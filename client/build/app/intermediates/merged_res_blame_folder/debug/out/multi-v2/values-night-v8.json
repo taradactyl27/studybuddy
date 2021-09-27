@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\atara\\Desktop\\Sbuddy\\studybuddy\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "outputFile": "C:\\Users\\atara\\Desktop\\Sbuddy\\studybuddy\\client\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\atara\\Desktop\\Sbuddy\\studybuddy\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "C:\\Users\\atara\\Desktop\\Sbuddy\\studybuddy\\client\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

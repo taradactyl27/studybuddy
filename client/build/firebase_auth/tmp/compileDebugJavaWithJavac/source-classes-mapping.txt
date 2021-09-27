@@ -1,0 +1,13 @@
+io/flutter/plugins/firebase/auth/FlutterFirebaseAuthPlugin.java
+ io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin
+ io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin$1
+ io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin$2
+ io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin$3
+io/flutter/plugins/firebase/auth/FlutterFirebaseAuthRegistrar.java
+ io.flutter.plugins.firebase.auth.FlutterFirebaseAuthRegistrar
+io/flutter/plugins/firebase/auth/FlutterFirebaseAuthPluginException.java
+ io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPluginException
+io/flutter/plugins/firebase/auth/Constants.java
+ io.flutter.plugins.firebase.auth.Constants
+io/flutter/plugins/firebase/auth/BuildConfig.java
+ io.flutter.plugins.firebase.auth.BuildConfig
