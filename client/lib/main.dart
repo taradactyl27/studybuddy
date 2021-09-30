@@ -16,9 +16,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 FirebaseAuth auth = FirebaseAuth.instance;
 
-Future<UserCredential> signInWithGoogle() async {
+Future<UserCredential?> signInWithGoogle() async {
   // Trigger the authentication flow
-  final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  if(googleUser == null){
+    return null;
+  }
 
   // Obtain the auth details from the request
   final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
