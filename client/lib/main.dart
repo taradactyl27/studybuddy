@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.cyan,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       onGenerateRoute: route.controller,
       initialRoute: route.loginPage,
