@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
         future: _initializeFirebase(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
+            return Center(
               children: [
                   ElevatedButton(
                     child: Text("Google Sign In"),
