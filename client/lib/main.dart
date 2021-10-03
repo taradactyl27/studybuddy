@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'screens/login_page.dart';
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'route/route.dart' as route;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
@@ -12,7 +18,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.cyan,
       ),
-      home: LoginPage(),
+      onGenerateRoute: route.controller,
+      initialRoute: route.loginPage,
     );
   }
 }
