@@ -21,11 +21,11 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
@@ -108,9 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                     child: SignInButton(Buttons.Google, onPressed: () async {
                   UserCredential user = await signInWithGoogle();
-                  if (user != null) {
-                    Navigator.pushNamed(context, route.landingPage);
-                  }
+                  Navigator.pushNamed(context, route.landingPage);
                 }))),
           ],
         ));

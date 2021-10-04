@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage>
                     Text('Welcome back,',
                         style: GoogleFonts.nunito(
                             textStyle: const TextStyle(fontSize: 24))),
-                    Text(currentUser.displayName,
+                    Text(currentUser!.displayName ?? "anonymous",
                         style: GoogleFonts.nunito(
                             textStyle: const TextStyle(fontSize: 24)))
                   ]))),
