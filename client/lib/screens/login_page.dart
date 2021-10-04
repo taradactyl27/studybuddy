@@ -2,6 +2,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:studybuddy/route/route.dart' as route;
 
 class LoginPage extends StatefulWidget {
@@ -50,49 +51,78 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Study Buddy'),
+            elevation: 0,
+            backgroundColor: Colors.transparent
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-              
-              children: [
-           
-                  TextFormField(
-                    controller: _usercontroller,
-                    decoration: InputDecoration(
-                      labelText: 'Email'
+              children: <Widget>[
+                   Container(
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage("theme/sbuddy.png"),
+                      ),
                     ),
-                    
                   ),
-                  TextFormField(
-              controller: _passwordcontroller,
-              decoration: InputDecoration(
-                labelText: 'Password'
-              ),
-              
-              obscureText: true,
-            ),
-            RaisedButton(
-              onPressed: () async{
-                _email = _usercontroller.text;
-                _password = _passwordcontroller.text;
-                if(_email != null && _password != null){
-                  User user = await handleSignInEmail(_email,_password);
-                }
-              },
-              child: Text('Sign in')
-              
-
-            ),
-                  ElevatedButton(
-                    child: Text("Google Sign In"),
-                    onPressed: () async{
-                      UserCredential user = await signInWithGoogle();
-                      if (user != null) {
-                        Navigator.pushNamed(context,route.landingPage);
-                      }
-                    }
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40),
+                    padding:EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      controller: _usercontroller,
+                      decoration: InputDecoration(
+                        labelText: 'Email'
+                      ),
+                    )
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 40),
+                    padding:EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      controller: _passwordcontroller,
+                      decoration: InputDecoration(
+                        labelText: 'Password'
+                      ),
+                      obscureText: true,
+                      )
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5.0),
+                    child: Center ( 
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(220, 36)
+                        ),
+                        child: Text('Sign in',
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                        onPressed: () async{
+                          _email = _usercontroller.text;
+                          _password = _passwordcontroller.text;
+                          if(_email != null && _password != null){
+                            User user = await handleSignInEmail(_email,_password);
+                          }
+                        }, 
+                      )
+                    )
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5.0),
+                    child: Center(
+                      child: SignInButton(
+                          Buttons.Google,
+                          onPressed: () async{
+                            UserCredential user = await signInWithGoogle();
+                            if (user != null) {
+                              Navigator.pushNamed(context,route.landingPage);
+                            }
+                          }
+                        )
+                      )
                   ),
               ],
         
