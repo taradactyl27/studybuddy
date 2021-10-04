@@ -98,9 +98,8 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;
-                    if (_email != null && _password != null) {
-                      User user = await handleSignInEmail(_email, _password);
-                    }
+                    User user = await handleSignInEmail(_email, _password);
+                    Navigator.pushNamed(context, route.landingPage);
                   },
                 ))),
             Container(
