@@ -1,10 +1,16 @@
+import 'dart:io';
 import 'dart:math';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:studybuddy/route/hero_route.dart';
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:studybuddy/route/route.dart' as route;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/screens/class_creation_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,6 +30,18 @@ class _HomePageState extends State<HomePage>
     setState(() {
       currentIndex = index;
     });
+  }
+
+  Future<void> uploadFile(String? filePath) async {
+    File file = File(filePath!);
+
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('uploads/file-to-upload.png')
+          .putFile(file);
+    } on firebase_core.FirebaseException catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -92,17 +110,28 @@ class _HomePageState extends State<HomePage>
                             : const Duration(milliseconds: 850),
                         alignment: alignment1,
                         curve: toggle ? Curves.easeIn : Curves.easeOut,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 275),
-                          curve: toggle ? Curves.easeIn : Curves.easeOut,
-                          height: size1,
-                          width: size1,
-                          decoration: BoxDecoration(
-                            color: const Color(0xff2a9d8f),
-                            borderRadius: BorderRadius.circular(40.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles();
+                            if (result != null) {
+                              uploadFile(result.files.single.path);
+                            } else {
+                              // User canceled the picker
+                            }
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 275),
+                            curve: toggle ? Curves.easeIn : Curves.easeOut,
+                            height: size1,
+                            width: size1,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff2a9d8f),
+                              borderRadius: BorderRadius.circular(40.0),
+                            ),
+                            child: const Icon(Icons.mic_rounded,
+                                color: Colors.white),
                           ),
-                          child: const Icon(Icons.mic_rounded,
-                              color: Colors.white),
                         )),
                     AnimatedAlign(
                         duration: toggle
@@ -110,17 +139,29 @@ class _HomePageState extends State<HomePage>
                             : const Duration(milliseconds: 850),
                         alignment: alignment2,
                         curve: toggle ? Curves.easeIn : Curves.easeOut,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 275),
-                          curve: toggle ? Curves.easeIn : Curves.easeOut,
-                          height: size2,
-                          width: size2,
-                          decoration: BoxDecoration(
-                            color: const Color(0xff2a9d8f),
-                            borderRadius: BorderRadius.circular(40.0),
+                        child: Hero(
+                          tag: 'add',
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(HeroDialogRoute(builder: (context) {
+                                return const ClassCreationCard();
+                              }));
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 275),
+                              curve: toggle ? Curves.easeIn : Curves.easeOut,
+                              height: size2,
+                              width: size2,
+                              decoration: BoxDecoration(
+                                color: const Color(0xff2a9d8f),
+                                borderRadius: BorderRadius.circular(40.0),
+                              ),
+                              child: const Icon(Icons.my_library_add_rounded,
+                                  color: Colors.white),
+                            ),
                           ),
-                          child: const Icon(Icons.my_library_add_rounded,
-                              color: Colors.white),
                         )),
                     Transform.rotate(
                       angle: _animation.value * pi * (3 / 4),

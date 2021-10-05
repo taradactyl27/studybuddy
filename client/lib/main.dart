@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'screens/login_page.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'route/route.dart' as route;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+  runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
