@@ -70,7 +70,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                           "description": _descriptioncontroller.text,
                         }).then((value) {
                           users.doc(currentUser!.uid).update({
-                            'courses': FieldValue.arrayUnion([value.id])
+                            'course_ids': FieldValue.arrayUnion([value.id])
                           });
                           Navigator.pop(context);
                           print("UPDATED USER");

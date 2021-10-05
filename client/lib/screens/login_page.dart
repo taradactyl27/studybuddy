@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                       .set({
                     "name": currentUser.displayName,
                     "email": currentUser.email,
-                    "course_ids": ["testCourse"]
+                    "course_ids": []
                   }).then((_) {
                     Navigator.pushNamed(context, route.landingPage);
                     print("success!");
