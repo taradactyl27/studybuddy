@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:studybuddy/route/route.dart' as route;
 import 'package:flutter/material.dart';
 
@@ -107,7 +108,18 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                     child: SignInButton(Buttons.Google, onPressed: () async {
                   UserCredential user = await signInWithGoogle();
-                  Navigator.pushNamed(context, route.landingPage);
+                  var currentUser = FirebaseAuth.instance.currentUser;
+                  FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(currentUser!.uid)
+                      .set({
+                    "name": currentUser.displayName,
+                    "email": currentUser.email,
+                    "course_ids": ["testCourse"]
+                  }).then((_) {
+                    Navigator.pushNamed(context, route.landingPage);
+                    print("success!");
+                  });
                 }))),
           ],
         ));

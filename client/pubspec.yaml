@@ -41,6 +41,7 @@ dependencies:
   flutter_signin_button: ^2.0.0
   firebase_storage: ^10.0.4
   file_picker: ^4.1.3
+  cloud_firestore: ^2.5.3
 
 dev_dependencies:
   flutter_test:

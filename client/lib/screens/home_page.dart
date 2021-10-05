@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:studybuddy/route/hero_route.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:studybuddy/route/route.dart' as route;
@@ -72,24 +73,114 @@ class _HomePageState extends State<HomePage>
   double size2 = 50;
   @override
   Widget build(BuildContext context) {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    CollectionReference courses =
+        FirebaseFirestore.instance.collection('courses');
+    var user_course_ids;
+    users.doc(currentUser!.uid).get().then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        print(documentSnapshot.data());
+      } else {
+        print("QUERY FAILED");
+        user_course_ids = null;
+      }
+    });
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-              top: 50,
-              left: 5,
-              child: Container(
-                  padding: const EdgeInsets.all(25),
-                  child: Column(children: [
-                    Text('Welcome back,',
-                        style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(fontSize: 24))),
-                    Text(currentUser!.displayName ?? "anonymous",
-                        style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(fontSize: 24)))
-                  ]))),
+          // Positioned(
+          //     top: 50,
+          //     left: 5,
+          //     // child: Container(
+          //     //     padding: const EdgeInsets.all(25),
+          //     //     child: Column(children: [
+          //     //       Text('Welcome back,',
+          //     //           style: GoogleFonts.nunito(
+          //     //               textStyle: const TextStyle(fontSize: 24))),
+          //     //       Text(currentUser!.displayName ?? "anonymous",
+          //     //           style: GoogleFonts.nunito(
+          //     //               textStyle: const TextStyle(fontSize: 24)))
+          //     //     ]))),
+          StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('courses')
+                  .where('course_id', arrayContainsAny: user_course_ids)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: Text('Loading'));
+                }
+                return ListView(
+                  padding: const EdgeInsets.all(30.0),
+                  children: snapshot.data!.docs.map((course) {
+                    return Container(
+                      height: 100,
+                      margin: const EdgeInsets.only(bottom: 32),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 8),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF61A3FE), Color(0xFF63FFD5)],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: [
+                              const Color(0xFF61A3FE),
+                              const Color(0xFF63FFD5)
+                            ].last.withOpacity(0.4),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                            offset: const Offset(4, 4),
+                          ),
+                        ],
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(24)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    course['name'],
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'avenir'),
+                                  ),
+                                  const SizedBox(width: 100),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      courses.doc(course.id).delete().then(
+                                          (value) => print("Course Deleted"));
+                                      users.doc(currentUser!.uid).update({
+                                        "course_ids":
+                                            FieldValue.arrayRemove([course.id])
+                                      });
+                                    },
+                                    child: const Icon(
+                                      Icons.clear_outlined,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                );
+              }),
           Positioned(
             bottom: 0,
             left: 0,
@@ -127,7 +218,7 @@ class _HomePageState extends State<HomePage>
                             height: size1,
                             width: size1,
                             decoration: BoxDecoration(
-                              color: const Color(0xff2a9d8f),
+                              color: const Color(0xFF63FFD5),
                               borderRadius: BorderRadius.circular(40.0),
                             ),
                             child: const Icon(Icons.mic_rounded,
@@ -156,7 +247,7 @@ class _HomePageState extends State<HomePage>
                               height: size2,
                               width: size2,
                               decoration: BoxDecoration(
-                                color: const Color(0xff2a9d8f),
+                                color: const Color(0xFF63FFD5),
                                 borderRadius: BorderRadius.circular(40.0),
                               ),
                               child: const Icon(Icons.my_library_add_rounded,
@@ -167,7 +258,7 @@ class _HomePageState extends State<HomePage>
                     Transform.rotate(
                       angle: _animation.value * pi * (3 / 4),
                       child: FloatingActionButton(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: const Color(0xFF61A3FE),
                           child: const Icon(Icons.add_rounded,
                               color: Colors.white),
                           elevation: 0.1,
@@ -204,7 +295,7 @@ class _HomePageState extends State<HomePage>
                           icon: Icon(
                             Icons.home,
                             color: currentIndex == 0
-                                ? Colors.blue
+                                ? const Color(0xFF61A3FE)
                                 : Colors.grey.shade400,
                           ),
                           onPressed: () {
@@ -216,7 +307,7 @@ class _HomePageState extends State<HomePage>
                             icon: Icon(
                               Icons.menu_book_rounded,
                               color: currentIndex == 1
-                                  ? Colors.blue
+                                  ? const Color(0xFF61A3FE)
                                   : Colors.grey.shade400,
                             ),
                             onPressed: () {
@@ -229,7 +320,7 @@ class _HomePageState extends State<HomePage>
                             icon: Icon(
                               Icons.bookmark,
                               color: currentIndex == 2
-                                  ? Colors.blue
+                                  ? const Color(0xFF61A3FE)
                                   : Colors.grey.shade400,
                             ),
                             onPressed: () {
@@ -239,7 +330,7 @@ class _HomePageState extends State<HomePage>
                             icon: Icon(
                               Icons.notifications,
                               color: currentIndex == 3
-                                  ? Colors.blue
+                                  ? const Color(0xFF61A3FE)
                                   : Colors.grey.shade400,
                             ),
                             onPressed: () {
