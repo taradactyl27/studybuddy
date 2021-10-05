@@ -32,12 +32,12 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  Future<void> uploadFile(String? filePath) async {
+  Future<void> uploadFile(String? filePath, String fileName) async {
     File file = File(filePath!);
-
+    String uid = currentUser!.uid;
     try {
       await firebase_storage.FirebaseStorage.instance
-          .ref('uploads/file-to-upload.png')
+          .ref('$uid/$fileName')
           .putFile(file);
     } on firebase_core.FirebaseException catch (e) {
       print(e);
@@ -115,7 +115,8 @@ class _HomePageState extends State<HomePage>
                             FilePickerResult? result =
                                 await FilePicker.platform.pickFiles();
                             if (result != null) {
-                              uploadFile(result.files.single.path);
+                              uploadFile(result.files.single.path,
+                                  result.files.first.name);
                             } else {
                               // User canceled the picker
                             }
