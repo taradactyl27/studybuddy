@@ -109,17 +109,26 @@ class _LoginPageState extends State<LoginPage> {
                     child: SignInButton(Buttons.Google, onPressed: () async {
                   UserCredential user = await signInWithGoogle();
                   var currentUser = FirebaseAuth.instance.currentUser;
-                  FirebaseFirestore.instance
-                      .collection("users")
-                      .doc(currentUser!.uid)
-                      .set({
-                    "name": currentUser.displayName,
-                    "email": currentUser.email,
-                    "course_ids": []
-                  }).then((_) {
+                  print(currentUser!.uid);
+                  if(user.additionalUserInfo!.isNewUser){
+                    FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(currentUser!.uid)
+                        .set({
+                      "name": currentUser.displayName,
+                      "email": currentUser.email,
+                      "course_ids": []
+                    }).then((_) {
+                      Navigator.pushNamed(context, route.landingPage);
+                      print("success!");
+                    });
+                  }
+                  else{
                     Navigator.pushNamed(context, route.landingPage);
-                    print("success!");
-                  });
+                      print("User Exists");
+                  }
+
+
                 }))),
           ],
         ));
