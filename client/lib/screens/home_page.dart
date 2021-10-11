@@ -48,16 +48,14 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<List<dynamic>> getCourseList() async {
-    List<dynamic> returnList = ["nothing"];
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUser!.uid)
         .get();
     if (documentSnapshot.exists) {
-      returnList.add(documentSnapshot.get('course_ids'));
-      return returnList;
+      return documentSnapshot.get('course_ids');
     } else {
-      return returnList;
+      return ["nothing"];
     }
   }
 
@@ -114,89 +112,99 @@ class _HomePageState extends State<HomePage>
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                return StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('courses')
-                        .where(FieldPath.documentId, whereIn: snapshot.data)
-                        .snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text('Loading'));
-                      }
-                      return ListView(
-                        padding: const EdgeInsets.all(30.0),
-                        children: snapshot.data!.docs.map((course) {
-                          return Container(
-                            height: 100,
-                            margin: const EdgeInsets.only(bottom: 32),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 32, vertical: 8),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF61A3FE), Color(0xFF63FFD5)],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: [
-                                    const Color(0xFF61A3FE),
-                                    const Color(0xFF63FFD5)
-                                  ].last.withOpacity(0.4),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                  offset: const Offset(4, 4),
-                                ),
-                              ],
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(24)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          course['name'],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontFamily: 'avenir'),
-                                        ),
-                                        const SizedBox(width: 100),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            courses
-                                                .doc(course.id)
-                                                .delete()
-                                                .then((value) =>
-                                                    print("Course Deleted"));
-                                            users.doc(currentUser!.uid).update({
-                                              "course_ids":
-                                                  FieldValue.arrayRemove(
-                                                      [course.id])
-                                            });
-                                          },
-                                          child: const Icon(
-                                            Icons.clear_outlined,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                if (snapshot.data!.isNotEmpty) {
+                  return StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('courses')
+                          .where(FieldPath.documentId, whereIn: snapshot.data)
+                          .snapshots(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(child: Text('Loading'));
+                        }
+                        return ListView(
+                          padding: const EdgeInsets.all(30.0),
+                          children: snapshot.data!.docs.map((course) {
+                            return Container(
+                              height: 100,
+                              margin: const EdgeInsets.only(bottom: 32),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 32, vertical: 8),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF61A3FE),
+                                    Color(0xFF63FFD5)
                                   ],
-                                )
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    });
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: [
+                                      const Color(0xFF61A3FE),
+                                      const Color(0xFF63FFD5)
+                                    ].last.withOpacity(0.4),
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                    offset: const Offset(4, 4),
+                                  ),
+                                ],
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(24)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            course['name'],
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'avenir'),
+                                          ),
+                                          const SizedBox(width: 100),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              courses
+                                                  .doc(course.id)
+                                                  .delete()
+                                                  .then((value) =>
+                                                      print("Course Deleted"));
+                                              users
+                                                  .doc(currentUser!.uid)
+                                                  .update({
+                                                "course_ids":
+                                                    FieldValue.arrayRemove(
+                                                        [course.id])
+                                              });
+                                            },
+                                            child: const Icon(
+                                              Icons.clear_outlined,
+                                              color: Colors.white,
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      });
+                } else {
+                  return const Center(child: Text('Add a course!'));
+                }
               } else {
                 return const Center(child: Text('Loading'));
               }
