@@ -110,10 +110,10 @@ class _LoginPageState extends State<LoginPage> {
                   UserCredential user = await signInWithGoogle();
                   var currentUser = FirebaseAuth.instance.currentUser;
                   print(currentUser!.uid);
-                  if(user.additionalUserInfo!.isNewUser){
+                  if (user.additionalUserInfo!.isNewUser) {
                     FirebaseFirestore.instance
                         .collection("users")
-                        .doc(currentUser!.uid)
+                        .doc(currentUser.uid)
                         .set({
                       "name": currentUser.displayName,
                       "email": currentUser.email,
@@ -122,13 +122,10 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.pushNamed(context, route.landingPage);
                       print("success!");
                     });
-                  }
-                  else{
+                  } else {
                     Navigator.pushNamed(context, route.landingPage);
-                      print("User Exists");
+                    print("User Exists");
                   }
-
-
                 }))),
           ],
         ));

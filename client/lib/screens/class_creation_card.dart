@@ -72,6 +72,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                           users.doc(currentUser!.uid).update({
                             'course_ids': FieldValue.arrayUnion([value.id])
                           });
+                          courses.doc(value.id).update({'course_id': value.id});
                           Navigator.pop(context);
                           print("UPDATED USER");
                         });

@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/screens/class_creation_card.dart';
+import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
+  late Future<List<dynamic>> _courseIds;
   bool toggle = false;
   var currentUser = FirebaseAuth.instance.currentUser;
   late AnimationController _controller;
@@ -42,6 +44,18 @@ class _HomePageState extends State<HomePage>
           .putFile(file);
     } on firebase_core.FirebaseException catch (e) {
       print(e);
+    }
+  }
+
+  Future<List<dynamic>> getCourseList() async {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser!.uid)
+        .get();
+    if (documentSnapshot.exists) {
+      return documentSnapshot.get('course_ids');
+    } else {
+      return ["nothing"];
     }
   }
 
@@ -76,17 +90,7 @@ class _HomePageState extends State<HomePage>
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     CollectionReference courses =
         FirebaseFirestore.instance.collection('courses');
-    var user_course_ids;
-    users.doc(currentUser!.uid).get().then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        print(documentSnapshot.data());
-      } else {
-        print("QUERY FAILED");
-        user_course_ids = null;
-      }
-    });
     final Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -103,84 +107,99 @@ class _HomePageState extends State<HomePage>
           //     //           style: GoogleFonts.nunito(
           //     //               textStyle: const TextStyle(fontSize: 24)))
           //     //     ]))),
-          StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('courses')
-                  .where('course_id', arrayContainsAny: user_course_ids)
-                  .snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: Text('Loading'));
-                }
-                return ListView(
-                  padding: const EdgeInsets.all(30.0),
-                  children: snapshot.data!.docs.map((course) {
-                    return Container(
-                      height: 100,
-                      margin: const EdgeInsets.only(bottom: 32),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 32, vertical: 8),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF61A3FE), Color(0xFF63FFD5)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: [
-                              const Color(0xFF61A3FE),
-                              const Color(0xFF63FFD5)
-                            ].last.withOpacity(0.4),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                            offset: const Offset(4, 4),
-                          ),
-                        ],
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    course['name'],
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'avenir'),
-                                  ),
-                                  const SizedBox(width: 100),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      courses.doc(course.id).delete().then(
-                                          (value) => print("Course Deleted"));
-                                      users.doc(currentUser!.uid).update({
-                                        "course_ids":
-                                            FieldValue.arrayRemove([course.id])
-                                      });
-                                    },
-                                    child: const Icon(
-                                      Icons.clear_outlined,
-                                      color: Colors.white,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ],
+          FutureBuilder<List<dynamic>>(
+            future: getCourseList(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                return StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('courses')
+                        .where(FieldPath.documentId, whereIn: snapshot.data)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: Text('Loading'));
+                      }
+                      return ListView(
+                        padding: const EdgeInsets.all(30.0),
+                        children: snapshot.data!.docs.map((course) {
+                          return Container(
+                            height: 100,
+                            margin: const EdgeInsets.only(bottom: 32),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 32, vertical: 8),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF61A3FE), Color(0xFF63FFD5)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
                               ),
-                            ],
-                          )
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                );
-              }),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: [
+                                    const Color(0xFF61A3FE),
+                                    const Color(0xFF63FFD5)
+                                  ].last.withOpacity(0.4),
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                  offset: const Offset(4, 4),
+                                ),
+                              ],
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(24)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          course['name'],
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'avenir'),
+                                        ),
+                                        const SizedBox(width: 100),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            courses
+                                                .doc(course.id)
+                                                .delete()
+                                                .then((value) =>
+                                                    print("Course Deleted"));
+                                            users.doc(currentUser!.uid).update({
+                                              "course_ids":
+                                                  FieldValue.arrayRemove(
+                                                      [course.id])
+                                            });
+                                          },
+                                          child: const Icon(
+                                            Icons.clear_outlined,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    });
+              } else {
+                return const Center(child: Text('Loading'));
+              }
+            },
+          ),
           Positioned(
             bottom: 0,
             left: 0,
@@ -334,7 +353,7 @@ class _HomePageState extends State<HomePage>
                                   : Colors.grey.shade400,
                             ),
                             onPressed: () {
-                              setBottomBarIndex(3);
+                              Navigator.pushNamed(context, route.settingsPage);
                             }),
                       ],
                     ),
@@ -346,33 +365,5 @@ class _HomePageState extends State<HomePage>
         ],
       ),
     );
-  }
-}
-
-class BNBCustomPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = new Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    Path path = Path();
-    path.moveTo(0, 20); // Start
-    path.quadraticBezierTo(size.width * 0.20, 0, size.width * 0.35, 0);
-    path.quadraticBezierTo(size.width * 0.40, 0, size.width * 0.40, 20);
-    path.arcToPoint(Offset(size.width * 0.60, 20),
-        radius: Radius.circular(20.0), clockwise: false);
-    path.quadraticBezierTo(size.width * 0.60, 0, size.width * 0.65, 0);
-    path.quadraticBezierTo(size.width * 0.80, 0, size.width, 20);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.lineTo(0, 20);
-    canvas.drawShadow(path, Colors.black, 5, true);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
   }
 }
