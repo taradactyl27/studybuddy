@@ -48,14 +48,16 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<List<dynamic>> getCourseList() async {
+    List<dynamic> returnList = ["nothing"];
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(currentUser!.uid)
         .get();
     if (documentSnapshot.exists) {
-      return documentSnapshot.get('course_ids');
+      returnList.add(documentSnapshot.get('course_ids'));
+      return returnList;
     } else {
-      return ["nothing"];
+      return returnList;
     }
   }
 
