@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:file_picker/file_picker.dart';
@@ -74,11 +75,18 @@ class _HomePageState extends State<HomePage>
     _controller.addListener(() {
       setState(() {});
     });
+    _courseIds = getCourseList();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  FutureOr onGoBack(dynamic value) {
+    setState(() {
+      _courseIds = getCourseList();
+    });
   }
 
   Alignment alignment1 = const Alignment(0.0, -1.3);
@@ -108,7 +116,7 @@ class _HomePageState extends State<HomePage>
           //     //               textStyle: const TextStyle(fontSize: 24)))
           //     //     ]))),
           FutureBuilder<List<dynamic>>(
-            future: getCourseList(),
+            future: _courseIds,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
@@ -268,7 +276,7 @@ class _HomePageState extends State<HomePage>
                               Navigator.of(context)
                                   .push(HeroDialogRoute(builder: (context) {
                                 return const ClassCreationCard();
-                              }));
+                              })).then(onGoBack);
                             },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 275),
