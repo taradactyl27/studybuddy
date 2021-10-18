@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "studybuddyez"
+    "default": "study-buddy-268e6",
+    "dev": "studybuddyez"
   }
 }

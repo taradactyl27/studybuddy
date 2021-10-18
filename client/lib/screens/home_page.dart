@@ -7,6 +7,7 @@ import 'package:studybuddy/route/hero_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:studybuddy/route/route.dart' as route;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,6 +44,11 @@ class _HomePageState extends State<HomePage>
       await firebase_storage.FirebaseStorage.instance
           .ref('$uid/$fileName')
           .putFile(file);
+      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('requestTranscription');
+      final results = await callable({
+        'storagepath': '$uid/$fileName'
+      });
+      // results.data;
     } on firebase_core.FirebaseException catch (e) {
       print(e);
     }

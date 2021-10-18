@@ -8,10 +8,10 @@ export const requestTranscription = functions.runWith({
     // Ensure the function has enough memory and time
     // to process large files
     timeoutSeconds: 360,
-  }).https.onRequest(async (request, response) =>  {
+  }).https.onCall(async (data, context) => {  
  const client = new speech.SpeechClient();
 
- const gcsUri = `gs://studybuddyez.appspot.com/Joann Peck, marketing.wav`;
+ const gcsUri = `gs://study-buddy-268e6.appspot.com/${ data.storagepath || 'Joann Peck, marketing.wav'}`;
 
   const audio = {
     uri: gcsUri,
@@ -23,7 +23,7 @@ export const requestTranscription = functions.runWith({
   };
 
   const outputConfig = {
-    gcsUri: `gs://studybuddyez.appspot.com/marketing_transcript.txt`,
+    gcsUri: `gs://study-buddy-268e6.appspot.com/${data.storagepath}_transcript.txt`,
   };
 
   const speechRequest = {
@@ -39,12 +39,14 @@ export const requestTranscription = functions.runWith({
     const transcription = res?.results?.map((result:any) => result?.alternatives[0].transcript).join('\n');
     console.log(`Transcription: ${transcription}`);
 
- response.send(`Transcription: ${transcription}`);
+  return {
+    data: `Transcription: ${transcription}`,
+  };
 });
 
 
 export const checkTranscriptionOperation = functions.https.onRequest(async (request, response) =>  {
-    const client = new speech.SpeechClient();
+   // const client = new speech.SpeechClient();
 
     // client.checkLongRunningRecognizeProgress('')
     response.send('should probably be in server');

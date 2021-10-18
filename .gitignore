@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 
-/google-services.json
+/google-services*.json
 
 # Firebase cache
 .firebase/
