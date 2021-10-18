@@ -106,6 +106,20 @@ class _LoginPageState extends State<LoginPage> {
             Container(
                 padding: const EdgeInsets.all(5.0),
                 child: Center(
+                    child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(220, 36)),
+                  child: const Text('Sign up',
+                      style: TextStyle(
+                        color: Colors.white,
+                      )),
+                  onPressed: () async {
+                    Navigator.pushNamed(context, route.registerPage);
+                  },
+                ))),
+            Container(
+                padding: const EdgeInsets.all(5.0),
+                child: Center(
                     child: SignInButton(Buttons.Google, onPressed: () async {
                   UserCredential user = await signInWithGoogle();
                   var currentUser = FirebaseAuth.instance.currentUser;
