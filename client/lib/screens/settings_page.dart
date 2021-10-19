@@ -1,16 +1,6 @@
-import 'dart:io';
-import 'dart:math';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:studybuddy/route/hero_route.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:studybuddy/route/route.dart' as route;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/screens/login_page.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 

@@ -1,4 +1,5 @@
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:flutter/gestures.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
@@ -106,20 +107,6 @@ class _LoginPageState extends State<LoginPage> {
             Container(
                 padding: const EdgeInsets.all(5.0),
                 child: Center(
-                    child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(220, 36)),
-                  child: const Text('Sign up',
-                      style: TextStyle(
-                        color: Colors.white,
-                      )),
-                  onPressed: () async {
-                    Navigator.pushNamed(context, route.registerPage);
-                  },
-                ))),
-            Container(
-                padding: const EdgeInsets.all(5.0),
-                child: Center(
                     child: SignInButton(Buttons.Google, onPressed: () async {
                   UserCredential user = await signInWithGoogle();
                   var currentUser = FirebaseAuth.instance.currentUser;
@@ -141,6 +128,25 @@ class _LoginPageState extends State<LoginPage> {
                     print("User Exists");
                   }
                 }))),
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: "Don't have an account? ",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    TextSpan(
+                        text: 'Sign Up!',
+                        style: const TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushNamed(context, route.registerPage);
+                          }),
+                  ],
+                ),
+              ),
+            ),
           ],
         ));
   }

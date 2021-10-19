@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:studybuddy/services/database.dart';
 
 class ClassCreationCard extends StatefulWidget {
   /// {@macro add_todo_popup_card}
@@ -18,9 +17,6 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    CollectionReference courses =
-        FirebaseFirestore.instance.collection('courses');
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -65,16 +61,12 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        courses.add({
-                          "name": _namecontroller.text,
-                          "description": _descriptioncontroller.text,
-                        }).then((value) {
-                          users.doc(currentUser!.uid).update({
-                            'course_ids': FieldValue.arrayUnion([value.id])
-                          });
-                          courses.doc(value.id).update({'course_id': value.id});
+                        Database.createCourse(
+                                currentUser!.uid,
+                                _namecontroller.text,
+                                _descriptioncontroller.text)
+                            .then((value) {
                           Navigator.pop(context);
-                          print("UPDATED USER");
                         });
                       },
                       style: ElevatedButton.styleFrom(
