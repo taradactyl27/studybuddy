@@ -8,6 +8,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:studybuddy/route/route.dart' as route;
 import 'package:flutter/material.dart';
+import 'package:studybuddy/services/database.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -112,14 +113,9 @@ class _LoginPageState extends State<LoginPage> {
                   var currentUser = FirebaseAuth.instance.currentUser;
                   print(currentUser!.uid);
                   if (user.additionalUserInfo!.isNewUser) {
-                    FirebaseFirestore.instance
-                        .collection("users")
-                        .doc(currentUser.uid)
-                        .set({
-                      "name": currentUser.displayName,
-                      "email": currentUser.email,
-                      "course_ids": []
-                    }).then((_) {
+                    Database.createUser(currentUser.uid,
+                            currentUser.displayName, currentUser.email)
+                        .then((_) {
                       Navigator.pushNamed(context, route.landingPage);
                       print("success!");
                     });

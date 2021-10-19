@@ -9,6 +9,14 @@ class Database {
   static CollectionReference users = _db.collection('users');
   static CollectionReference courses = _db.collection('courses');
 
+  static Future<void> createUser(
+      String uid, String? name, String? email) async {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .set({"name": name, "email": email, "course_ids": []});
+  }
+
   static Future<void> deleteCourse(String uid, String courseId) async {
     courses.doc(courseId).delete();
     users.doc(uid).update({
