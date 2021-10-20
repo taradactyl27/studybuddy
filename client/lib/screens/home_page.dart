@@ -12,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/screens/class_creation_card.dart';
 import 'package:studybuddy/services/database.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
+import 'package:studybuddy/widgets/course_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -25,7 +26,6 @@ class _HomePageState extends State<HomePage>
   int currentIndex = 0;
   late Future<List<dynamic>> _courseIds;
   bool toggle = false;
-  var currentUser = FirebaseAuth.instance.currentUser;
   late AnimationController _controller;
   late Animation _animation;
 
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage>
     _controller.addListener(() {
       setState(() {});
     });
-    _courseIds = Database.getUserCourseList(currentUser!.uid);
+    _courseIds = Database.getUserCourseList();
   }
 
   @override
@@ -58,9 +58,9 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
-  FutureOr refreshCourses() {
+  void _refreshCourses() {
     setState(() {
-      _courseIds = Database.getUserCourseList(currentUser!.uid);
+      _courseIds = Database.getUserCourseList();
     });
   }
 
@@ -89,97 +89,57 @@ class _HomePageState extends State<HomePage>
             //     //           style: GoogleFonts.nunito(
             //     //               textStyle: const TextStyle(fontSize: 24)))
             //     //     ]))),
-            FutureBuilder<List<dynamic>>(
-              future: _courseIds,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.hasData) {
-                  if (snapshot.data!.isNotEmpty) {
-                    return StreamBuilder(
-                        stream: Database.getCourseStream(snapshot.data),
-                        builder:
-                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(child: Text('Loading'));
-                          }
-                          return ListView(
-                            padding: const EdgeInsets.all(30.0),
-                            children: snapshot.data!.docs.map((course) {
-                              return Container(
-                                height: 100,
-                                margin: const EdgeInsets.only(bottom: 32),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 32, vertical: 8),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF61A3FE),
-                                      Color(0xFF63FFD5)
-                                    ],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: [
-                                        const Color(0xFF61A3FE),
-                                        const Color(0xFF63FFD5)
-                                      ].last.withOpacity(0.4),
-                                      blurRadius: 8,
-                                      spreadRadius: 2,
-                                      offset: const Offset(4, 4),
-                                    ),
-                                  ],
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(24)),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              course['name'],
-                                              style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontFamily: 'avenir'),
-                                            ),
-                                            const SizedBox(width: 100),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                Database.deleteCourse(
-                                                    currentUser!.uid,
-                                                    course.id);
-                                                refreshCourses();
-                                              },
-                                              child: const Icon(
-                                                Icons.clear_outlined,
-                                                color: Colors.white,
-                                                size: 24,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(top: 40, left: 30),
+                  child: Text("Your Courses",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w400,
+                      ))),
+                ),
+                FutureBuilder<List<dynamic>>(
+                  future: _courseIds,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      if (snapshot.data!.isNotEmpty) {
+                        return StreamBuilder(
+                            stream: Database.getCourseStream(snapshot.data),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return const Center(child: Text('Loading'));
+                              }
+                              return SizedBox(
+                                height: 400,
+                                child: GridView.count(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 20,
+                                  crossAxisCount: 2,
+                                  padding: const EdgeInsets.all(30.0),
+                                  children: snapshot.data!.docs.map((course) {
+                                    return CourseTile(
+                                      course: course,
+                                      refreshCourses: _refreshCourses,
+                                    );
+                                  }).toList(),
                                 ),
                               );
-                            }).toList(),
-                          );
-                        });
-                  } else {
-                    return const Center(child: Text('Add a course!'));
-                  }
-                } else {
-                  return const Center(child: Text('Loading'));
-                }
-              },
+                            });
+                      } else {
+                        return const Center(child: Text('Add a course!'));
+                      }
+                    } else {
+                      return const Center(child: Text('Loading'));
+                    }
+                  },
+                ),
+              ],
             ),
             Positioned(
               bottom: 0,
@@ -207,7 +167,7 @@ class _HomePageState extends State<HomePage>
                                   await FilePicker.platform.pickFiles();
                               if (result != null) {
                                 Database.uploadFile(result.files.single.path,
-                                    result.files.first.name, currentUser!.uid);
+                                    result.files.first.name);
                               } else {
                                 // User canceled the picker
                               }
@@ -240,7 +200,7 @@ class _HomePageState extends State<HomePage>
                                     .push(HeroDialogRoute(builder: (context) {
                                   return const ClassCreationCard();
                                 })).then((value) {
-                                  refreshCourses();
+                                  _refreshCourses();
                                 });
                               },
                               child: AnimatedContainer(

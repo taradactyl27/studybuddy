@@ -113,9 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                   var currentUser = FirebaseAuth.instance.currentUser;
                   print(currentUser!.uid);
                   if (user.additionalUserInfo!.isNewUser) {
-                    Database.createUser(currentUser.uid,
-                            currentUser.displayName, currentUser.email)
-                        .then((_) {
+                    Database.createUser().then((_) {
                       Navigator.pushNamed(context, route.landingPage);
                       print("success!");
                     });

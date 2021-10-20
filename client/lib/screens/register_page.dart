@@ -80,12 +80,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     _password = _passwordcontroller.text;
                     User user = await handleSignUpEmail(_email, _password);
                     var currentUser = FirebaseAuth.instance.currentUser;
-                    print(currentUser!.uid);
-                    Database.createUser(currentUser.uid,
-                            currentUser.displayName, currentUser.email)
-                        .then((_) {
+                    Database.createUser().then((_) {
                       Navigator.pushNamed(context, route.landingPage);
-                      print("success!");
                     });
                   },
                 ))),
