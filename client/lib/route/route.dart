@@ -24,7 +24,7 @@ Route<dynamic> controller(RouteSettings settings) {
     case coursePage:
       final arguments = settings.arguments as Map;
       return MaterialPageRoute(
-          builder: (context) => CoursePage(courseId: arguments["course_id"]));
+          builder: (context) => CoursePage(course: arguments["course"]));
     default:
       throw ('HOWD YOU GET HERE');
   }

@@ -51,10 +51,8 @@ class CourseTile extends StatelessWidget {
               Center(
                 child: Text(course['name'],
                     style: GoogleFonts.nunito(
-                      textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'avenir',
-                          fontSize: 21),
+                      textStyle:
+                          const TextStyle(color: Colors.white, fontSize: 21),
                     )),
               ),
               // GestureDetector(

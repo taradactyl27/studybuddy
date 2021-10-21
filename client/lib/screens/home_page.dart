@@ -112,7 +112,9 @@ class _HomePageState extends State<HomePage>
                             builder: (context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
                               if (!snapshot.hasData) {
-                                return const Center(child: Text('Loading'));
+                                return const SizedBox(
+                                    height: 200,
+                                    child: Center(child: Text('Loading')));
                               }
                               return SizedBox(
                                 height: 400,
@@ -126,10 +128,11 @@ class _HomePageState extends State<HomePage>
                                     return InkWell(
                                       onTap: () {
                                         Navigator.pushNamed(
-                                            context, route.coursePage,
-                                            arguments: {
-                                              'course_id': course.id
-                                            });
+                                                context, route.coursePage,
+                                                arguments: {'course': course})
+                                            .then((value) {
+                                          _refreshCourses();
+                                        });
                                       },
                                       child: CourseTile(
                                         course: course,
@@ -141,10 +144,13 @@ class _HomePageState extends State<HomePage>
                               );
                             });
                       } else {
-                        return const Center(child: Text('Add a course!'));
+                        return const SizedBox(
+                            height: 200,
+                            child: Center(child: Text('Add a course!')));
                       }
                     } else {
-                      return const Center(child: Text('Loading'));
+                      return const SizedBox(
+                          height: 200, child: Center(child: Text('Loading')));
                     }
                   },
                 ),
