@@ -123,9 +123,18 @@ class _HomePageState extends State<HomePage>
                                   crossAxisCount: 2,
                                   padding: const EdgeInsets.all(30.0),
                                   children: snapshot.data!.docs.map((course) {
-                                    return CourseTile(
-                                      course: course,
-                                      refreshCourses: _refreshCourses,
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, route.coursePage,
+                                            arguments: {
+                                              'course_id': course.id
+                                            });
+                                      },
+                                      child: CourseTile(
+                                        course: course,
+                                        refreshCourses: _refreshCourses,
+                                      ),
                                     );
                                   }).toList(),
                                 ),
