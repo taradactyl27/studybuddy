@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:studybuddy/route/hero_route.dart';
 import 'package:studybuddy/route/route.dart' as route;
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage>
   int currentIndex = 0;
   late Future<List<dynamic>> _courseIds;
   bool toggle = false;
+  final TextEditingController _searchController = TextEditingController();
   late AnimationController _controller;
   late Animation _animation;
 
@@ -89,11 +91,15 @@ class _HomePageState extends State<HomePage>
             //     //           style: GoogleFonts.nunito(
             //     //               textStyle: const TextStyle(fontSize: 24)))
             //     //     ]))),
+            Container(
+                padding: const EdgeInsets.all(30),
+                child: CupertinoTextField(
+                    controller: _searchController, placeholder: "Search...")),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(top: 40, left: 30),
+                  padding: const EdgeInsets.only(top: 80, left: 30),
                   child: Text("Your Courses",
                       style: GoogleFonts.nunito(
                           textStyle: const TextStyle(
