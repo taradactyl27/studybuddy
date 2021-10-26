@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         padding: const EdgeInsets.only(top: 55),
         child: Stack(
@@ -94,7 +95,21 @@ class _HomePageState extends State<HomePage>
             Container(
                 padding: const EdgeInsets.all(30),
                 child: CupertinoTextField(
-                    controller: _searchController, placeholder: "Search...")),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: Colors.white,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 1.0,
+                          spreadRadius: 0.0,
+                          offset: Offset(
+                              1.0, 1.0), // shadow direction: bottom right
+                        )
+                      ],
+                    ),
+                    controller: _searchController,
+                    placeholder: "Search...")),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

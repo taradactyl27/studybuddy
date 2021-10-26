@@ -5,6 +5,8 @@ import 'package:studybuddy/screens/home_page.dart';
 import 'package:studybuddy/screens/settings_page.dart';
 import 'package:studybuddy/screens/register_page.dart';
 
+import 'dashboard_route.dart';
+
 const String loginPage = 'login';
 const String landingPage = 'landing';
 const String settingsPage = 'settings';
@@ -14,7 +16,7 @@ const String coursePage = 'coursePage';
 Route<dynamic> controller(RouteSettings settings) {
   switch (settings.name) {
     case settingsPage:
-      return MaterialPageRoute(builder: (context) => SettingsPage());
+      return DashboardPageRoute(builder: (context) => SettingsPage());
     case loginPage:
       return MaterialPageRoute(builder: (context) => LoginPage());
     case landingPage:
