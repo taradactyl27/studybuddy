@@ -17,6 +17,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+final GoogleSignIn googleSignIn = new GoogleSignIn();
+
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usercontroller = TextEditingController();
 
@@ -102,6 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;
                     User user = await handleSignInEmail(_email, _password);
+                    Database.updateUser(user);
                     Navigator.pushNamed(context, route.landingPage);
                   },
                 ))),
@@ -118,8 +121,10 @@ class _LoginPageState extends State<LoginPage> {
                       print("success!");
                     });
                   } else {
-                    Navigator.pushNamed(context, route.landingPage);
-                    print("User Exists");
+                    Database.updateUser(currentUser).then((_) {
+                      Navigator.pushNamed(context, route.landingPage);
+                      print("User Exists");
+                    });
                   }
                 }))),
             Center(

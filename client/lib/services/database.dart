@@ -20,6 +20,14 @@ class Database {
     });
   }
 
+  static Future<void> updateUser (User? newUser) async {
+    //currentUser = FirebaseAuth.instance.currentUser;
+    currentUser = newUser;
+    uid = currentUser!.uid;
+    print("User Updated");
+  }
+  
+
   static Future<void> deleteCourse(String courseId) async {
     courses.doc(courseId).delete();
     users.doc(uid).update({
