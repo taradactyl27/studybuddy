@@ -6,20 +6,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 User? currentUser = FirebaseAuth.instance.currentUser;
 String uid = currentUser!.uid;
 final FirebaseFirestore db = FirebaseFirestore.instance;
-CollectionReference users = db.collection('users');
-CollectionReference courses = db.collection('courses');
+CollectionReference<Map<String, dynamic>> users = db.collection('users');
+CollectionReference<Map<String, dynamic>> courses = db.collection('courses');
 
 Future<void> createUser() async {
-  FirebaseFirestore.instance.collection("users").doc(uid).set({
+  await users.doc(uid).set({
     "name": currentUser!.displayName,
     "email": currentUser!.email,
     "course_ids": []
   });
 }
 
+Future<void> updateUser(User? newUser) async {
+  //currentUser = FirebaseAuth.instance.currentUser;
+  currentUser = newUser;
+  uid = currentUser!.uid;
+  print("User Updated");
+}
+
 Future<void> deleteCourse(String courseId) async {
-  courses.doc(courseId).delete();
-  users.doc(uid).update({
+  await courses.doc(courseId).delete();
+  await users.doc(uid).update({
     'course_ids': FieldValue.arrayRemove([courseId])
   });
 }
@@ -32,12 +39,11 @@ Future<void> createCourse(String name, String description) async {
   users.doc(uid).update({
     'course_ids': FieldValue.arrayUnion([value.id])
   });
-  courses.doc(value.id).update({'course_id': value.id});
+  return courses.doc(value.id).update({'course_id': value.id});
 }
 
 Future<List<dynamic>> getUserCourseList() async {
-  DocumentSnapshot documentSnapshot =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  DocumentSnapshot documentSnapshot = await users.doc(uid).get();
   if (documentSnapshot.exists) {
     return documentSnapshot.get('course_ids');
   } else {
@@ -47,8 +53,5 @@ Future<List<dynamic>> getUserCourseList() async {
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(
     List<dynamic>? courseList) {
-  return FirebaseFirestore.instance
-      .collection('courses')
-      .where(FieldPath.documentId, whereIn: courseList)
-      .snapshots();
+  return courses.where(FieldPath.documentId, whereIn: courseList).snapshots();
 }

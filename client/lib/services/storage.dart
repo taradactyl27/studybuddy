@@ -69,6 +69,8 @@ Future<void> uploadFile(FilePickerResult result, String courseID) async {
     if (data['operationID'] != null) {
       print(data['operationID']);
     }
+
+    return;
   } on firebase_core.FirebaseException catch (e) {
     print(e);
   }

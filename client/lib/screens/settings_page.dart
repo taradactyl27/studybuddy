@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:studybuddy/screens/login_page.dart';
+import 'package:studybuddy/services/database.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -28,7 +29,9 @@ class _SettingsPageState extends State<SettingsPage> {
         Center(
           child: ElevatedButton(
             onPressed: () async {
+              await googleSignIn.signOut();
               await FirebaseAuth.instance.signOut();
+              //Database.updateUser();
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginPage()),
                   (route) => false);

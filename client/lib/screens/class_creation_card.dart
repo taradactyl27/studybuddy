@@ -83,12 +83,10 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                             onPressed: _namecontroller.value.text.isNotEmpty
                                 ? () async {
                                     if (_errorText == null) {
-                                      database
-                                          .createCourse(_namecontroller.text,
-                                              _descriptioncontroller.text)
-                                          .then((value) {
-                                        Navigator.pop(context);
-                                      });
+                                      await database.createCourse(
+                                          _namecontroller.text,
+                                          _descriptioncontroller.text);
+                                      Navigator.pop(context);
                                     }
                                   }
                                 : null,

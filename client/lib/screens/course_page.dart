@@ -66,7 +66,7 @@ class _CoursePageState extends State<CoursePage> {
                         primary: Colors.red,
                       ),
                       onPressed: () async {
-                        database.deleteCourse(widget.course.id);
+                        await database.deleteCourse(widget.course.id);
                         Navigator.pop(context);
                       },
                       child: const Text("Delete Course"),

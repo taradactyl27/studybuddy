@@ -16,6 +16,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+final GoogleSignIn googleSignIn = new GoogleSignIn();
+
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usercontroller = TextEditingController();
 
@@ -101,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;
                     User user = await handleSignInEmail(_email, _password);
+                    await database.updateUser(user);
                     Navigator.pushNamed(context, route.landingPage);
                   },
                 ))),
@@ -112,11 +115,11 @@ class _LoginPageState extends State<LoginPage> {
                   var currentUser = FirebaseAuth.instance.currentUser;
                   print(currentUser!.uid);
                   if (user.additionalUserInfo!.isNewUser) {
-                    database.createUser().then((_) {
-                      Navigator.pushNamed(context, route.landingPage);
-                      print("success!");
-                    });
+                    await database.createUser();
+                    Navigator.pushNamed(context, route.landingPage);
+                    print("success!");
                   } else {
+                    await database.updateUser(currentUser);
                     Navigator.pushNamed(context, route.landingPage);
                     print("User Exists");
                   }

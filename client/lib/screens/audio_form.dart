@@ -80,7 +80,7 @@ class _AudioFormState extends State<AudioForm> {
                         FilePickerResult? result =
                             await FilePicker.platform.pickFiles();
                         if (result != null) {
-                          storage.uploadFile(result, courseID);
+                          await storage.uploadFile(result, courseID);
                           // TODO: pop context with result of operation
                         } else {
                           // User canceled the picker
