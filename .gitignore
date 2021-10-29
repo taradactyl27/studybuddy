@@ -86,4 +86,5 @@ node_modules/
 
 # environment variables / keys
 .env
+functions/google-services*.json
 /google-services*.json

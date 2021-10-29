@@ -6,7 +6,7 @@ import speech from "@google-cloud/speech";
 // // https://firebase.google.com/docs/functions/typescript
 //
 
-const serviceAccount = require("../../google-services.json");
+const serviceAccount = require("../google-services.json");
 
 const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG!);
 admin.initializeApp({
