@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:studybuddy/route/hero_route.dart';
-import 'package:studybuddy/route/route.dart' as route;
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/route/hero_route.dart';
+import 'package:studybuddy/route/route.dart' as route;
+import 'package:studybuddy/screens/audio_form.dart';
 import 'package:studybuddy/screens/class_creation_card.dart';
-import 'package:studybuddy/services/database.dart';
+import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
 
@@ -52,7 +51,7 @@ class _HomePageState extends State<HomePage>
     _controller.addListener(() {
       setState(() {});
     });
-    _courseIds = Database.getUserCourseList();
+    _courseIds = database.getUserCourseList();
   }
 
   @override
@@ -62,7 +61,7 @@ class _HomePageState extends State<HomePage>
 
   void _refreshCourses() {
     setState(() {
-      _courseIds = Database.getUserCourseList();
+      _courseIds = database.getUserCourseList();
     });
   }
 
@@ -129,7 +128,7 @@ class _HomePageState extends State<HomePage>
                         snapshot.hasData) {
                       if (snapshot.data!.isNotEmpty) {
                         return StreamBuilder(
-                            stream: Database.getCourseStream(snapshot.data),
+                            stream: database.getCourseStream(snapshot.data),
                             builder: (context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
                               if (!snapshot.hasData) {
@@ -197,29 +196,70 @@ class _HomePageState extends State<HomePage>
                               : const Duration(milliseconds: 850),
                           alignment: alignment1,
                           curve: toggle ? Curves.easeIn : Curves.easeOut,
-                          child: GestureDetector(
-                            onTap: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles();
-                              if (result != null) {
-                                Database.uploadFile(result.files.single.path,
-                                    result.files.first.name);
+                          child: FutureBuilder<List<dynamic>>(
+                            future: _courseIds,
+                            builder: (context, snapshot) {
+                              var audioButtonContainer = AnimatedContainer(
+                                duration: const Duration(milliseconds: 275),
+                                curve: toggle ? Curves.easeIn : Curves.easeOut,
+                                height: size1,
+                                width: size1,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF63FFD5),
+                                  borderRadius: BorderRadius.circular(40.0),
+                                ),
+                                child: const Icon(Icons.mic_rounded,
+                                    color: Colors.white),
+                              );
+                              if (snapshot.connectionState ==
+                                      ConnectionState.done &&
+                                  snapshot.hasData) {
+                                if (snapshot.data!.isNotEmpty) {
+                                  return StreamBuilder(
+                                      stream: database
+                                          .getCourseStream(snapshot.data),
+                                      builder: (context,
+                                          AsyncSnapshot<QuerySnapshot>
+                                              snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              print("loading course data");
+                                            },
+                                            child: audioButtonContainer,
+                                          );
+                                        }
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            print("opening audio form");
+                                            await Navigator.of(context).push(
+                                                HeroDialogRoute(
+                                                    builder: (context) {
+                                              return AudioForm(
+                                                courseList: snapshot.data!.docs,
+                                              );
+                                            }));
+                                          },
+                                          child: audioButtonContainer,
+                                        );
+                                      });
+                                } else {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      print("must create a course first");
+                                    },
+                                    child: audioButtonContainer,
+                                  );
+                                }
                               } else {
-                                // User canceled the picker
+                                return GestureDetector(
+                                  onTap: () {
+                                    print("loading course ids");
+                                  },
+                                  child: audioButtonContainer,
+                                );
                               }
                             },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 275),
-                              curve: toggle ? Curves.easeIn : Curves.easeOut,
-                              height: size1,
-                              width: size1,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF63FFD5),
-                                borderRadius: BorderRadius.circular(40.0),
-                              ),
-                              child: const Icon(Icons.mic_rounded,
-                                  color: Colors.white),
-                            ),
                           )),
                       AnimatedAlign(
                           duration: toggle

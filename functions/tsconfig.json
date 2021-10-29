@@ -7,10 +7,11 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   },
   "compileOnSave": true,
-  "include": [
-    "src"
-, "index.ts"  ]
+  "include": ["src", "index.ts"]
 }

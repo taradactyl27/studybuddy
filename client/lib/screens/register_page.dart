@@ -1,9 +1,9 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:studybuddy/route/route.dart' as route;
-import 'package:flutter/material.dart';
-import 'package:studybuddy/services/database.dart';
+import 'package:studybuddy/services/database.dart' as database;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -80,7 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     _password = _passwordcontroller.text;
                     User user = await handleSignUpEmail(_email, _password);
                     var currentUser = FirebaseAuth.instance.currentUser;
-                    Database.createUser().then((_) {
+                    database.createUser().then((_) {
                       Navigator.pushNamed(context, route.landingPage);
                     });
                   },

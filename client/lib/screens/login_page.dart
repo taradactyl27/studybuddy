@@ -1,14 +1,13 @@
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter/gestures.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:studybuddy/route/route.dart' as route;
-import 'package:flutter/material.dart';
-import 'package:studybuddy/services/database.dart';
+import 'package:studybuddy/services/database.dart' as database;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -113,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                   var currentUser = FirebaseAuth.instance.currentUser;
                   print(currentUser!.uid);
                   if (user.additionalUserInfo!.isNewUser) {
-                    Database.createUser().then((_) {
+                    database.createUser().then((_) {
                       Navigator.pushNamed(context, route.landingPage);
                       print("success!");
                     });

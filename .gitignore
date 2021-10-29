@@ -25,12 +25,14 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 
-/google-services*.json
-
 # Firebase cache
 .firebase/
 
+# Firestore local database
+.firedata/
+
 # Firebase config
+.runtimeconfig.json
 
 # Uncomment this if you'd like others to create their own Firebase project.
 # For a team working on the same Firebase project(s), it is recommended to leave
@@ -82,5 +84,6 @@ node_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# environment variables / keys
 .env
+/google-services*.json

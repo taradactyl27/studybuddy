@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:studybuddy/services/database.dart';
+import 'package:studybuddy/services/database.dart' as database;
 
 class CoursePage extends StatefulWidget {
   const CoursePage({
@@ -66,7 +66,7 @@ class _CoursePageState extends State<CoursePage> {
                         primary: Colors.red,
                       ),
                       onPressed: () async {
-                        Database.deleteCourse(widget.course.id);
+                        database.deleteCourse(widget.course.id);
                         Navigator.pop(context);
                       },
                       child: const Text("Delete Course"),

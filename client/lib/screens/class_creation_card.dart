@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:studybuddy/services/database.dart';
+import 'package:flutter/material.dart';
+import 'package:studybuddy/services/database.dart' as database;
 
 class ClassCreationCard extends StatefulWidget {
   /// {@macro add_todo_popup_card}
@@ -83,8 +83,8 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                             onPressed: _namecontroller.value.text.isNotEmpty
                                 ? () async {
                                     if (_errorText == null) {
-                                      Database.createCourse(
-                                              _namecontroller.text,
+                                      database
+                                          .createCourse(_namecontroller.text,
                                               _descriptioncontroller.text)
                                           .then((value) {
                                         Navigator.pop(context);
