@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/services/database.dart' as database;
+import 'package:studybuddy/widgets/transcript_tile.dart';
 
 class CoursePage extends StatefulWidget {
   const CoursePage({
@@ -56,6 +57,48 @@ class _CoursePageState extends State<CoursePage> {
                   ),
                 ),
               ),
+              Positioned(
+                  top: 150,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.only(top: 80, left: 30),
+                          child: Text("Your Transcripts",
+                              style: GoogleFonts.nunito(
+                                  textStyle: const TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.w400,
+                              )))),
+                      StreamBuilder(
+                          stream: database.getCourseTranscriptions(
+                              widget.course.get('course_id')),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return const SizedBox(
+                                  height: 200,
+                                  child: Center(child: Text('Loading')));
+                            }
+                            return SizedBox(
+                                height: 400,
+                                width: MediaQuery.of(context).size.width,
+                                child: GridView.count(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  crossAxisSpacing: 20,
+                                  crossAxisCount: 2,
+                                  padding: const EdgeInsets.all(10.0),
+                                  children:
+                                      snapshot.data!.docs.map((transcript) {
+                                    return TranscriptTile(
+                                      transcript: transcript,
+                                    );
+                                  }).toList(),
+                                ));
+                          })
+                    ],
+                  )),
               Positioned(
                   width: MediaQuery.of(context).size.width,
                   bottom: 10,

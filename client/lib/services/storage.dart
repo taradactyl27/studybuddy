@@ -38,6 +38,7 @@ Future<void> uploadFile(FilePickerResult result, String courseID) async {
         .httpsCallable('transcription-requestTranscription');
     final result = await callable({
       'storagePath': '$uid/$name',
+      'template': 'Joann Peck, marketing (1).wav_transcript.json'
       // add template here if mocking transcription to choose a different example
     });
 

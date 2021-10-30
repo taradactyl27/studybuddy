@@ -51,6 +51,11 @@ Future<List<dynamic>> getUserCourseList() async {
   }
 }
 
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
+    String courseId) {
+  return courses.doc(courseId).collection('audios').snapshots();
+}
+
 Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(
     List<dynamic>? courseList) {
   return courses.where(FieldPath.documentId, whereIn: courseList).snapshots();
