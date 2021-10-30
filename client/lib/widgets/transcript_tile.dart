@@ -55,8 +55,9 @@ class _TranscriptTileState extends State<TranscriptTile> {
                       Map reqData = {
                         "prompt": widget.transcript['text'] +
                             ". To summarize in depth: 1.",
-                        "max_tokens": 64,
-                        "temperature": 0.7
+                        "max_tokens": 100,
+                        "temperature": 0.7,
+                        "stop": ["5."],
                       };
                       var response = await http.post(
                           Uri.parse(
@@ -76,7 +77,6 @@ class _TranscriptTileState extends State<TranscriptTile> {
                       setState(() {
                         isLoading = false;
                       });
-                      //FIRESTORE CALLS TO UPDATE DATA WITH GENERATED STUDY NOTES
                     },
                     child: !isLoading
                         ? const Text("Create Notes")
