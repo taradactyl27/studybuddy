@@ -93,6 +93,7 @@ class _CoursePageState extends State<CoursePage> {
                                       snapshot.data!.docs.map((transcript) {
                                     return TranscriptTile(
                                       transcript: transcript,
+                                      courseId: widget.course.get('course_id'),
                                     );
                                   }).toList(),
                                 ));

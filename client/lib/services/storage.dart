@@ -32,6 +32,7 @@ Future<void> uploadFile(FilePickerResult result, String courseID) async {
       'owner': uid,
       'created': Timestamp.now(),
       'audioRef': '$uid/$name',
+      'notesGenerated': false,
     });
 
     HttpsCallable callable = FirebaseFunctions.instance

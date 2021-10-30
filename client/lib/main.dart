@@ -4,11 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'route/route.dart' as route;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dotenv.load();
   //FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

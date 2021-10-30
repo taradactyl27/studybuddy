@@ -42,6 +42,26 @@ Future<void> createCourse(String name, String description) async {
   return courses.doc(value.id).update({'course_id': value.id});
 }
 
+Future<void> uploadStudyNotes(
+    String notes, String transcriptId, String courseId) async {
+  await courses
+      .doc(courseId)
+      .collection('audios')
+      .doc(transcriptId)
+      .update({'studyNotes': notes, 'notesGenerated': true});
+  print("NOTES UPLOADED");
+}
+
+Future<String> getStudyNotes(String transcriptId, String courseId) async {
+  DocumentSnapshot doc =
+      await courses.doc(courseId).collection('audios').doc(transcriptId).get();
+  if (doc.exists) {
+    return doc.get('studyNotes');
+  } else {
+    return "empty";
+  }
+}
+
 Future<List<dynamic>> getUserCourseList() async {
   DocumentSnapshot documentSnapshot = await users.doc(uid).get();
   if (documentSnapshot.exists) {
