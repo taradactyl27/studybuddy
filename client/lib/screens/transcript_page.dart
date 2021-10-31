@@ -32,35 +32,48 @@ class _TranscriptPageState extends State<TranscriptPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.transcript['audioRef'].split('/')[1]),
-      ),
-      body: Column(
-        children: [
-          QuillToolbar.basic(
-            controller: _controller,
-            toolbarIconSize: 22,
-            showImageButton: false,
-            showVideoButton: false,
-            showCameraButton: false,
-            multiRowsDisplay: false,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
           ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(
-                bottom: 10.0,
-                top: 5.0,
-                left: 15.0,
-                right: 15.0,
-              ),
-              child: QuillEditor.basic(
-                controller: _controller,
-                readOnly: false, // true for view only mode
-              ),
+          title: Text(
+            widget.transcript['audioRef'].split('/')[1],
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                QuillToolbar.basic(
+                  controller: _controller,
+                  toolbarIconSize: 22,
+                  showImageButton: false,
+                  showVideoButton: false,
+                  showCameraButton: false,
+                  multiRowsDisplay: false,
+                ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      bottom: 10.0,
+                      top: 5.0,
+                      left: 15.0,
+                      right: 15.0,
+                    ),
+                    child: QuillEditor.basic(
+                      controller: _controller,
+                      readOnly: false, // true for view only mode
+                    ),
+                  ),
+                )
+              ],
             ),
-          )
-        ],
-      ),
-    );
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.check, color: Colors.white),
+        ));
   }
 }

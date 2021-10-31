@@ -44,7 +44,7 @@ class _TranscriptTileState extends State<TranscriptTile> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(widget.transcript['audioRef']),
+            Text(widget.transcript['audioRef'].split('/')[1]),
             !widget.transcript['notesGenerated']
                 ? ElevatedButton(
                     onPressed: () async {
