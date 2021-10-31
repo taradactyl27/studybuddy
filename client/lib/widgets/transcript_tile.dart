@@ -82,10 +82,11 @@ class _TranscriptTileState extends State<TranscriptTile> {
                         ? const Text("Create Notes")
                         : const Center(
                             child: SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2.0, color: Colors.black)),
+                              height: 15,
+                              width: 15,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2.0, color: Colors.black),
+                            ),
                           ),
                   )
                 : ElevatedButton(

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class ClassCreationCard extends StatefulWidget {
@@ -33,6 +34,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
 
   @override
   Widget build(BuildContext context) {
+    final uid = context.read<User>().uid;
     return ValueListenableBuilder(
         valueListenable: _namecontroller,
         builder: (context, TextEditingValue value, __) {
@@ -84,6 +86,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                                 ? () async {
                                     if (_errorText == null) {
                                       await database.createCourse(
+                                          uid,
                                           _namecontroller.text,
                                           _descriptioncontroller.text);
                                       Navigator.pop(context);

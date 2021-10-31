@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:studybuddy/screens/login_page.dart';
-import 'package:studybuddy/services/database.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
+import 'package:provider/provider.dart';
+import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:studybuddy/services/auth.dart' as auth;
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({Key? key}) : super(key: key);
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -29,12 +28,9 @@ class _SettingsPageState extends State<SettingsPage> {
         Center(
           child: ElevatedButton(
             onPressed: () async {
-              await googleSignIn.signOut();
-              await FirebaseAuth.instance.signOut();
-              //Database.updateUser();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (route) => false);
+              await auth.signOut();
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(routes.loginPage, (route) => false);
             },
             child: const Text('Sign Out'),
           ),
@@ -42,15 +38,15 @@ class _SettingsPageState extends State<SettingsPage> {
         Positioned(
             bottom: 0,
             left: 0,
-            child: Container(
+            child: SizedBox(
                 width: size.width,
                 height: 80,
-                child: Stack(overflow: Overflow.visible, children: [
+                child: Stack(clipBehavior: Clip.none, children: [
                   CustomPaint(
                     size: Size(size.width, 80),
                     painter: BNBCustomPainter(),
                   ),
-                  Container(
+                  SizedBox(
                     width: size.width,
                     height: 80,
                     child: Row(

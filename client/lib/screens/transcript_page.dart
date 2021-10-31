@@ -5,28 +5,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
 class TranscriptPage extends StatefulWidget {
-  TranscriptPage({Key? key, required this.transcript, required this.courseId})
+  TranscriptPage(
+      {Key? key,
+      required this.transcript,
+      required this.courseId,
+      this.tabID = 0})
       : super(key: key);
 
   final QueryDocumentSnapshot<Object?> transcript;
   final String courseId;
+  int tabID;
   @override
   _TranscriptPageState createState() => _TranscriptPageState();
 }
 
 class _TranscriptPageState extends State<TranscriptPage> {
-  late QuillController _controller;
+  late QuillController _textController;
+  late QuillController _notesController;
+  late List<QuillController> _controllers;
+  int tabID = 0;
 
   @override
   void initState() {
     super.initState();
-    dynamic inputText = widget.transcript['text'] + '\n';
-    List<dynamic> initData = [
-      {'insert': inputText}
+
+    tabID = widget.tabID;
+
+    List<dynamic> initTextData = [
+      {'insert': widget.transcript['text'] + '\n'}
     ];
-    _controller = QuillController(
-        document: Document.fromJson(initData),
-        selection: TextSelection.collapsed(offset: 0));
+
+    List<dynamic> initNotesData = [
+      {'insert': widget.transcript['studyNotes'] + '\n'}
+    ];
+
+    _controllers = List.of(<QuillController>[
+      QuillController(
+          document: Document.fromJson(initTextData),
+          selection: const TextSelection.collapsed(offset: 0)),
+      QuillController(
+          document: Document.fromJson(initNotesData),
+          selection: const TextSelection.collapsed(offset: 0))
+    ]);
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _notesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,13 +67,33 @@ class _TranscriptPageState extends State<TranscriptPage> {
             widget.transcript['audioRef'].split('/')[1],
             style: const TextStyle(color: Colors.white),
           ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(primary: Colors.deepOrange),
+              onPressed: () {
+                setState(() {
+                  tabID = 0;
+                });
+              },
+              child: const Text("Original"),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(primary: Colors.deepPurple),
+              onPressed: () {
+                setState(() {
+                  tabID = 1;
+                });
+              },
+              child: const Text("Our Notes"),
+            ),
+          ],
         ),
         body: Stack(
           children: [
             Column(
               children: [
                 QuillToolbar.basic(
-                  controller: _controller,
+                  controller: _controllers[tabID],
                   toolbarIconSize: 22,
                   showImageButton: false,
                   showVideoButton: false,
@@ -62,7 +109,7 @@ class _TranscriptPageState extends State<TranscriptPage> {
                       right: 15.0,
                     ),
                     child: QuillEditor.basic(
-                      controller: _controller,
+                      controller: _controllers[tabID],
                       readOnly: false, // true for view only mode
                     ),
                   ),

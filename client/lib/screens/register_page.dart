@@ -1,9 +1,7 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:studybuddy/route/route.dart' as route;
-import 'package:studybuddy/services/database.dart' as database;
+import 'package:provider/provider.dart';
+import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:studybuddy/services/auth.dart' as auth;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -16,16 +14,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usercontroller = TextEditingController();
 
   final TextEditingController _passwordcontroller = TextEditingController();
-
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  Future<User> handleSignUpEmail(String email, String password) async {
-    UserCredential result = await auth.createUserWithEmailAndPassword(
-        email: _email, password: _password);
-    final User user = result.user!;
-
-    return user;
-  }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -78,11 +66,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   onPressed: () async {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;
-                    User user = await handleSignUpEmail(_email, _password);
-                    //var currentUser = FirebaseAuth.instance.currentUser;
-                    database.updateUser(user);
-                    await database.createUser();
-                    Navigator.pushNamed(context, route.landingPage);
+                    try {
+                      await auth.signUpEmail(_email, _password);
+                      await Navigator.of(context).pushNamedAndRemoveUntil(
+                          routes.homePage, (route) => false);
+                    } catch (e) {
+                      print(e);
+                    }
                   },
                 ))),
           ],

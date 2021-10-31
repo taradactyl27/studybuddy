@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:provider/provider.dart';
+
 import 'package:studybuddy/services/storage.dart' as storage;
 
 class AudioForm extends StatefulWidget {
@@ -13,8 +15,6 @@ class AudioForm extends StatefulWidget {
   final List<dynamic> courseList;
 }
 
-var currentUser = FirebaseAuth.instance.currentUser;
-
 class _AudioFormState extends State<AudioForm> {
   final _formKey = GlobalKey<FormBuilderState>();
 
@@ -25,6 +25,7 @@ class _AudioFormState extends State<AudioForm> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<User>();
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -80,7 +81,7 @@ class _AudioFormState extends State<AudioForm> {
                         FilePickerResult? result =
                             await FilePicker.platform.pickFiles();
                         if (result != null) {
-                          await storage.uploadFile(result, courseID);
+                          await storage.uploadFile(user, result, courseID);
                           // TODO: pop context with result of operation
                         } else {
                           // User canceled the picker

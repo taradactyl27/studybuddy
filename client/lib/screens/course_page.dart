@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:studybuddy/route/hero_route.dart';
+import 'package:provider/provider.dart';
+import 'package:studybuddy/services/auth.dart' show User;
+import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/screens/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
-import 'package:studybuddy/route/route.dart' as route;
+import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
 
@@ -31,10 +33,11 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   Widget build(BuildContext context) {
+    final uid = context.read<User>().uid;
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
-        body: Container(
+        body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
@@ -105,7 +108,7 @@ class _CoursePageState extends State<CoursePage> {
                                     return InkWell(
                                       onTap: () {
                                         Navigator.pushNamed(
-                                            context, route.transcriptPage,
+                                            context, routes.transcriptPage,
                                             arguments: {
                                               'transcript': transcript,
                                               'course_id':
@@ -133,7 +136,7 @@ class _CoursePageState extends State<CoursePage> {
                         primary: Colors.red,
                       ),
                       onPressed: () async {
-                        await database.deleteCourse(widget.course.id);
+                        await database.deleteCourse(uid, widget.course.id);
                         Navigator.pop(context);
                       },
                       child: const Text("Delete Course"),
@@ -142,11 +145,11 @@ class _CoursePageState extends State<CoursePage> {
               Positioned(
                 bottom: 0,
                 left: 0,
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: 80,
                   child: Stack(
-                    overflow: Overflow.visible,
+                    clipBehavior: Clip.none,
                     children: [
                       CustomPaint(
                         size: Size(MediaQuery.of(context).size.width, 80),
@@ -169,7 +172,7 @@ class _CoursePageState extends State<CoursePage> {
                           ),
                         ),
                       ]),
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: 80,
                         child: Row(
@@ -219,7 +222,7 @@ class _CoursePageState extends State<CoursePage> {
                                 ),
                                 onPressed: () {
                                   Navigator.pushNamed(
-                                      context, route.settingsPage);
+                                      context, routes.settingsPage);
                                 }),
                           ],
                         ),
