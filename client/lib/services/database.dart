@@ -36,6 +36,26 @@ Future<void> deleteCourse(String uid, String courseId) async {
   });
 }
 
+Future<void> uploadStudyNotes(
+    String notes, String transcriptId, String courseId) async {
+  await courses
+      .doc(courseId)
+      .collection('audios')
+      .doc(transcriptId)
+      .update({'studyNotes': notes, 'notesGenerated': true});
+  print("NOTES UPLOADED");
+}
+
+Future<String> getStudyNotes(String transcriptId, String courseId) async {
+  DocumentSnapshot doc =
+      await courses.doc(courseId).collection('audios').doc(transcriptId).get();
+  if (doc.exists) {
+    return doc.get('studyNotes');
+  } else {
+    return "empty";
+  }
+}
+
 Future<List<dynamic>> getUserCourseList(String uid) async {
   DocumentSnapshot documentSnapshot = await users.doc(uid).get();
   if (documentSnapshot.exists) {
@@ -43,6 +63,11 @@ Future<List<dynamic>> getUserCourseList(String uid) async {
   } else {
     return ["null"];
   }
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
+    String courseId) {
+  return courses.doc(courseId).collection('audios').snapshots();
 }
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(

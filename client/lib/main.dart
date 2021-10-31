@@ -1,18 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'routes/routes.dart';
 import '../services/auth.dart';
+import 'routes/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-  // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  await dotenv.load();
+
+  if (dotenv.env['EMULATE_FUNCTIONS'] == 'true') {
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  }
+
+  if (dotenv.env['EMULATE_FIRESTORE'] == 'true') {
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  }
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));

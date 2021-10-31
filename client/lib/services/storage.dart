@@ -2,17 +2,46 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart' show FirebaseException;
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 final FirebaseFirestore db = FirebaseFirestore.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 CollectionReference courses = db.collection('courses');
+
+Future<Map> getSearchResults(String query) async {
+  HttpsCallable callable =
+      FirebaseFunctions.instance.httpsCallable('algolia-generateSearchKey');
+  final result = await callable();
+
+  Map reqData = {
+    'query': query,
+  };
+  String key = result.data['key'];
+  Map<String, String> _headers = <String, String>{
+    'X-Algolia-Application-Id': 'STFQQELZGY',
+    'X-Algolia-API-Key': key,
+    'Content-Type': 'application/json; charset=UTF-8',
+  };
+
+  var response = await http.post(
+    Uri.parse('https://stfqqelzgy-dsn.algolia.net/1/indexes/audios/query'),
+    headers: _headers,
+    body: jsonEncode(reqData),
+  );
+
+  Map<String, dynamic> map = json.decode(response.body);
+  print(map);
+  print(map['hits'].length);
+  return map;
+}
 
 Future<void> uploadFile(
     User user, FilePickerResult result, String courseID) async {
@@ -31,12 +60,15 @@ Future<void> uploadFile(
       'owner': uid,
       'created': Timestamp.now(),
       'audioRef': '$uid/$name',
+      'notesGenerated': false,
     });
 
     HttpsCallable callable = FirebaseFunctions.instance
         .httpsCallable('transcription-requestTranscription');
     final result = await callable({
       'storagePath': '$uid/$name',
+      'template':
+          'VOXTAB_Academic_audio_transcript-2021-10-30T06-56-14_626569137+00-00.json'
       // add template here if mocking transcription to choose a different example
     });
 
