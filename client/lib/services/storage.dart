@@ -64,7 +64,7 @@ Future<void> uploadFile(FilePickerResult result, String courseID) async {
     final result = await callable({
       'storagePath': '$uid/$name',
       'template':
-          'VOXTAB_Academic_audio_transcript-2021-10-30T18-02-43_431109621+00-00.json'
+          'VOXTAB_Academic_audio_transcript-2021-10-30T06-56-14_626569137+00-00.json'
       // add template here if mocking transcription to choose a different example
     });
 

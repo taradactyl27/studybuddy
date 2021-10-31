@@ -220,7 +220,7 @@ class _HomePageState extends State<HomePage>
                               : ListView(
                                   children:
                                       searchResults['hits'].map<Widget>((hit) {
-                                    return Center(child: Text(hit['owner']));
+                                    return Text(hit['owner']);
                                   }).toList(),
                                 )),
                     )),
@@ -359,11 +359,11 @@ class _HomePageState extends State<HomePage>
                                     _controller.forward();
                                     Future.delayed(
                                         const Duration(milliseconds: 10), () {
-                                      alignment1 = const Alignment(-0.35, -3.5);
+                                      alignment1 = const Alignment(-0.35, -2.5);
                                     });
                                     Future.delayed(
                                         const Duration(milliseconds: 10), () {
-                                      alignment2 = const Alignment(0.35, -3.5);
+                                      alignment2 = const Alignment(0.35, -2.5);
                                     });
                                   } else {
                                     toggle = !toggle;
