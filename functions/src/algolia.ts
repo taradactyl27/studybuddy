@@ -12,6 +12,10 @@ const ALGOLIA_SEARCH_KEY = functions.config().algolia.search_key;
 const ALGOLIA_INDEX_NAME = "audios";
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
+client.initIndex(ALGOLIA_INDEX_NAME).setSettings({
+  attributesForFaceting: ['filterOnly(owner)']
+});
+
 export const onAudioCreated = functions.firestore
   .document("courses/{courseID}/audios/{audioID}")
   .onUpdate((change, context) => {

@@ -1,37 +1,24 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' show User;
 
-User? currentUser = FirebaseAuth.instance.currentUser;
-String uid = currentUser!.uid;
 final FirebaseFirestore db = FirebaseFirestore.instance;
 CollectionReference<Map<String, dynamic>> users = db.collection('users');
 CollectionReference<Map<String, dynamic>> courses = db.collection('courses');
 
-Future<void> createUser() async {
-  await users.doc(uid).set({
-    "name": currentUser!.displayName,
-    "email": currentUser!.email,
-    "course_ids": []
-  });
+Future<void> createUserDoc(User? user) async {
+  try {
+    await users
+        .doc(user!.uid)
+        .set({"name": user.displayName, "email": user.email, "course_ids": []});
+  } on FirebaseException catch (e) {
+    return Future.error(e);
+    // TODO: fail harder and delete accounts if doc creation fails
+  }
 }
 
-Future<void> updateUser(User? newUser) async {
-  //currentUser = FirebaseAuth.instance.currentUser;
-  currentUser = newUser;
-  uid = currentUser!.uid;
-  print("User Updated");
-}
-
-Future<void> deleteCourse(String courseId) async {
-  await courses.doc(courseId).delete();
-  await users.doc(uid).update({
-    'course_ids': FieldValue.arrayRemove([courseId])
-  });
-}
-
-Future<void> createCourse(String name, String description) async {
+Future<void> createCourse(String uid, String name, String description) async {
   DocumentReference<Object?> value = await courses.add({
     "name": name,
     "description": description,
@@ -42,7 +29,14 @@ Future<void> createCourse(String name, String description) async {
   return courses.doc(value.id).update({'course_id': value.id});
 }
 
-Future<List<dynamic>> getUserCourseList() async {
+Future<void> deleteCourse(String uid, String courseId) async {
+  await courses.doc(courseId).delete();
+  await users.doc(uid).update({
+    'course_ids': FieldValue.arrayRemove([courseId])
+  });
+}
+
+Future<List<dynamic>> getUserCourseList(String uid) async {
   DocumentSnapshot documentSnapshot = await users.doc(uid).get();
   if (documentSnapshot.exists) {
     return documentSnapshot.get('course_ids');

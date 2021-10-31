@@ -6,11 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
-import 'package:studybuddy/route/hero_route.dart';
-import 'package:studybuddy/route/route.dart' as route;
+import 'package:provider/provider.dart';
+
+import 'package:studybuddy/routes/hero_route.dart';
+import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/screens/audio_form.dart';
 import 'package:studybuddy/screens/class_creation_card.dart';
 import 'package:studybuddy/services/database.dart' as database;
+import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
 
@@ -24,8 +27,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
-  late Future<List<dynamic>> _courseIds;
   bool toggle = false;
+  late String uid;
+  late Future<List<dynamic>> _courseIds;
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _controller;
   late Animation _animation;
@@ -51,7 +55,8 @@ class _HomePageState extends State<HomePage>
     _controller.addListener(() {
       setState(() {});
     });
-    _courseIds = database.getUserCourseList();
+    uid = context.read<User>().uid;
+    _courseIds = database.getUserCourseList(uid);
   }
 
   @override
@@ -61,7 +66,7 @@ class _HomePageState extends State<HomePage>
 
   void _refreshCourses() {
     setState(() {
-      _courseIds = database.getUserCourseList();
+      _courseIds = database.getUserCourseList(uid);
     });
   }
 
@@ -148,7 +153,7 @@ class _HomePageState extends State<HomePage>
                                     return InkWell(
                                       onTap: () {
                                         Navigator.pushNamed(
-                                                context, route.coursePage,
+                                                context, routes.coursePage,
                                                 arguments: {'course': course})
                                             .then((value) {
                                           _refreshCourses();
@@ -179,12 +184,11 @@ class _HomePageState extends State<HomePage>
             Positioned(
               bottom: 0,
               left: 0,
-              child: Container(
+              child: SizedBox(
                 width: size.width,
                 height: 80,
                 child: Stack(
-                  overflow: Overflow.visible,
-                  children: [
+                  clipBehavior: Clip.none, children: [
                     CustomPaint(
                       size: Size(size.width, 80),
                       painter: BNBCustomPainter(),
@@ -323,7 +327,7 @@ class _HomePageState extends State<HomePage>
                             }),
                       ),
                     ]),
-                    Container(
+                    SizedBox(
                       width: size.width,
                       height: 80,
                       child: Row(
@@ -372,8 +376,8 @@ class _HomePageState extends State<HomePage>
                                     : Colors.grey.shade400,
                               ),
                               onPressed: () {
-                                Navigator.pushNamed(
-                                    context, route.settingsPage);
+                                Navigator.of(context)
+                                    .pushNamed(routes.settingsPage);
                               }),
                         ],
                       ),

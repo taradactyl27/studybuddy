@@ -7,20 +7,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_core/firebase_core.dart' show FirebaseException;
+import 'package:firebase_storage/firebase_storage.dart';
 
-User? currentUser = FirebaseAuth.instance.currentUser;
-String uid = currentUser!.uid;
-String email = currentUser!.email!;
 final FirebaseFirestore db = FirebaseFirestore.instance;
-final firebase_storage.FirebaseStorage storage =
-    firebase_storage.FirebaseStorage.instance;
+final FirebaseStorage storage = FirebaseStorage.instance;
 CollectionReference courses = db.collection('courses');
 
-Future<void> uploadFile(FilePickerResult result, String courseID) async {
+Future<void> uploadFile(
+    User user, FilePickerResult result, String courseID) async {
   File file = File(result.files.single.path!);
   String name = result.files.single.name;
+  String uid = user.uid;
+  String email = user.email!;
   try {
     final audioPath = email.contains('admin') ? name : '$uid/$name';
     await storage.ref(audioPath).putFile(file);
@@ -71,7 +70,7 @@ Future<void> uploadFile(FilePickerResult result, String courseID) async {
     }
 
     return;
-  } on firebase_core.FirebaseException catch (e) {
+  } on FirebaseException catch (e) {
     print(e);
   }
 }

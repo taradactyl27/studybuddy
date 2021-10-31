@@ -28,6 +28,13 @@ export const requestTranscription = functions
     timeoutSeconds: 360,
   })
   .https.onCall(async (data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        "function call not authenticated somehow??"
+      );
+    }
+    
     console.log(!context.auth?.token.email?.includes("admin"));
     // Mock transcription calls for non-admin accounts by copying existing file
     if (!context.auth?.token.email?.includes("admin")) {

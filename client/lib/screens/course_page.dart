@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/services/database.dart' as database;
 
 class CoursePage extends StatefulWidget {
@@ -19,10 +21,11 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   @override
   Widget build(BuildContext context) {
+    final uid = context.read<User>().uid;
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
-        body: Container(
+        body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
@@ -66,7 +69,7 @@ class _CoursePageState extends State<CoursePage> {
                         primary: Colors.red,
                       ),
                       onPressed: () async {
-                        await database.deleteCourse(widget.course.id);
+                        await database.deleteCourse(uid, widget.course.id);
                         Navigator.pop(context);
                       },
                       child: const Text("Delete Course"),
