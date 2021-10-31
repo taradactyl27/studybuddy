@@ -29,74 +29,18 @@ class _TranscriptTileState extends State<TranscriptTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 180,
-        width: 180,
-        margin: const EdgeInsets.only(bottom: 32),
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 6),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blueAccent),
-          borderRadius: const BorderRadius.all(
-              Radius.circular(20.0) //                 <--- border radius here
-              ),
+   return Card(
+      child: ListTile(
+        leading: const Icon(
+          Icons.insert_drive_file_outlined,
+          size: 35,
+          color: Colors.lightBlueAccent,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(widget.transcript['audioRef'].split('/')[1]),
-            !widget.transcript['notesGenerated']
-                ? ElevatedButton(
-                    onPressed: () async {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      String? apiKey = dotenv.env['OPEN_AI_KEY'];
-                      Map reqData = {
-                        "prompt": widget.transcript['text'] +
-                            ". To summarize in depth: 1.",
-                        "max_tokens": 100,
-                        "temperature": 0.7,
-                        "stop": ["5."],
-                      };
-                      var response = await http.post(
-                          Uri.parse(
-                              'https://api.openai.com/v1/engines/davinci/completions'),
-                          headers: {
-                            HttpHeaders.authorizationHeader: "Bearer $apiKey",
-                            HttpHeaders.acceptHeader: "application/json",
-                            HttpHeaders.contentTypeHeader: "application/json",
-                          },
-                          body: jsonEncode(reqData));
-                      Map<String, dynamic> map = json.decode(response.body);
-                      print(map);
-                      List<dynamic> resp = map["choices"];
-                      String studyNotes = "1. " + resp[0]["text"];
-                      await database.uploadStudyNotes(
-                          studyNotes, widget.transcript.id, widget.courseId);
-                      setState(() {
-                        isLoading = false;
-                      });
-                    },
-                    child: !isLoading
-                        ? const Text("Create Notes")
-                        : const Center(
-                            child: SizedBox(
-                              height: 15,
-                              width: 15,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2.0, color: Colors.black),
-                            ),
-                          ),
-                  )
-                : ElevatedButton(
-                    onPressed: () async {
-                      print(await database.getStudyNotes(
-                          widget.transcript.id, widget.courseId));
-                    },
-                    child: const Text("Print Notes"),
-                  ),
-          ],
-        ));
+        title: Text(widget.transcript['audioRef'].split('/')[1].split('.')[0]),
+        subtitle: Text((widget.transcript['created'].toDate().toString())),
+        trailing: const Icon(Icons.arrow_forward_ios_rounded),
+        isThreeLine: true,
+      ),
+    );
   }
 }

@@ -97,11 +97,9 @@ class _CoursePageState extends State<CoursePage> {
                             return SizedBox(
                                 height: 400,
                                 width: MediaQuery.of(context).size.width,
-                                child: GridView.count(
+                                child: ListView(
                                   scrollDirection: Axis.vertical,
                                   shrinkWrap: true,
-                                  crossAxisSpacing: 20,
-                                  crossAxisCount: 2,
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
