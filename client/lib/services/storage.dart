@@ -65,11 +65,11 @@ Future<void> uploadFile(
 
     HttpsCallable callable = FirebaseFunctions.instance
         .httpsCallable('transcription-requestTranscription');
+
+    // mock file by sending template field
     final result = await callable({
       'storagePath': '$uid/$name',
-      'template':
-          'VOXTAB_Academic_audio_transcript-2021-10-30T06-56-14_626569137+00-00.json'
-      // add template here if mocking transcription to choose a different example
+      'template': 'VOXTAB_Academic_audio_transcript.json'
     });
 
     final data = Map<String, dynamic>.from(result.data);

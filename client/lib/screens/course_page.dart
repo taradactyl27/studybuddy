@@ -149,7 +149,8 @@ class _CoursePageState extends State<CoursePage> {
                   width: MediaQuery.of(context).size.width,
                   height: 80,
                   child: Stack(
-                    clipBehavior: Clip.none, children: [
+                    clipBehavior: Clip.none,
+                    children: [
                       CustomPaint(
                         size: Size(MediaQuery.of(context).size.width, 80),
                         painter: BNBCustomPainter(),

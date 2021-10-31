@@ -37,8 +37,9 @@ Route<dynamic> controller(RouteSettings settings) {
         case transcriptPage:
           final arguments = settings.arguments as Map;
           return TranscriptPage(
-              transcript: arguments["transcript"],
-              courseId: arguments["course_id"]);
+            transcript: arguments["transcript"],
+            courseId: arguments["course_id"],
+          );
         default:
           return const Scaffold(
             body: Center(

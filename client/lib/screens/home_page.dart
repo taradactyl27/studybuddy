@@ -254,7 +254,8 @@ class _HomePageState extends State<HomePage>
                   width: size.width,
                   height: 80,
                   child: Stack(
-                    clipBehavior: Clip.none, children: [
+                    clipBehavior: Clip.none,
+                    children: [
                       CustomPaint(
                         size: Size(size.width, 80),
                         painter: BNBCustomPainter(),
