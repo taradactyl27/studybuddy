@@ -14,6 +14,7 @@ import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
+import 'package:studybuddy/widgets/search_field.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -220,7 +221,7 @@ class _HomePageState extends State<HomePage>
                               : ListView(
                                   children:
                                       searchResults['hits'].map<Widget>((hit) {
-                                    return Center(child: Text(hit['owner']));
+                                    return InkWell(onTap:(){}, child: SearchField(hit: hit));
                                   }).toList(),
                                 )),
                     )),
