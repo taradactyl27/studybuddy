@@ -65,6 +65,11 @@ Future<List<dynamic>> getUserCourseList(String uid) async {
   }
 }
 
+Future<DocumentSnapshot<Map<String, dynamic>>> getCourseTranscription(
+    String transcriptId, String courseId) {
+  return courses.doc(courseId).collection('audios').doc(transcriptId).get();
+}
+
 Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
     String courseId) {
   return courses.doc(courseId).collection('audios').snapshots();

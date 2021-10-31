@@ -243,7 +243,22 @@ class _HomePageState extends State<HomePage>
                                 children:
                                     searchResults['hits'].map<Widget>((hit) {
                                   return InkWell(
-                                      onTap: () {},
+                                      onTap: () async {
+                                        print(hit['objectID']);
+                                        print(hit['course']);
+                                        DocumentSnapshot transcript =
+                                            await database
+                                                .getCourseTranscription(
+                                                    hit['objectID'],
+                                                    hit['course']);
+                                        print(transcript.exists);
+                                        Navigator.pushNamed(
+                                            context, routes.transcriptPage,
+                                            arguments: {
+                                              'transcript': transcript,
+                                              'course_id': hit['course'],
+                                            });
+                                      },
                                       child: SearchField(hit: hit));
                                 }).toList(),
                               ))),

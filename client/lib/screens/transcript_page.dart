@@ -12,7 +12,7 @@ class TranscriptPage extends StatefulWidget {
       this.tabID = 0})
       : super(key: key);
 
-  final QueryDocumentSnapshot<Object?> transcript;
+  final DocumentSnapshot<Object?> transcript;
   final String courseId;
   int tabID;
   @override
