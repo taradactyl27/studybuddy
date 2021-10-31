@@ -172,7 +172,8 @@ class _HomePageState extends State<HomePage>
                                 if (!snapshot.hasData) {
                                   return const SizedBox(
                                       height: 200,
-                                      child: Center(child: Text('Loading')));
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
                                 }
                                 return SizedBox(
                                   height: 400,
@@ -208,7 +209,8 @@ class _HomePageState extends State<HomePage>
                         }
                       } else {
                         return const SizedBox(
-                            height: 200, child: Center(child: Text('Loading')));
+                            height: 200,
+                            child: Center(child: CircularProgressIndicator()));
                       }
                     },
                   ),

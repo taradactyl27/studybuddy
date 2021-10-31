@@ -102,9 +102,21 @@ class _CoursePageState extends State<CoursePage> {
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
-                                    return TranscriptTile(
-                                      transcript: transcript,
-                                      courseId: widget.course.get('course_id'),
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, route.transcriptPage,
+                                            arguments: {
+                                              'transcript': transcript,
+                                              'course_id':
+                                                  widget.course.get('course_id')
+                                            });
+                                      },
+                                      child: TranscriptTile(
+                                        transcript: transcript,
+                                        courseId:
+                                            widget.course.get('course_id'),
+                                      ),
                                     );
                                   }).toList(),
                                 ));

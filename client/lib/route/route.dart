@@ -4,6 +4,7 @@ import 'package:studybuddy/screens/login_page.dart';
 import 'package:studybuddy/screens/home_page.dart';
 import 'package:studybuddy/screens/settings_page.dart';
 import 'package:studybuddy/screens/register_page.dart';
+import 'package:studybuddy/screens/transcript_page.dart';
 import 'dashboard_route.dart';
 
 const String loginPage = 'login';
@@ -11,6 +12,7 @@ const String landingPage = 'landing';
 const String settingsPage = 'settings';
 const String registerPage = 'register';
 const String coursePage = 'coursePage';
+const String transcriptPage = 'transcriptPage';
 
 Route<dynamic> controller(RouteSettings settings) {
   switch (settings.name) {
@@ -26,6 +28,12 @@ Route<dynamic> controller(RouteSettings settings) {
       final arguments = settings.arguments as Map;
       return MaterialPageRoute(
           builder: (_) => CoursePage(course: arguments["course"]));
+    case transcriptPage:
+      final arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+          builder: (_) => TranscriptPage(
+              transcript: arguments["transcript"],
+              courseId: arguments["course_id"]));
     default:
       throw ('HOWD YOU GET HERE');
   }
