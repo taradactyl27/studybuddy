@@ -45,7 +45,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                   color: Colors.white,
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      side: const BorderSide(width: 3, color: Colors.blue),
+                      side: const BorderSide(width: 3, color: Colors.black45),
                       borderRadius: BorderRadius.circular(32)),
                   child: SingleChildScrollView(
                     child: Padding(

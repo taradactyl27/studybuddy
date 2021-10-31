@@ -110,6 +110,18 @@ class _HomePageState extends State<HomePage>
                   padding: const EdgeInsets.all(30),
                   height: 100,
                   child: TextField(
+                    onSubmitted: (value) async {
+                      setState(() {
+                        isSearching = true;
+                        isLoading = true;
+                      });
+                      Map results = await storage
+                          .getSearchResults(_searchController.text);
+                      setState(() {
+                        searchResults = results;
+                        isLoading = false;
+                      });
+                    },
                     decoration: InputDecoration(
                       labelText: "Search...",
                       fillColor: Colors.white,
@@ -160,7 +172,8 @@ class _HomePageState extends State<HomePage>
                                 if (!snapshot.hasData) {
                                   return const SizedBox(
                                       height: 200,
-                                      child: Center(child: Text('Loading')));
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
                                 }
                                 return SizedBox(
                                   height: 400,
@@ -196,7 +209,8 @@ class _HomePageState extends State<HomePage>
                         }
                       } else {
                         return const SizedBox(
-                            height: 200, child: Center(child: Text('Loading')));
+                            height: 200,
+                            child: Center(child: CircularProgressIndicator()));
                       }
                     },
                   ),
@@ -206,25 +220,28 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                     top: 45,
                     width: MediaQuery.of(context).size.width,
-                    child: Center(
-                      child: Container(
-                          margin: const EdgeInsets.all(30),
-                          height: 300,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black45),
-                              borderRadius: BorderRadius.circular(15.0)),
-                          child: isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              : ListView(
-                                  children:
-                                      searchResults['hits'].map<Widget>((hit) {
-                                    return InkWell(onTap:(){}, child: SearchField(hit: hit));
-                                  }).toList(),
-                                )),
-                    )),
+                    child: Container(
+                        margin: const EdgeInsets.all(30),
+                        height: 300,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black45),
+                            borderRadius: BorderRadius.circular(15.0)),
+                        child: isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ListView(
+                                padding: const EdgeInsets.only(
+                                    bottom: 0, left: 0, right: 0, top: 5),
+                                shrinkWrap: true,
+                                children:
+                                    searchResults['hits'].map<Widget>((hit) {
+                                  return InkWell(
+                                      onTap: () {},
+                                      child: SearchField(hit: hit));
+                                }).toList(),
+                              ))),
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -360,11 +377,11 @@ class _HomePageState extends State<HomePage>
                                     _controller.forward();
                                     Future.delayed(
                                         const Duration(milliseconds: 10), () {
-                                      alignment1 = const Alignment(-0.35, -3.5);
+                                      alignment1 = const Alignment(-0.35, -2.5);
                                     });
                                     Future.delayed(
                                         const Duration(milliseconds: 10), () {
-                                      alignment2 = const Alignment(0.35, -3.5);
+                                      alignment2 = const Alignment(0.35, -2.5);
                                     });
                                   } else {
                                     toggle = !toggle;

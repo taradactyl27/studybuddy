@@ -3,7 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/route/hero_route.dart';
+import 'package:studybuddy/screens/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
+import 'package:studybuddy/route/route.dart' as route;
+import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
 
 class CoursePage extends StatefulWidget {
@@ -18,6 +22,13 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
+  int currentIndex = 0;
+  setBottomBarIndex(index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,9 +102,21 @@ class _CoursePageState extends State<CoursePage> {
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
-                                    return TranscriptTile(
-                                      transcript: transcript,
-                                      courseId: widget.course.get('course_id'),
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, route.transcriptPage,
+                                            arguments: {
+                                              'transcript': transcript,
+                                              'course_id':
+                                                  widget.course.get('course_id')
+                                            });
+                                      },
+                                      child: TranscriptTile(
+                                        transcript: transcript,
+                                        courseId:
+                                            widget.course.get('course_id'),
+                                      ),
                                     );
                                   }).toList(),
                                 ));
@@ -102,7 +125,7 @@ class _CoursePageState extends State<CoursePage> {
                   )),
               Positioned(
                   width: MediaQuery.of(context).size.width,
-                  bottom: 10,
+                  bottom: 100,
                   left: 0,
                   child: Center(
                     child: ElevatedButton(
@@ -116,6 +139,95 @@ class _CoursePageState extends State<CoursePage> {
                       child: const Text("Delete Course"),
                     ),
                   )),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 80,
+                  child: Stack(
+                    overflow: Overflow.visible,
+                    children: [
+                      CustomPaint(
+                        size: Size(MediaQuery.of(context).size.width, 80),
+                        painter: BNBCustomPainter(),
+                      ),
+                      Stack(alignment: const Alignment(0, 0), children: [
+                        Center(
+                          heightFactor: 0.82,
+                          child: FloatingActionButton(
+                            backgroundColor: const Color(0xFF61A3FE),
+                            child: const Icon(Icons.add_rounded,
+                                color: Colors.white),
+                            elevation: 0.1,
+                            onPressed: () async {
+                              await Navigator.of(context)
+                                  .push(HeroDialogRoute(builder: (context) {
+                                return AudioForm(courseList: [widget.course]);
+                              }));
+                            },
+                          ),
+                        ),
+                      ]),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.home,
+                                color: currentIndex == 0
+                                    ? const Color(0xFF61A3FE)
+                                    : Colors.grey.shade400,
+                              ),
+                              onPressed: () {
+                                setBottomBarIndex(0);
+                              },
+                              splashColor: Colors.white,
+                            ),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.menu_book_rounded,
+                                  color: currentIndex == 1
+                                      ? const Color(0xFF61A3FE)
+                                      : Colors.grey.shade400,
+                                ),
+                                onPressed: () {
+                                  setBottomBarIndex(1);
+                                }),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.20,
+                            ),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.bookmark,
+                                  color: currentIndex == 2
+                                      ? const Color(0xFF61A3FE)
+                                      : Colors.grey.shade400,
+                                ),
+                                onPressed: () {
+                                  setBottomBarIndex(2);
+                                }),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.notifications,
+                                  color: currentIndex == 3
+                                      ? const Color(0xFF61A3FE)
+                                      : Colors.grey.shade400,
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, route.settingsPage);
+                                }),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ));
