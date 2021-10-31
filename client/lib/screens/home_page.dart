@@ -14,6 +14,7 @@ import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
+import 'package:studybuddy/widgets/search_field.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -109,6 +110,18 @@ class _HomePageState extends State<HomePage>
                   padding: const EdgeInsets.all(30),
                   height: 100,
                   child: TextField(
+                    onSubmitted: (value) async {
+                      setState(() {
+                        isSearching = true;
+                        isLoading = true;
+                      });
+                      Map results = await storage
+                          .getSearchResults(_searchController.text);
+                      setState(() {
+                        searchResults = results;
+                        isLoading = false;
+                      });
+                    },
                     decoration: InputDecoration(
                       labelText: "Search...",
                       fillColor: Colors.white,
@@ -205,25 +218,28 @@ class _HomePageState extends State<HomePage>
                 Positioned(
                     top: 45,
                     width: MediaQuery.of(context).size.width,
-                    child: Center(
-                      child: Container(
-                          margin: const EdgeInsets.all(30),
-                          height: 300,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black45),
-                              borderRadius: BorderRadius.circular(15.0)),
-                          child: isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              : ListView(
-                                  children:
-                                      searchResults['hits'].map<Widget>((hit) {
-                                    return Text(hit['owner']);
-                                  }).toList(),
-                                )),
-                    )),
+                    child: Container(
+                        margin: const EdgeInsets.all(30),
+                        height: 300,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black45),
+                            borderRadius: BorderRadius.circular(15.0)),
+                        child: isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ListView(
+                                padding: const EdgeInsets.only(
+                                    bottom: 0, left: 0, right: 0, top: 5),
+                                shrinkWrap: true,
+                                children:
+                                    searchResults['hits'].map<Widget>((hit) {
+                                  return InkWell(
+                                      onTap: () {},
+                                      child: SearchField(hit: hit));
+                                }).toList(),
+                              ))),
               Positioned(
                 bottom: 0,
                 left: 0,
