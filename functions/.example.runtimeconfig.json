@@ -1,0 +1,7 @@
+{
+  "algolia": {
+    "api_key": "SUPERSECRETAPIKEYHERE",
+    "search_key": "SEARCHKEYHERE",
+    "app_id": "APPIDHERE"
+  }
+}

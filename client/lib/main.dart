@@ -1,26 +1,60 @@
-import 'package:flutter/material.dart';
-import 'screens/login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'route/route.dart' as route;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+
+import '../services/auth.dart';
+import 'routes/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  await dotenv.load();
+
+  if (dotenv.env['EMULATE_FUNCTIONS'] == 'true') {
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  }
+
+  if (dotenv.env['EMULATE_FIRESTORE'] == 'true') {
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  }
+
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
+
+  runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Study Buddy',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.cyan,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiProvider(
+      providers: [
+        StreamProvider<User?>(
+          initialData: null,
+          create: (_) => FirebaseAuth.instance.userChanges(),
+          updateShouldNotify: (oldUser, newUser) {
+            return oldUser != newUser;
+          },
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Study Buddy',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.cyan,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        onGenerateRoute: controller,
+        initialRoute: rootUrl,
       ),
-      onGenerateRoute: route.controller,
-      initialRoute: route.loginPage,
     );
   }
 }

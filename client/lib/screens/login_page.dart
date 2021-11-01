@@ -1,11 +1,9 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:google_sign_in/google_sign_in.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:firebase_auth/firebase_auth.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:studybuddy/route/route.dart' as route;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:provider/provider.dart';
+import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:studybuddy/services/auth.dart' as auth;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,34 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usercontroller = TextEditingController();
 
   final TextEditingController _passwordcontroller = TextEditingController();
-
-  Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  Future<User> handleSignInEmail(String email, String password) async {
-    UserCredential result = await auth.signInWithEmailAndPassword(
-        email: _email, password: _password);
-    final User user = result.user!;
-
-    return user;
-  }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -98,17 +68,47 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;
-                    User user = await handleSignInEmail(_email, _password);
-                    Navigator.pushNamed(context, route.landingPage);
+                    // _formKey.currentState!.save();
+                    try {
+                      await auth.signInEmail(_email, _password);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          routes.homePage, (route) => false);
+                    } catch (e) {
+                      print(e);
+                    }
                   },
                 ))),
             Container(
                 padding: const EdgeInsets.all(5.0),
                 child: Center(
                     child: SignInButton(Buttons.Google, onPressed: () async {
-                  UserCredential user = await signInWithGoogle();
-                  Navigator.pushNamed(context, route.landingPage);
+                  try {
+                    await auth.signInGoogle();
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        routes.homePage, (route) => false);
+                  } catch (e) {
+                    print(e);
+                  }
                 }))),
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: "Don't have an account? ",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    TextSpan(
+                        text: 'Sign Up!',
+                        style: const TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushNamed(context, routes.registerPage);
+                          }),
+                  ],
+                ),
+              ),
+            ),
           ],
         ));
   }
