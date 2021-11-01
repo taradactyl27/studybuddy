@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,8 @@ class AudioForm extends StatefulWidget {
 
 class _AudioFormState extends State<AudioForm> {
   final _formKey = GlobalKey<FormBuilderState>();
-
+  double progress = 0;
+  bool uploading = false;
   @override
   void dispose() {
     super.dispose();
@@ -70,7 +72,7 @@ class _AudioFormState extends State<AudioForm> {
                       ),
                     ),
                     const Divider(
-                      color: Colors.black45,
+                      color: Colors.transparent,
                       thickness: 0.4,
                     ),
                     ElevatedButton(
@@ -81,21 +83,41 @@ class _AudioFormState extends State<AudioForm> {
                         FilePickerResult? result =
                             await FilePicker.platform.pickFiles();
                         if (result != null) {
+                          setState(() {
+                            uploading = true;
+                          });
+                          UploadTask upload =
+                              storage.uploadAudioFile(user, result, courseID);
+                          upload.snapshotEvents.listen((event) {
+                            setState(() {
+                              progress =
+                                  (event.bytesTransferred / event.totalBytes);
+                            });
+                          });
+                          await upload;
                           await storage.uploadFile(user, result, courseID);
+                          setState(() {
+                            uploading = false;
+                            progress = 0;
+                          });
                           // TODO: pop context with result of operation
                         } else {
                           // User canceled the picker
                         }
-
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blue,
+                        elevation: uploading ? 0 : 2,
+                        primary: uploading ? Colors.white : Colors.blue,
                       ),
-                      child: const Text('Choose File',
-                          style: TextStyle(
-                            color: Colors.white,
-                          )),
+                      child: uploading
+                          ? LinearProgressIndicator(
+                              value: progress,
+                            )
+                          : const Text('Choose File',
+                              style: TextStyle(
+                                color: Colors.white,
+                              )),
                     ),
                   ],
                 ),

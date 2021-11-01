@@ -43,6 +43,17 @@ Future<Map> getSearchResults(String query) async {
   return map;
 }
 
+UploadTask uploadAudioFile(
+    User user, FilePickerResult result, String courseID) {
+  File file = File(result.files.single.path!);
+  String name = result.files.single.name;
+  String uid = user.uid;
+  String email = user.email!;
+  final audioPath = email.contains('admin') ? name : '$uid/$name';
+  print('audio UPLOAD done!!!');
+  return storage.ref(audioPath).putFile(file);
+}
+
 Future<void> uploadFile(
     User user, FilePickerResult result, String courseID) async {
   File file = File(result.files.single.path!);
@@ -50,10 +61,6 @@ Future<void> uploadFile(
   String uid = user.uid;
   String email = user.email!;
   try {
-    final audioPath = email.contains('admin') ? name : '$uid/$name';
-    await storage.ref(audioPath).putFile(file);
-    print('audio UPLOAD done!!!');
-
     DocumentReference<Map<String, dynamic>> audioDoc =
         courses.doc(courseID).collection('audios').doc();
     await audioDoc.set({
