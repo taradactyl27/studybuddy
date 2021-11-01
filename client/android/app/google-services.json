@@ -45,6 +45,7 @@
             {
               "client_id": "106161362230-5nmiek60n278tuuge3e84b5q45boo246.apps.googleusercontent.com",
               "client_type": 3
+<<<<<<< HEAD
             },
             {
               "client_id": "106161362230-bpsr061nnh1up10bh4hh6s09mvdtdkl2.apps.googleusercontent.com",
@@ -52,6 +53,8 @@
               "ios_info": {
                 "bundle_id": "com.example.studybuddyapp"
               }
+=======
+>>>>>>> main
             }
           ]
         }
