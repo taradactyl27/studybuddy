@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' show User;
 
 final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -65,7 +66,7 @@ Future<List<dynamic>> getUserCourseList(String uid) async {
   }
 }
 
-Future<DocumentSnapshot<Map<String, dynamic>>> getCourseTranscription(
+Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
     String transcriptId, String courseId) {
   return courses.doc(courseId).collection('audios').doc(transcriptId).get();
 }
@@ -78,4 +79,47 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
 Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(
     List<dynamic>? courseList) {
   return courses.where(FieldPath.documentId, whereIn: courseList).snapshots();
+}
+
+Future<void> createAudioDoc(User user, String courseID, String path) async {
+  String uid = user.uid;
+  try {
+    DocumentReference<Map<String, dynamic>> audioDoc =
+        courses.doc(courseID).collection('audios').doc();
+
+    await audioDoc.set({
+      'owner': uid,
+      'created': Timestamp.now(),
+      'audioRef': path,
+      'notesGenerated': false,
+    });
+
+    HttpsCallable callable = FirebaseFunctions.instance
+        .httpsCallable('transcription-requestTranscription');
+
+    final result = await callable({
+      'storagePath': path,
+    });
+
+    final data = Map<String, dynamic>.from(result.data);
+
+    if (data['path'] != null) {
+      await audioDoc.update({
+        'transcriptRef': data['path'],
+        'isTranscribing': true,
+      });
+      return;
+    }
+
+    // TODO: release control here and set necessary data for background transcription loading
+
+    if (data['operationID'] != null) {
+      print(data['operationID']);
+    }
+
+    print("error in transcribing process");
+    return;
+  } on FirebaseException catch (e) {
+    print(e);
+  }
 }

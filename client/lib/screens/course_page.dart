@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/routes/hero_route.dart';
-import 'package:studybuddy/screens/audio_form.dart';
+import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/storage.dart';
@@ -106,7 +107,8 @@ class _CoursePageState extends State<CoursePage> {
                                   children:
                                       snapshot.data!.docs.map((transcript) {
                                     var data = transcript.data();
-                                    if (data['isTranscribing'] &&
+                                    if (data.containsKey('isTranscribing') &&
+                                        data['isTranscribing'] &&
                                         data.containsKey('transcriptRef')) {
                                       attemptTranscript(
                                           widget.course.get('course_id'),

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -10,14 +9,15 @@ import 'package:provider/provider.dart';
 
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:studybuddy/screens/audio_form.dart';
-import 'package:studybuddy/screens/class_creation_card.dart';
+import 'package:studybuddy/widgets/audio_form.dart';
+import 'package:studybuddy/widgets/class_creation_card.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/services/auth.dart' show User;
-import 'package:studybuddy/services/storage.dart' as storage;
+import 'package:studybuddy/services/api.dart'
+    show getSearchResults, getSearchKey;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
-import 'package:studybuddy/widgets/search_field.dart';
+import 'package:studybuddy/widgets/search_result.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage>
   late Future<List<dynamic>> _courseIds;
   late AnimationController _controller;
   late Animation _animation;
+  late Future<String> _searchApiKey;
 
   setBottomBarIndex(index) {
     setState(() {
@@ -62,6 +63,7 @@ class _HomePageState extends State<HomePage>
     });
     uid = context.read<User>().uid;
     _courseIds = database.getUserCourseList(uid);
+    _searchApiKey = getSearchKey();
   }
 
   @override
@@ -73,6 +75,31 @@ class _HomePageState extends State<HomePage>
     setState(() {
       _courseIds = database.getUserCourseList(uid);
     });
+  }
+
+  void _retryKey() {
+    setState(() {
+      _searchApiKey = getSearchKey();
+    });
+  }
+
+  void submitSearch(AsyncSnapshot<String> snapshot) async {
+    if (snapshot.connectionState == ConnectionState.done) {
+      if (snapshot.hasData) {
+        setState(() {
+          isSearching = true;
+          isLoading = true;
+        });
+        Map results =
+            await getSearchResults(snapshot.data!, _searchController.text);
+        setState(() {
+          searchResults = results;
+          isLoading = false;
+        });
+      } else {
+        _retryKey();
+      }
+    }
   }
 
   Alignment alignment1 = const Alignment(0.0, -1.3);
@@ -98,60 +125,33 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.only(top: 55),
           child: Stack(
             children: [
-              // Positioned(
-              //     top: 50,
-              //     left: 5,
-              //     // child: Container(
-              //     //     padding: const EdgeInsets.all(25),
-              //     //     child: Column(children: [
-              //     //       Text('Welcome back,',
-              //     //           style: GoogleFonts.nunito(
-              //     //               textStyle: const TextStyle(fontSize: 24))),
-              //     //       Text(currentUser!.displayName ?? "anonymous",
-              //     //           style: GoogleFonts.nunito(
-              //     //               textStyle: const TextStyle(fontSize: 24)))
-              //     //     ]))),
               Container(
                   padding: const EdgeInsets.all(30),
                   height: 100,
-                  child: TextField(
-                    onSubmitted: (value) async {
-                      setState(() {
-                        isSearching = true;
-                        isLoading = true;
-                      });
-                      Map results = await storage
-                          .getSearchResults(_searchController.text);
-                      setState(() {
-                        searchResults = results;
-                        isLoading = false;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Search...",
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(),
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () async {
-                          setState(() {
-                            isSearching = true;
-                            isLoading = true;
-                          });
-                          Map results = await storage
-                              .getSearchResults(_searchController.text);
-                          setState(() {
-                            searchResults = results;
-                            isLoading = false;
-                          });
-                        },
-                        icon: const Icon(Icons.search),
-                      ),
-                    ),
-                    controller: _searchController,
-                  )),
+                  child: FutureBuilder<String>(
+                      future: _searchApiKey,
+                      builder: (context, snapshot) {
+                        return TextField(
+                          onSubmitted: (value) async {
+                            submitSearch(snapshot);
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Search...",
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                              borderSide: const BorderSide(),
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                submitSearch(snapshot);
+                              },
+                              icon: const Icon(Icons.search),
+                            ),
+                          ),
+                          controller: _searchController,
+                        );
+                      })),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -222,46 +222,7 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
               if (isSearching)
-                Positioned(
-                    top: 45,
-                    width: MediaQuery.of(context).size.width,
-                    child: Container(
-                        margin: const EdgeInsets.all(30),
-                        height: 300,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black45),
-                            borderRadius: BorderRadius.circular(15.0)),
-                        child: isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : ListView(
-                                padding: const EdgeInsets.only(
-                                    bottom: 0, left: 0, right: 0, top: 5),
-                                shrinkWrap: true,
-                                children:
-                                    searchResults['hits'].map<Widget>((hit) {
-                                  return InkWell(
-                                      onTap: () async {
-                                        print(hit['objectID']);
-                                        print(hit['course']);
-                                        DocumentSnapshot<Map<String, dynamic>>
-                                            transcript = await database
-                                                .getCourseTranscription(
-                                                    hit['objectID'],
-                                                    hit['course']);
-                                        print(transcript.exists);
-                                        Navigator.pushNamed(
-                                            context, routes.transcriptPage,
-                                            arguments: {
-                                              'transcript': transcript,
-                                              'course_id': hit['course'],
-                                            });
-                                      },
-                                      child: SearchField(hit: hit));
-                                }).toList(),
-                              ))),
+                SearchResultBox(isLoading: isLoading, results: searchResults),
               Positioned(
                 bottom: 0,
                 left: 0,

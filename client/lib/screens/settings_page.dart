@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:studybuddy/services/auth.dart' as auth;
+import 'package:studybuddy/services/auth.dart' show User, signOut;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -21,18 +21,28 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = context.watch<User?>();
+    final username = user!.displayName != null && user.displayName!.isNotEmpty
+        ? user.displayName!
+        : user.email!;
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
         body: Stack(
       children: [
         Center(
-          child: ElevatedButton(
-            onPressed: () async {
-              await auth.signOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(routes.loginPage, (route) => false);
-            },
-            child: const Text('Sign Out'),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(username),
+              ElevatedButton(
+                  onPressed: () async {
+                    await signOut();
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        routes.loginPage, (route) => false);
+                  },
+                  child: const Text('Sign Out')),
+            ],
           ),
         ),
         Positioned(

@@ -21,6 +21,42 @@ const generateTranscriptPath = (audioPath: string) => {
   return `${path.join(dir, name)}_transcript.json`;
 };
 
+const runTranscription =  async (audioPath: string, transcriptPath: string): Promise<string | undefined> => {
+    // run transcription request
+    const client = new speech.SpeechClient();
+    const gcsUri = baseBucketURL + audioPath;
+    const audio = {
+      uri: gcsUri,
+    };
+    const config = {
+      languageCode: "en-US",
+      audioChannelCount: 2,
+    };
+    const outputConfig = {
+      gcsUri: baseBucketURL + transcriptPath,
+    };
+    const speechRequest = {
+      audio,
+      config,
+      outputConfig,
+    };
+
+    const [operation] = await client.longRunningRecognize(speechRequest);
+    // Get a Promise representation of the final result of the job
+    console.log(operation.name);
+    return operation.name;
+
+    // const [res] = await operation.promise();
+    // const transcription = res?.results
+    //   ?.map((result: any) => result?.alternatives[0].transcript)
+    //   .join("\n");
+
+    // return {
+    //   data: `Transcription: ${transcription}`,
+    // };
+
+};
+
 export const requestTranscription = functions
   .runWith({
     // Ensure the function has enough memory and time
@@ -34,65 +70,30 @@ export const requestTranscription = functions
         "function call not authenticated somehow??"
       );
     }
-    
-    // console.log(!context.auth?.token.email?.includes("admin"));
-    // // Mock transcription calls for non-admin accounts by copying existing file
-    // if (!context.auth?.token.email?.includes("admin")) {
-    //   const bucket = admin.storage().bucket();
-    //   const transcriptPath = generateTranscriptPath(data.storagePath);
 
-    //   console.log(data.template);
-    //   await bucket
-    //     .file(data.template || "Joann Peck, marketing (1).wav_transcript.json")
-    //     .copy(bucket.file(transcriptPath));
-
-    //   return {
-    //     path: transcriptPath,
-    //   };
-    // }
-
-    // remove uid from 'admin' requests to put at base of bucket
-    // const audioPath = path.basename(data.storagePath);
-
-
-    // end mock code: comment block above and uncomment line below for 'prod' behavior
     const audioPath = data.storagePath;
 
-    // run transcription request
-    const client = new speech.SpeechClient();
-    const gcsUri = baseBucketURL + audioPath;
-    const audio = {
-      uri: gcsUri,
-    };
-    const config = {
-      languageCode: "en-US",
-      audioChannelCount: 2,
-    };
-    const outputConfig = {
-      gcsUri: baseBucketURL + generateTranscriptPath(audioPath),
-    };
-    const speechRequest = {
-      audio,
-      config,
-      outputConfig,
-    };
+    try {
+      const transcriptPath = generateTranscriptPath(audioPath);
+      const operationID = await runTranscription(audioPath, transcriptPath);
+      return {
+        operationID,
+        path: transcriptPath,
+      };
 
-    const [operation] = await client.longRunningRecognize(speechRequest);
-    // Get a Promise representation of the final result of the job
-    console.log(operation.name);
-    return {
-      operationID: operation.name,
-      path: generateTranscriptPath(audioPath),
-    };
+      // const [res] = await operation.promise();
+      // const transcription = res?.results
+      //   ?.map((result: any) => result?.alternatives[0].transcript)
+      //   .join("\n");
 
-    // const [res] = await operation.promise();
-    // const transcription = res?.results
-    //   ?.map((result: any) => result?.alternatives[0].transcript)
-    //   .join("\n");
+      // return {
+      //   data: `Transcription: ${transcription}`,
+      // };
+    } catch (error) {
+      console.log(error);
+      return { error };
+    }
 
-    // return {
-    //   data: `Transcription: ${transcription}`,
-    // };
   });
 
 export const mockTranscription = functions
@@ -108,72 +109,42 @@ export const mockTranscription = functions
         "function call not authenticated somehow??"
       );
     }
-    
-    // console.log(!context.auth?.token.email?.includes("admin"));
-    // // Mock transcription calls for non-admin accounts by copying existing file
-    // if (!context.auth?.token.email?.includes("admin")) {
-    //   const bucket = admin.storage().bucket();
-    //   const transcriptPath = generateTranscriptPath(data.storagePath);
 
-    //   console.log(data.template);
-    //   await bucket
-    //     .file(data.template || "Joann Peck, marketing (1).wav_transcript.json")
-    //     .copy(bucket.file(transcriptPath));
-
-    //   return {
-    //     path: transcriptPath,
-    //   };
-    // }
-
-    // remove uid from 'admin' requests to put at base of bucket
-    // const audioPath = path.basename(data.storagePath);
-
-
-    // end mock code: comment block above and uncomment line below for 'prod' behavior
     const audioPath = data.storagePath;
+    const bucket = admin.storage().bucket();
 
-    // run transcription request
-    const client = new speech.SpeechClient();
-    const gcsUri = baseBucketURL + audioPath;
-    const audio = {
-      uri: gcsUri,
-    };
-    const config = {
-      languageCode: "en-US",
-      audioChannelCount: 2,
-    };
-    const outputConfig = {
-      gcsUri: baseBucketURL + generateTranscriptPath(audioPath),
-    };
-    const speechRequest = {
-      audio,
-      config,
-      outputConfig,
-    };
+    let operationID = '';
 
-    const [operation] = await client.longRunningRecognize(speechRequest);
-    // Get a Promise representation of the final result of the job
-    console.log(operation.name);
+    // Run actual transcriptions for admins and place at bucket root
+    if (context.auth?.token.email?.includes("admin")) {
+      const filename = path.basename(audioPath);
+      await bucket
+      .file(audioPath)
+      .copy(bucket.file(filename));
+
+      operationID = await runTranscription(audioPath, generateTranscriptPath(filename)) || '';
+      console.log(operationID);
+    }
+
+    const transcriptPath = generateTranscriptPath(audioPath);
+
+    console.log(data.template);
+    await bucket
+      .file(data.template || "5- Minute Lecture - Professor Irwin Goldman_transcript.json")
+      .copy(bucket.file(transcriptPath));
+
     return {
-      operationID: operation.name,
-      path: generateTranscriptPath(audioPath),
+      operationID,
+      path: transcriptPath,
     };
 
-    // const [res] = await operation.promise();
-    // const transcription = res?.results
-    //   ?.map((result: any) => result?.alternatives[0].transcript)
-    //   .join("\n");
-
-    // return {
-    //   data: `Transcription: ${transcription}`,
-    // };
   });
 
-export const checkTranscriptionOperation = functions.https.onCall(
-  async (data, context) => {
-    // const client = new speech.SpeechClient();
-    // client.checkLongRunningRecognizeProgress('');
+// export const checkTranscriptionOperation = functions.https.onCall(
+//   async (data, context) => {
+//     // const client = new speech.SpeechClient();
+//     // client.checkLongRunningRecognizeProgress('');
 
-    return "should probably be in server";
-  }
-);
+//     return "should probably be in server";
+//   }
+// );
