@@ -103,7 +103,8 @@ class _CoursePageState extends State<CoursePage> {
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
-                                    return InkWell(
+                                        if(transcript['text']==Null){
+                                          return InkWell(
                                       onTap: () {
                                         Navigator.pushNamed(
                                             context, routes.transcriptPage,
@@ -119,6 +120,17 @@ class _CoursePageState extends State<CoursePage> {
                                             widget.course.get('course_id'),
                                       ),
                                     );
+                                        }
+                                    else{
+                                      return InkWell(
+                                      onTap: null,
+                                      child: TranscriptTile(
+                                        transcript: transcript,
+                                        courseId:
+                                            widget.course.get('course_id'),
+                                      ),
+                                    );
+                                    }
                                   }).toList(),
                                 ));
                           })
