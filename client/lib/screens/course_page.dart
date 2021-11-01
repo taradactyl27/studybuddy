@@ -103,7 +103,7 @@ class _CoursePageState extends State<CoursePage> {
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
-                                        if(transcript['text']==Null){
+                                        if(transcript['text']!=Null){
                                           return InkWell(
                                       onTap: () {
                                         Navigator.pushNamed(
