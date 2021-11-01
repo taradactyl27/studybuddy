@@ -87,8 +87,9 @@ class _CoursePageState extends State<CoursePage> {
                       StreamBuilder(
                           stream: database.getCourseTranscriptions(
                               widget.course.get('course_id')),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          builder: (context,
+                              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                                  snapshot) {
                             if (!snapshot.hasData) {
                               return const SizedBox(
                                   height: 200,
@@ -103,33 +104,32 @@ class _CoursePageState extends State<CoursePage> {
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
-                                        if(transcript['text']!=Null){
-                                          return InkWell(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, routes.transcriptPage,
-                                            arguments: {
-                                              'transcript': transcript,
-                                              'course_id':
-                                                  widget.course.get('course_id')
-                                            });
-                                      },
-                                      child: TranscriptTile(
-                                        transcript: transcript,
-                                        courseId:
-                                            widget.course.get('course_id'),
-                                      ),
-                                    );
-                                        }
-                                    else{
+                                    if (transcript.data().containsKey('text')) {
                                       return InkWell(
-                                      onTap: null,
-                                      child: TranscriptTile(
-                                        transcript: transcript,
-                                        courseId:
-                                            widget.course.get('course_id'),
-                                      ),
-                                    );
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, routes.transcriptPage,
+                                              arguments: {
+                                                'transcript': transcript,
+                                                'course_id': widget.course
+                                                    .get('course_id')
+                                              });
+                                        },
+                                        child: TranscriptTile(
+                                          transcript: transcript,
+                                          courseId:
+                                              widget.course.get('course_id'),
+                                        ),
+                                      );
+                                    } else {
+                                      return InkWell(
+                                        onTap: null,
+                                        child: TranscriptTile(
+                                          transcript: transcript,
+                                          courseId:
+                                              widget.course.get('course_id'),
+                                        ),
+                                      );
                                     }
                                   }).toList(),
                                 ));

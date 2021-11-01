@@ -115,7 +115,7 @@ class _TranscriptPageState extends State<TranscriptPage> {
                           "prompt": transcriptMut['text'] +
                               ". To summarize in depth: 1.",
                           "max_tokens": 100,
-                          "temperature": 0.7,
+                          "temperature": 0.3,
                           "stop": ["5."],
                         };
                         var response = await http.post(

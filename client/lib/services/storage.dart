@@ -76,7 +76,7 @@ Future<void> uploadFile(
     // mock file by sending template field
     final result = await callable({
       'storagePath': '$uid/$name',
-      'template': 'VOXTAB_Academic_audio_transcript.json'
+      // 'template': 'VOXTAB_Academic_audio_transcript.json'
     });
 
     final data = Map<String, dynamic>.from(result.data);
