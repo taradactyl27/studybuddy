@@ -5,13 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:studybuddy/services/database.dart' as database;
+
+import '../services/database.dart' as database;
 
 class TranscriptTile extends StatefulWidget {
   const TranscriptTile(
       {Key? key, required this.transcript, required this.courseId})
       : super(key: key);
-  final QueryDocumentSnapshot<Object?> transcript;
+  final QueryDocumentSnapshot<Map<String, dynamic>> transcript;
   final String courseId;
 
   @override
@@ -29,8 +30,11 @@ class _TranscriptTileState extends State<TranscriptTile> {
 
   @override
   Widget build(BuildContext context) {
-   return Card(
+    return Card(
       child: ListTile(
+        tileColor: widget.transcript.data().containsKey('text')
+            ? Colors.white
+            : Colors.black12,
         leading: const Icon(
           Icons.insert_drive_file_outlined,
           size: 35,

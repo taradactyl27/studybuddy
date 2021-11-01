@@ -35,25 +35,28 @@ export const requestTranscription = functions
       );
     }
     
-    console.log(!context.auth?.token.email?.includes("admin"));
-    // Mock transcription calls for non-admin accounts by copying existing file
-    if (!context.auth?.token.email?.includes("admin")) {
-      const bucket = admin.storage().bucket();
-      const transcriptPath = generateTranscriptPath(data.storagePath);
+    // console.log(!context.auth?.token.email?.includes("admin"));
+    // // Mock transcription calls for non-admin accounts by copying existing file
+    // if (!context.auth?.token.email?.includes("admin")) {
+    //   const bucket = admin.storage().bucket();
+    //   const transcriptPath = generateTranscriptPath(data.storagePath);
 
-      console.log(data.template);
-      await bucket
-        .file(data.template || "Joann Peck, marketing (1).wav_transcript.json")
-        .copy(bucket.file(transcriptPath));
+    //   console.log(data.template);
+    //   await bucket
+    //     .file(data.template || "Joann Peck, marketing (1).wav_transcript.json")
+    //     .copy(bucket.file(transcriptPath));
 
-      return {
-        path: transcriptPath,
-      };
-    }
+    //   return {
+    //     path: transcriptPath,
+    //   };
+    // }
 
     // remove uid from 'admin' requests to put at base of bucket
-    // end mock code: comment block above and replace below line with full path for 'prod' behavior
-    const audioPath = path.basename(data.storagePath);
+    // const audioPath = path.basename(data.storagePath);
+
+
+    // end mock code: comment block above and uncomment line below for 'prod' behavior
+    const audioPath = data.storagePath;
 
     // run transcription request
     const client = new speech.SpeechClient();
@@ -79,6 +82,81 @@ export const requestTranscription = functions
     console.log(operation.name);
     return {
       operationID: operation.name,
+      path: generateTranscriptPath(audioPath),
+    };
+
+    // const [res] = await operation.promise();
+    // const transcription = res?.results
+    //   ?.map((result: any) => result?.alternatives[0].transcript)
+    //   .join("\n");
+
+    // return {
+    //   data: `Transcription: ${transcription}`,
+    // };
+  });
+
+export const mockTranscription = functions
+  .runWith({
+    // Ensure the function has enough memory and time
+    // to process large files
+    timeoutSeconds: 360,
+  })
+  .https.onCall(async (data, context) => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError(
+        "failed-precondition",
+        "function call not authenticated somehow??"
+      );
+    }
+    
+    // console.log(!context.auth?.token.email?.includes("admin"));
+    // // Mock transcription calls for non-admin accounts by copying existing file
+    // if (!context.auth?.token.email?.includes("admin")) {
+    //   const bucket = admin.storage().bucket();
+    //   const transcriptPath = generateTranscriptPath(data.storagePath);
+
+    //   console.log(data.template);
+    //   await bucket
+    //     .file(data.template || "Joann Peck, marketing (1).wav_transcript.json")
+    //     .copy(bucket.file(transcriptPath));
+
+    //   return {
+    //     path: transcriptPath,
+    //   };
+    // }
+
+    // remove uid from 'admin' requests to put at base of bucket
+    // const audioPath = path.basename(data.storagePath);
+
+
+    // end mock code: comment block above and uncomment line below for 'prod' behavior
+    const audioPath = data.storagePath;
+
+    // run transcription request
+    const client = new speech.SpeechClient();
+    const gcsUri = baseBucketURL + audioPath;
+    const audio = {
+      uri: gcsUri,
+    };
+    const config = {
+      languageCode: "en-US",
+      audioChannelCount: 2,
+    };
+    const outputConfig = {
+      gcsUri: baseBucketURL + generateTranscriptPath(audioPath),
+    };
+    const speechRequest = {
+      audio,
+      config,
+      outputConfig,
+    };
+
+    const [operation] = await client.longRunningRecognize(speechRequest);
+    // Get a Promise representation of the final result of the job
+    console.log(operation.name);
+    return {
+      operationID: operation.name,
+      path: generateTranscriptPath(audioPath),
     };
 
     // const [res] = await operation.promise();

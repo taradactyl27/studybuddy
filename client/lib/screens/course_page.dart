@@ -9,6 +9,7 @@ import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/screens/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:studybuddy/services/storage.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
 
@@ -104,6 +105,13 @@ class _CoursePageState extends State<CoursePage> {
                                   padding: const EdgeInsets.all(10.0),
                                   children:
                                       snapshot.data!.docs.map((transcript) {
+                                    var data = transcript.data();
+                                    if (data['isTranscribing']) {
+                                      attemptTranscript(
+                                          widget.course.get('course_id'),
+                                          transcript.id,
+                                          data['transcriptRef']);
+                                    }
                                     if (transcript.data().containsKey('text')) {
                                       return InkWell(
                                         onTap: () {

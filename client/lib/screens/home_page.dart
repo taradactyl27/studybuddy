@@ -246,8 +246,8 @@ class _HomePageState extends State<HomePage>
                                       onTap: () async {
                                         print(hit['objectID']);
                                         print(hit['course']);
-                                        DocumentSnapshot transcript =
-                                            await database
+                                        DocumentSnapshot<Map<String, dynamic>>
+                                            transcript = await database
                                                 .getCourseTranscription(
                                                     hit['objectID'],
                                                     hit['course']);
