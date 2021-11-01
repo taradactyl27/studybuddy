@@ -96,6 +96,7 @@ export const requestTranscription = functions
 
   });
 
+const defaultMockTranscriptPath = 'mock_transcript.json';
 export const mockTranscription = functions
   .runWith({
     // Ensure the function has enough memory and time
@@ -130,7 +131,7 @@ export const mockTranscription = functions
 
     console.log(data.template);
     await bucket
-      .file(data.template || "5- Minute Lecture - Professor Irwin Goldman_transcript.json")
+      .file(data.template || defaultMockTranscriptPath)
       .copy(bucket.file(transcriptPath));
 
     return {
