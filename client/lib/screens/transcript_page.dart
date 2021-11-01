@@ -11,7 +11,7 @@ import 'package:studybuddy/services/database.dart' as database;
 import '../services/storage.dart' show attemptTranscript;
 
 class TranscriptPage extends StatefulWidget {
-  TranscriptPage(
+  const TranscriptPage(
       {Key? key,
       required this.transcript,
       required this.courseId,
@@ -20,7 +20,7 @@ class TranscriptPage extends StatefulWidget {
 
   final DocumentSnapshot<Map<String, dynamic>> transcript;
   final String courseId;
-  int tabID;
+  final int tabID;
   @override
   _TranscriptPageState createState() => _TranscriptPageState();
 }
@@ -156,7 +156,7 @@ class _TranscriptPageState extends State<TranscriptPage> {
                               await database.uploadStudyNotes(studyNotes,
                                   transcriptMut.id, widget.courseId);
                               DocumentSnapshot<Map<String, dynamic>> temp =
-                                  await database.getCourseTranscription(
+                                  await database.getTranscription(
                                       transcriptMut.id, widget.courseId);
                               setState(() {
                                 transcriptMut = temp;
@@ -190,17 +190,14 @@ class _TranscriptPageState extends State<TranscriptPage> {
           children: [
             Column(
               children: [
-                widget.transcript['isTranscribing']
-                    ? const Text(
-                        'transcription loading (not like anyone actually studies right after class anyway)...')
-                    : QuillToolbar.basic(
-                        controller: _controllers[tabID],
-                        toolbarIconSize: 22,
-                        showImageButton: false,
-                        showVideoButton: false,
-                        showCameraButton: false,
-                        multiRowsDisplay: false,
-                      ),
+                QuillToolbar.basic(
+                  controller: _controllers[tabID],
+                  toolbarIconSize: 22,
+                  showImageButton: false,
+                  showVideoButton: false,
+                  showCameraButton: false,
+                  multiRowsDisplay: false,
+                ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.only(
