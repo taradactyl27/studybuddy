@@ -113,13 +113,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
-  console:
-    dependency: transitive
-    description:
-      name: console
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
   convert:
     dependency: transitive
     description:
@@ -155,13 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
-  dart_pre_commit:
-    dependency: "direct dev"
-    description:
-      name: dart_pre_commit
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.3.2"
   diff_match_patch:
     dependency: transitive
     description:
@@ -373,13 +359,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "9.2.0"
-  freezed_annotation:
-    dependency: transitive
-    description:
-      name: freezed_annotation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.14.3"
   gettext_parser:
     dependency: transitive
     description:
@@ -387,13 +366,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
-  git_hooks:
-    dependency: "direct dev"
-    description:
-      name: git_hooks
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.6"
   glob:
     dependency: transitive
     description:
@@ -492,13 +464,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  json_annotation:
-    dependency: transitive
-    description:
-      name: json_annotation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.3.0"
   lints:
     dependency: transitive
     description:
@@ -632,13 +597,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1+1"
-  riverpod:
-    dependency: transitive
-    description:
-      name: riverpod
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.14.0+3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -665,13 +623,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
-  state_notifier:
-    dependency: transitive
-    description:
-      name: state_notifier
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.1"
   stream_channel:
     dependency: transitive
     description:

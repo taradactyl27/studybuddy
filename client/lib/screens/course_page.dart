@@ -87,8 +87,9 @@ class _CoursePageState extends State<CoursePage> {
                       StreamBuilder(
                           stream: database.getCourseTranscriptions(
                               widget.course.get('course_id')),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          builder: (context,
+                              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                                  snapshot) {
                             if (!snapshot.hasData) {
                               return const SizedBox(
                                   height: 200,

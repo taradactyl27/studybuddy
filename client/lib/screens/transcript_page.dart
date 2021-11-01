@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
+import '../services/storage.dart' show attemptTranscript;
+
 class TranscriptPage extends StatefulWidget {
   TranscriptPage(
       {Key? key,
@@ -12,7 +14,7 @@ class TranscriptPage extends StatefulWidget {
       this.tabID = 0})
       : super(key: key);
 
-  final QueryDocumentSnapshot<Object?> transcript;
+  final QueryDocumentSnapshot<Map<String, dynamic>> transcript;
   final String courseId;
   int tabID;
   @override
@@ -26,17 +28,27 @@ class _TranscriptPageState extends State<TranscriptPage> {
   int tabID = 0;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     tabID = widget.tabID;
 
+    var data = widget.transcript.data();
+
+    if (data['isTranscribing']) {
+      await attemptTranscript(
+          widget.courseId, widget.transcript.id, data['transcriptRef']);
+    }
+
     List<dynamic> initTextData = [
-      {'insert': widget.transcript['text'] + '\n'}
+      {'insert': data['isTranscribing'] ? '' : widget.transcript['text'] + '\n'}
     ];
 
     List<dynamic> initNotesData = [
-      {'insert': widget.transcript['studyNotes'] + '\n'}
+      {
+        'insert':
+            data['isTranscribing'] ? '' : widget.transcript['studyNotes'] + '\n'
+      }
     ];
 
     _controllers = List.of(<QuillController>[
@@ -67,39 +79,44 @@ class _TranscriptPageState extends State<TranscriptPage> {
             widget.transcript['audioRef'].split('/')[1],
             style: const TextStyle(color: Colors.white),
           ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(primary: Colors.deepOrange),
-              onPressed: () {
-                setState(() {
-                  tabID = 0;
-                });
-              },
-              child: const Text("Original"),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(primary: Colors.deepPurple),
-              onPressed: () {
-                setState(() {
-                  tabID = 1;
-                });
-              },
-              child: const Text("Our Notes"),
-            ),
-          ],
+          actions: widget.transcript['isTranscribing']
+              ? null
+              : <Widget>[
+                  TextButton(
+                    style: TextButton.styleFrom(primary: Colors.deepOrange),
+                    onPressed: () {
+                      setState(() {
+                        tabID = 0;
+                      });
+                    },
+                    child: const Text("Original"),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(primary: Colors.deepPurple),
+                    onPressed: () {
+                      setState(() {
+                        tabID = 1;
+                      });
+                    },
+                    child: const Text("Our Notes"),
+                  ),
+                ],
         ),
         body: Stack(
           children: [
             Column(
               children: [
-                QuillToolbar.basic(
-                  controller: _controllers[tabID],
-                  toolbarIconSize: 22,
-                  showImageButton: false,
-                  showVideoButton: false,
-                  showCameraButton: false,
-                  multiRowsDisplay: false,
-                ),
+                widget.transcript['isTranscribing']
+                    ? const Text(
+                        'transcription loading (not like anyone actually studies right after class anyway)...')
+                    : QuillToolbar.basic(
+                        controller: _controllers[tabID],
+                        toolbarIconSize: 22,
+                        showImageButton: false,
+                        showVideoButton: false,
+                        showCameraButton: false,
+                        multiRowsDisplay: false,
+                      ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.only(

@@ -49,8 +49,6 @@ dependencies:
   flutter_quill: ^2.0.13
 
 dev_dependencies:
-  git_hooks: ^0.1.0
-  dart_pre_commit: ^2.3.2
   flutter_test:
     sdk: flutter
 

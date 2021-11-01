@@ -5,10 +5,10 @@ pre-commit:
   commands:
     lint_code:
       glob: '*.dart'
-      run: dart fix client --apply && git add .
+      run: dart fix client --apply && git add client
     format_code:
       glob: '*.dart'
-      run: flutter format {staged_files} && git add .
+      run: flutter format {staged_files} && git add client
 
 # Example
 # pre-commit:

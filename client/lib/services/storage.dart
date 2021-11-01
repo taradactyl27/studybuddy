@@ -43,6 +43,25 @@ Future<Map> getSearchResults(String query) async {
   return map;
 }
 
+Future<void> attemptTranscript(
+    String courseID, String audioID, String path) async {
+  try {
+    Uint8List? transcriptData = await storage.ref(path).getData();
+
+    Map<String, dynamic> transcript = jsonDecode(utf8.decode(transcriptData!));
+
+    String fullTranscriptText = transcript['results'].fold('',
+        (prev, result) => prev + ' ' + result['alternatives'][0]['transcript']);
+
+    await courses.doc(courseID).collection('audios').doc(audioID).update({
+      'text': fullTranscriptText,
+      'isTranscribing': false,
+    });
+  } catch (e) {
+    print('getting/updating transcript json ref failed. wait longer.....');
+  }
+}
+
 Future<void> uploadFile(
     User user, FilePickerResult result, String courseID) async {
   File file = File(result.files.single.path!);
@@ -61,38 +80,23 @@ Future<void> uploadFile(
       'created': Timestamp.now(),
       'audioRef': '$uid/$name',
       'notesGenerated': false,
+      'isTranscribing': true,
     });
 
     HttpsCallable callable = FirebaseFunctions.instance
         .httpsCallable('transcription-requestTranscription');
 
-    // mock file by sending template field
     final result = await callable({
       'storagePath': '$uid/$name',
-      'template': 'VOXTAB_Academic_audio_transcript.json'
     });
 
     final data = Map<String, dynamic>.from(result.data);
 
-    // mocked transcription copying succeeded
     if (data['path'] != null) {
-      Uint8List? transcriptData = await storage.ref(data['path']).getData();
-
-      Map<String, dynamic> transcript =
-          jsonDecode(utf8.decode(transcriptData!));
-
-      String fullTranscriptText = transcript['results'].fold(
-          '',
-          (prev, result) =>
-              prev + ' ' + result['alternatives'][0]['transcript']);
-
-      audioDoc.update({
+      await audioDoc.update({
         'transcriptRef': data['path'],
-        'text': fullTranscriptText,
       });
-      print(fullTranscriptText);
-      // send to transcript review and editing process
-
+      return;
     }
 
     // TODO: release control here and set necessary data for background transcription loading
@@ -101,6 +105,7 @@ Future<void> uploadFile(
       print(data['operationID']);
     }
 
+    print("error in transcribing process");
     return;
   } on FirebaseException catch (e) {
     print(e);
