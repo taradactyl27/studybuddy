@@ -106,7 +106,8 @@ class _CoursePageState extends State<CoursePage> {
                                   children:
                                       snapshot.data!.docs.map((transcript) {
                                     var data = transcript.data();
-                                    if (data['isTranscribing']) {
+                                    if (data['isTranscribing'] &&
+                                        data.containsKey('transcriptRef')) {
                                       attemptTranscript(
                                           widget.course.get('course_id'),
                                           transcript.id,
