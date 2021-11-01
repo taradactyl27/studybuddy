@@ -225,7 +225,7 @@ class _CoursePageState extends State<CoursePage> {
                                 }),
                             IconButton(
                                 icon: Icon(
-                                  Icons.notifications,
+                                  Icons.settings_rounded,
                                   color: currentIndex == 3
                                       ? const Color(0xFF61A3FE)
                                       : Colors.grey.shade400,
