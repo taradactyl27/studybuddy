@@ -47,6 +47,16 @@ Future<void> uploadStudyNotes(
   print("NOTES UPLOADED");
 }
 
+Future<void> uploadDocumentDeltas(String delta, String fieldName,
+    String transcriptId, String courseId) async {
+  await courses
+      .doc(courseId)
+      .collection('audios')
+      .doc(transcriptId)
+      .update({fieldName: delta});
+  print("Deltas Saved");
+}
+
 Future<String> getStudyNotes(String transcriptId, String courseId) async {
   DocumentSnapshot doc =
       await courses.doc(courseId).collection('audios').doc(transcriptId).get();
@@ -95,7 +105,7 @@ Future<void> createAudioDoc(User user, String courseID, String path) async {
     });
 
     HttpsCallable callable = FirebaseFunctions.instance
-        .httpsCallable('transcription-requestTranscription');
+        .httpsCallable('transcription-mockTranscript');
 
     final result = await callable({
       'storagePath': path,
