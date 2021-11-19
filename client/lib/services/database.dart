@@ -19,15 +19,42 @@ Future<void> createUserDoc(User? user) async {
   }
 }
 
-Future<void> createCourse(String uid, String name, String description) async {
+Future<void> createCourse(
+    String uid, String email, String name, String description) async {
   DocumentReference<Object?> value = await courses.add({
     "name": name,
     "description": description,
+    "roles": {
+      uid: {"email": email, "role": "owner"}
+    }
   });
   users.doc(uid).update({
-    'course_ids': FieldValue.arrayUnion([value.id])
+    "course_ids": FieldValue.arrayUnion([value.id])
   });
-  return courses.doc(value.id).update({'course_id': value.id});
+  courses.doc(value.id).update({"course_id": value.id});
+}
+
+Future<void> addUserToCourse(String courseId, String email) async {
+  QuerySnapshot userdoc = await users.where("email", isEqualTo: email).get();
+  if (userdoc.size == 0) {
+    throw Exception("User not found");
+  } else {
+    String roleField = "roles." + userdoc.docs[0].id + ".role";
+    String emailField = "roles." + userdoc.docs[0].id + ".email";
+    await courses.doc(courseId).update({roleField: "user"});
+    await courses.doc(courseId).update({emailField: email});
+    await users.doc(userdoc.docs[0].id).update({
+      'course_ids': FieldValue.arrayUnion([courseId])
+    });
+  }
+}
+
+Future<void> removeUserFromCourse(String courseId, String uid) async {
+  String roleField = 'roles.' + uid;
+  await courses.doc(courseId).update({roleField: FieldValue.delete()});
+  await users.doc(uid).update({
+    'course_ids': FieldValue.arrayRemove([courseId])
+  });
 }
 
 Future<void> deleteCourse(String uid, String courseId) async {
@@ -55,6 +82,18 @@ Future<void> uploadDocumentDeltas(String delta, String fieldName,
       .doc(transcriptId)
       .update({fieldName: delta});
   print("Deltas Saved");
+}
+
+Future<dynamic> getCoursePermList(String courseId) async {
+  DocumentSnapshot doc = await courses.doc(courseId).get();
+  print("got doc");
+  if (doc.exists) {
+    print(doc.get('roles'));
+    return doc.get('roles');
+  } else {
+    print('empty');
+    return {};
+  }
 }
 
 Future<String> getStudyNotes(String transcriptId, String courseId) async {

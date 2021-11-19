@@ -35,6 +35,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
   @override
   Widget build(BuildContext context) {
     final uid = context.read<User>().uid;
+    final email = context.read<User>().email;
     return ValueListenableBuilder(
         valueListenable: _namecontroller,
         builder: (context, TextEditingValue value, __) {
@@ -87,6 +88,7 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                                     if (_errorText == null) {
                                       await database.createCourse(
                                           uid,
+                                          email!,
                                           _namecontroller.text,
                                           _descriptioncontroller.text);
                                       Navigator.pop(context);
