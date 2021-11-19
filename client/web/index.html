@@ -25,7 +25,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="studybuddy">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
+  <meta name="google-signin-client_id"
+    content="106161362230-5nmiek60n278tuuge3e84b5q45boo246.apps.googleusercontent.com">
   <title>studybuddy</title>
   <link rel="manifest" href="manifest.json">
 </head>
@@ -33,6 +34,25 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-messaging.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-functions.js"></script>
+  <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyBtpG0IHkbO0CW7wHM8NiTH7yrwXZnRyJI",
+        authDomain: "study-buddy-268e6.firebaseapp.com",
+        projectId: "study-buddy-268e6",
+        storageBucket: "study-buddy-268e6.appspot.com",
+        messagingSenderId: "106161362230",
+        appId: "1:106161362230:web:8e4069d32df177accf0f97",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+  </script>
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
