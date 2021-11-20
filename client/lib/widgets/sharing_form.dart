@@ -25,11 +25,18 @@ var currentUser = FirebaseAuth.instance.currentUser;
 class _SharingFormState extends State<SharingForm> {
   final TextEditingController _namecontroller = TextEditingController();
   late Future<dynamic> courseUserPermissions;
+  late bool isLoading;
+
+  void _refreshPermList() {
+    setState(() {
+      courseUserPermissions = database.getCoursePermList(widget.course.id);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    print("getting course perms");
+    isLoading = false;
     courseUserPermissions = database.getCoursePermList(widget.course.id);
   }
 
@@ -69,7 +76,6 @@ class _SharingFormState extends State<SharingForm> {
                     FutureBuilder<dynamic>(
                         future: courseUserPermissions,
                         builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                          print(snapshot);
                           if (!snapshot.hasData) {
                             return const SizedBox(
                                 height: 50,
@@ -87,10 +93,14 @@ class _SharingFormState extends State<SharingForm> {
                                         snapshot.data.keys.map<Widget>((user) {
                                       print(user);
                                       return UserTile(
-                                          email: snapshot.data[user]['email'],
-                                          permStatus: snapshot.data[user]
-                                                  ['role'] ??
-                                              "");
+                                        email: snapshot.data[user]['email'],
+                                        permStatus:
+                                            snapshot.data[user]['role'] ?? "",
+                                        isOwner: widget.isOwner,
+                                        uid: user,
+                                        courseId: widget.course.id,
+                                        refreshPermList: _refreshPermList,
+                                      );
                                     }).toList()));
                           }
                         }),
@@ -104,17 +114,39 @@ class _SharingFormState extends State<SharingForm> {
                         cursorColor: Colors.white,
                       ),
                     widget.isOwner
-                        ? ElevatedButton(
-                            onPressed: () async {
-                              String userEmail = _namecontroller.text;
-                              await database.addUserToCourse(
-                                  widget.course.id, userEmail);
-                              setState(() {
-                                courseUserPermissions = database
-                                    .getCoursePermList(widget.course.id);
-                              });
-                            },
-                            child: const Text("Add a User"),
+                        ? Container(
+                            width: 150,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                String userEmail = _namecontroller.text;
+                                try {
+                                  await database.addUserToCourse(
+                                      widget.course.id, userEmail);
+                                } catch (exception) {
+                                  //HANDLE EXCEPTIONS IN SHARING
+                                }
+                                setState(() {
+                                  courseUserPermissions = database
+                                      .getCoursePermList(widget.course.id);
+                                  isLoading = false;
+                                });
+                              },
+                              child: isLoading
+                                  ? const Center(
+                                      child: SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2.0,
+                                            color: Colors.white),
+                                      ),
+                                    )
+                                  : const Text("Add a User",
+                                      style: TextStyle(color: Colors.white)),
+                            ),
                           )
                         : ElevatedButton(
                             onPressed: () async {

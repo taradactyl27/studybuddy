@@ -39,6 +39,12 @@ Future<void> addUserToCourse(String courseId, String email) async {
   if (userdoc.size == 0) {
     throw Exception("User not found");
   } else {
+    DocumentSnapshot doc = await courses.doc(courseId).get();
+    if (doc.exists) {
+      if (doc.get('roles').containsKey(userdoc.docs[0].id)) {
+        throw Exception("User already added to course");
+      }
+    }
     String roleField = "roles." + userdoc.docs[0].id + ".role";
     String emailField = "roles." + userdoc.docs[0].id + ".email";
     await courses.doc(courseId).update({roleField: "user"});
