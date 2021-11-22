@@ -10,8 +10,6 @@ class ClassCreationCard extends StatefulWidget {
   State<ClassCreationCard> createState() => _ClassCreationCardState();
 }
 
-var currentUser = FirebaseAuth.instance.currentUser;
-
 class _ClassCreationCardState extends State<ClassCreationCard> {
   final TextEditingController _namecontroller = TextEditingController();
   final TextEditingController _descriptioncontroller = TextEditingController();

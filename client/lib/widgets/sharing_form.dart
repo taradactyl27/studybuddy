@@ -20,8 +20,6 @@ class SharingForm extends StatefulWidget {
   State<SharingForm> createState() => _SharingFormState();
 }
 
-var currentUser = FirebaseAuth.instance.currentUser;
-
 class _SharingFormState extends State<SharingForm> {
   final TextEditingController _namecontroller = TextEditingController();
   late Future<dynamic> courseUserPermissions;

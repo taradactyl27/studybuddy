@@ -7,11 +7,9 @@ class CourseTile extends StatelessWidget {
   const CourseTile({
     Key? key,
     required this.course,
-    required this.refreshCourses,
   }) : super(key: key);
 
   final QueryDocumentSnapshot<Object?> course;
-  final Function refreshCourses;
 
   @override
   Widget build(BuildContext context) {
@@ -54,17 +52,6 @@ class CourseTile extends StatelessWidget {
                           const TextStyle(color: Colors.white, fontSize: 21),
                     )),
               ),
-              // GestureDetector(
-              //   onTap: () async {
-              //     Database.deleteCourse(course.id);
-              //     refreshCourses();
-              //   },
-              //   child: const Icon(
-              //     Icons.clear_outlined,
-              //     color: Colors.white,
-              //     size: 24,
-              //   ),
-              // )
             ],
           ),
         ),
