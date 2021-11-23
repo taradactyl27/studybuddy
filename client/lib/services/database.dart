@@ -12,29 +12,49 @@ Future<void> createUserDoc(User? user) async {
   try {
     await users
         .doc(user!.uid)
-        .set({"name": user.displayName, "email": user.email, "course_ids": []});
+        .set({"name": user.displayName, "email": user.email});
   } on FirebaseException catch (e) {
     return Future.error(e);
     // TODO: fail harder and delete accounts if doc creation fails
   }
 }
 
-Future<void> createCourse(String uid, String name, String description) async {
+Future<void> createCourse(
+    String uid, String email, String name, String description) async {
   DocumentReference<Object?> value = await courses.add({
     "name": name,
     "description": description,
+    "roles": {
+      uid: {"email": email, "role": "owner"}
+    }
   });
-  users.doc(uid).update({
-    'course_ids': FieldValue.arrayUnion([value.id])
-  });
-  return courses.doc(value.id).update({'course_id': value.id});
+  courses.doc(value.id).update({"course_id": value.id});
+}
+
+Future<void> addUserToCourse(String courseId, String email) async {
+  QuerySnapshot userdoc = await users.where("email", isEqualTo: email).get();
+  if (userdoc.size == 0) {
+    throw Exception("User not found");
+  } else {
+    DocumentSnapshot doc = await courses.doc(courseId).get();
+    if (doc.exists) {
+      if (doc.get('roles').containsKey(userdoc.docs[0].id)) {
+        throw Exception("User already added to course");
+      }
+    }
+    String roleField = "roles.${userdoc.docs[0].id}.role";
+    String emailField = "roles.${userdoc.docs[0].id}.email";
+    await courses.doc(courseId).update({roleField: "user", emailField: email});
+  }
+}
+
+Future<void> removeUserFromCourse(String courseId, String uid) async {
+  String roleField = 'roles.' + uid;
+  await courses.doc(courseId).update({roleField: FieldValue.delete()});
 }
 
 Future<void> deleteCourse(String uid, String courseId) async {
   await courses.doc(courseId).delete();
-  await users.doc(uid).update({
-    'course_ids': FieldValue.arrayRemove([courseId])
-  });
 }
 
 Future<void> uploadStudyNotes(
@@ -57,6 +77,15 @@ Future<void> uploadDocumentDeltas(String delta, String fieldName,
   print("Deltas Saved");
 }
 
+Future<dynamic> getCoursePermList(String courseId) async {
+  DocumentSnapshot doc = await courses.doc(courseId).get();
+  if (doc.exists) {
+    return doc.get('roles');
+  } else {
+    return {};
+  }
+}
+
 Future<String> getStudyNotes(String transcriptId, String courseId) async {
   DocumentSnapshot doc =
       await courses.doc(courseId).collection('audios').doc(transcriptId).get();
@@ -64,15 +93,6 @@ Future<String> getStudyNotes(String transcriptId, String courseId) async {
     return doc.get('studyNotes');
   } else {
     return "empty";
-  }
-}
-
-Future<List<dynamic>> getUserCourseList(String uid) async {
-  DocumentSnapshot documentSnapshot = await users.doc(uid).get();
-  if (documentSnapshot.exists) {
-    return documentSnapshot.get('course_ids');
-  } else {
-    return ["null"];
   }
 }
 
@@ -86,9 +106,8 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
   return courses.doc(courseId).collection('audios').snapshots();
 }
 
-Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(
-    List<dynamic>? courseList) {
-  return courses.where(FieldPath.documentId, whereIn: courseList).snapshots();
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(String uid) {
+  return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
 }
 
 Future<void> createAudioDoc(User user, String courseID, String path) async {
