@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 Future<String> getSearchKey([bool devMode = false]) async {
@@ -34,4 +36,27 @@ Future<Map> getSearchResults(String key, String query) async {
   print(map);
   print(map['hits'].length);
   return map;
+}
+
+Future<String> getGeneratedStudyNotes(String promptText) async {
+  String? apiKey = dotenv.env['OPEN_AI_KEY'];
+  Map reqData = {
+    "prompt": promptText + ". To summarize in depth: 1.",
+    "max_tokens": 100,
+    "temperature": 0.3,
+    "stop": ["5."],
+  };
+  var response = await http.post(
+      Uri.parse('https://api.openai.com/v1/engines/davinci/completions'),
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer $apiKey",
+        HttpHeaders.acceptHeader: "application/json",
+        HttpHeaders.contentTypeHeader: "application/json",
+      },
+      body: jsonEncode(reqData));
+
+  Map<String, dynamic> map = json.decode(response.body);
+  List<dynamic> resp = map["choices"];
+  String studyNotes = "1. " + resp[0]["text"];
+  return studyNotes;
 }

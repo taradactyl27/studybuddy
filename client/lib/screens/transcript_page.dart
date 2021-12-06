@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
-import 'package:http/http.dart' as http;
+
+import 'package:studybuddy/services/api.dart' as api;
 import 'package:studybuddy/services/database.dart' as database;
 
 class TranscriptPage extends StatefulWidget {
@@ -29,39 +28,45 @@ class _TranscriptPageState extends State<TranscriptPage> {
   late List<QuillController> _controllers;
   late DocumentSnapshot<Map<String, dynamic>> transcriptMut;
   late bool isLoading;
+  late bool isSaveLoading;
   int tabID = 0;
 
   @override
   void initState() {
     super.initState();
     isLoading = false;
+    isSaveLoading = false;
     tabID = widget.tabID;
     transcriptMut = widget.transcript;
     var data = transcriptMut.data();
 
-    List<dynamic> initTextData = [
-      {
-        'insert': data != null && data['isTranscribing']
-            ? ''
-            : widget.transcript['text'] + '\n'
-      }
-    ];
+    List<dynamic> initTextData = data!.containsKey('deltas')
+        ? jsonDecode(data['deltas'])
+        : [
+            {
+              'insert':
+                  data['isTranscribing'] ? '' : widget.transcript['text'] + '\n'
+            }
+          ];
 
     List<dynamic> initNotesData;
-    if (data != null && transcriptMut['notesGenerated']) {
-      initNotesData = [
-        {
-          'insert': data['isTranscribing']
-              ? ''
-              : widget.transcript['studyNotes'] + '\n'
-        }
-      ];
+    if (data.containsKey('noteDeltas')) {
+      initNotesData = jsonDecode(data['noteDeltas']);
     } else {
-      initNotesData = [
-        {'insert': '\n'}
-      ];
+      if (data != null && transcriptMut['notesGenerated']) {
+        initNotesData = [
+          {
+            'insert': data['isTranscribing']
+                ? ''
+                : widget.transcript['studyNotes'] + '\n'
+          }
+        ];
+      } else {
+        initNotesData = [
+          {'insert': '\n'}
+        ];
+      }
     }
-
     _controllers = List.of(<QuillController>[
       QuillController(
           document: Document.fromJson(initTextData),
@@ -116,53 +121,28 @@ class _TranscriptPageState extends State<TranscriptPage> {
                       : TextButton(
                           style:
                               TextButton.styleFrom(primary: Colors.deepPurple),
-                          onPressed: () {
-                            setState(() async {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              String? apiKey = dotenv.env['OPEN_AI_KEY'];
-                              Map reqData = {
-                                "prompt": transcriptMut['text'] +
-                                    ". To summarize in depth: 1.",
-                                "max_tokens": 100,
-                                "temperature": 0.3,
-                                "stop": ["5."],
-                              };
-                              var response = await http.post(
-                                  Uri.parse(
-                                      'https://api.openai.com/v1/engines/davinci/completions'),
-                                  headers: {
-                                    HttpHeaders.authorizationHeader:
-                                        "Bearer $apiKey",
-                                    HttpHeaders.acceptHeader:
-                                        "application/json",
-                                    HttpHeaders.contentTypeHeader:
-                                        "application/json",
-                                  },
-                                  body: jsonEncode(reqData));
-                              Map<String, dynamic> map =
-                                  json.decode(response.body);
-                              print(map);
-                              List<dynamic> resp = map["choices"];
-                              String studyNotes = "1. " + resp[0]["text"];
-                              await database.uploadStudyNotes(studyNotes,
-                                  transcriptMut.id, widget.courseId);
-                              DocumentSnapshot<Map<String, dynamic>> temp =
-                                  await database.getTranscription(
-                                      transcriptMut.id, widget.courseId);
-                              setState(() {
-                                transcriptMut = temp;
-                                List<dynamic> initNotesData = [
-                                  {'insert': transcriptMut['studyNotes'] + '\n'}
-                                ];
-                                _controllers[1] = QuillController(
-                                    document: Document.fromJson(initNotesData),
-                                    selection: const TextSelection.collapsed(
-                                        offset: 0));
-                                isLoading = false;
-                                tabID = 1;
-                              });
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            String studyNotes = await api
+                                .getGeneratedStudyNotes(transcriptMut['text']);
+                            await database.uploadStudyNotes(
+                                studyNotes, transcriptMut.id, widget.courseId);
+                            DocumentSnapshot<Map<String, dynamic>> temp =
+                                await database.getTranscription(
+                                    transcriptMut.id, widget.courseId);
+                            setState(() {
+                              transcriptMut = temp;
+                              List<dynamic> initNotesData = [
+                                {'insert': transcriptMut['studyNotes'] + '\n'}
+                              ];
+                              _controllers[1] = QuillController(
+                                  document: Document.fromJson(initNotesData),
+                                  selection:
+                                      const TextSelection.collapsed(offset: 0));
+                              isLoading = false;
+                              tabID = 1;
                             });
                           },
                           child: !isLoading
@@ -210,8 +190,37 @@ class _TranscriptPageState extends State<TranscriptPage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.check, color: Colors.white),
+          onPressed: () async {
+            setState(() {
+              isSaveLoading = true;
+            });
+            String transcriptDeltasJson =
+                jsonEncode(_controllers[0].document.toDelta().toJson());
+            String? notesDeltasJson;
+            if (transcriptMut['notesGenerated']) {
+              notesDeltasJson =
+                  jsonEncode(_controllers[1].document.toDelta().toJson());
+            }
+            await database.uploadDocumentDeltas(transcriptDeltasJson, 'deltas',
+                transcriptMut.id, widget.courseId);
+            if (notesDeltasJson != null) {
+              await database.uploadDocumentDeltas(notesDeltasJson, 'noteDeltas',
+                  transcriptMut.id, widget.courseId);
+            }
+            setState(() {
+              isSaveLoading = false;
+            });
+          },
+          child: isSaveLoading
+              ? const Center(
+                  child: SizedBox(
+                    height: 15,
+                    width: 15,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2.0, color: Colors.white),
+                  ),
+                )
+              : const Icon(Icons.check, color: Colors.white),
         ));
   }
 }

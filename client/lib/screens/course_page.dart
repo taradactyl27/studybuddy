@@ -11,6 +11,7 @@ import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
+import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
 
 class CoursePage extends StatefulWidget {
@@ -37,7 +38,33 @@ class _CoursePageState extends State<CoursePage> {
     final uid = context.read<User>().uid;
     return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          actions: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await Navigator.of(context)
+                      .push(HeroDialogRoute(builder: (context) {
+                    return SharingForm(
+                        course: widget.course,
+                        isOwner:
+                            widget.course.get('roles')[uid]['role'] == "owner");
+                  }));
+                },
+                icon: const Icon(
+                  Icons.folder_shared,
+                  color: Colors.white,
+                  size: 24.0,
+                ),
+                label:
+                    const Text("Share", style: TextStyle(color: Colors.white)),
+              ),
+            )
+          ],
+        ),
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
@@ -138,22 +165,23 @@ class _CoursePageState extends State<CoursePage> {
                           })
                     ],
                   )),
-              Positioned(
-                  width: MediaQuery.of(context).size.width,
-                  bottom: 100,
-                  left: 0,
-                  child: Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
+              if (widget.course.get("roles")[uid]["role"] == "owner")
+                Positioned(
+                    width: MediaQuery.of(context).size.width,
+                    bottom: 100,
+                    left: 0,
+                    child: Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                        ),
+                        onPressed: () async {
+                          await database.deleteCourse(uid, widget.course.id);
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Delete Course"),
                       ),
-                      onPressed: () async {
-                        await database.deleteCourse(uid, widget.course.id);
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Delete Course"),
-                    ),
-                  )),
+                    )),
               Positioned(
                 bottom: 0,
                 left: 0,

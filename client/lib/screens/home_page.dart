@@ -62,19 +62,12 @@ class _HomePageState extends State<HomePage>
       setState(() {});
     });
     uid = context.read<User>().uid;
-    _courseIds = database.getUserCourseList(uid);
     _searchApiKey = getSearchKey(true);
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void _refreshCourses() {
-    setState(() {
-      _courseIds = database.getUserCourseList(uid);
-    });
   }
 
   void _retryKey() {
@@ -165,61 +158,39 @@ class _HomePageState extends State<HomePage>
                           fontWeight: FontWeight.w400,
                         ))),
                   ),
-                  FutureBuilder<List<dynamic>>(
-                    future: _courseIds,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        if (snapshot.data!.isNotEmpty) {
-                          return StreamBuilder(
-                              stream: database.getCourseStream(snapshot.data),
-                              builder: (context,
-                                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const SizedBox(
-                                      height: 200,
-                                      child: Center(
-                                          child: CircularProgressIndicator()));
-                                }
-                                return SizedBox(
-                                  height: 400,
-                                  child: GridView.count(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    crossAxisSpacing: 20,
-                                    crossAxisCount: 2,
-                                    padding: const EdgeInsets.all(30.0),
-                                    children: snapshot.data!.docs.map((course) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                                  context, routes.coursePage,
-                                                  arguments: {'course': course})
-                                              .then((value) {
-                                            _refreshCourses();
-                                          });
-                                        },
-                                        child: CourseTile(
-                                          course: course,
-                                          refreshCourses: _refreshCourses,
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                );
-                              });
-                        } else {
+                  StreamBuilder(
+                      stream: database.getCourseStream(uid),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData) {
                           return const SizedBox(
                               height: 200,
-                              child: Center(child: Text('Add a course!')));
+                              child:
+                                  Center(child: CircularProgressIndicator()));
                         }
-                      } else {
-                        return const SizedBox(
-                            height: 200,
-                            child: Center(child: CircularProgressIndicator()));
-                      }
-                    },
-                  ),
+                        return SizedBox(
+                          height: 400,
+                          child: GridView.count(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            crossAxisSpacing: 20,
+                            crossAxisCount: 2,
+                            padding: const EdgeInsets.all(30.0),
+                            children: snapshot.data!.docs.map((course) {
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, routes.coursePage,
+                                      arguments: {'course': course});
+                                },
+                                child: CourseTile(
+                                  course: course,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      })
                 ],
               ),
               if (isSearching)
@@ -244,55 +215,44 @@ class _HomePageState extends State<HomePage>
                                 : const Duration(milliseconds: 850),
                             alignment: alignment1,
                             curve: toggle ? Curves.easeIn : Curves.easeOut,
-                            child: FutureBuilder<List<dynamic>>(
-                              future: _courseIds,
-                              builder: (context, snapshot) {
-                                var audioButtonContainer = AnimatedContainer(
-                                  duration: const Duration(milliseconds: 275),
-                                  curve:
-                                      toggle ? Curves.easeIn : Curves.easeOut,
-                                  height: size1,
-                                  width: size1,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF63FFD5),
-                                    borderRadius: BorderRadius.circular(40.0),
-                                  ),
-                                  child: const Icon(Icons.mic_rounded,
-                                      color: Colors.white),
-                                );
-                                if (snapshot.connectionState ==
-                                        ConnectionState.done &&
-                                    snapshot.hasData) {
-                                  if (snapshot.data!.isNotEmpty) {
-                                    return StreamBuilder(
-                                        stream: database
-                                            .getCourseStream(snapshot.data),
-                                        builder: (context,
-                                            AsyncSnapshot<QuerySnapshot>
-                                                snapshot) {
-                                          if (!snapshot.hasData) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                print("loading course data");
-                                              },
-                                              child: audioButtonContainer,
-                                            );
-                                          }
-                                          return GestureDetector(
-                                            onTap: () async {
-                                              print("opening audio form");
-                                              await Navigator.of(context).push(
-                                                  HeroDialogRoute(
-                                                      builder: (context) {
-                                                return AudioForm(
-                                                  courseList:
-                                                      snapshot.data!.docs,
-                                                );
-                                              }));
-                                            },
-                                            child: audioButtonContainer,
+                            child: StreamBuilder(
+                                stream: database.getCourseStream(uid),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  var audioButtonContainer = AnimatedContainer(
+                                    duration: const Duration(milliseconds: 275),
+                                    curve:
+                                        toggle ? Curves.easeIn : Curves.easeOut,
+                                    height: size1,
+                                    width: size1,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF63FFD5),
+                                      borderRadius: BorderRadius.circular(40.0),
+                                    ),
+                                    child: const Icon(Icons.mic_rounded,
+                                        color: Colors.white),
+                                  );
+                                  if (!snapshot.hasData) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        print("loading course data");
+                                      },
+                                      child: audioButtonContainer,
+                                    );
+                                  }
+                                  if (snapshot.data != null) {
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        print("opening audio form");
+                                        await Navigator.of(context).push(
+                                            HeroDialogRoute(builder: (context) {
+                                          return AudioForm(
+                                            courseList: snapshot.data!.docs,
                                           );
-                                        });
+                                        }));
+                                      },
+                                      child: audioButtonContainer,
+                                    );
                                   } else {
                                     return GestureDetector(
                                       onTap: () {
@@ -301,16 +261,7 @@ class _HomePageState extends State<HomePage>
                                       child: audioButtonContainer,
                                     );
                                   }
-                                } else {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      print("loading course ids");
-                                    },
-                                    child: audioButtonContainer,
-                                  );
-                                }
-                              },
-                            )),
+                                })),
                         AnimatedAlign(
                             duration: toggle
                                 ? const Duration(milliseconds: 275)
@@ -325,9 +276,7 @@ class _HomePageState extends State<HomePage>
                                   Navigator.of(context)
                                       .push(HeroDialogRoute(builder: (context) {
                                     return const ClassCreationCard();
-                                  })).then((value) {
-                                    _refreshCourses();
-                                  });
+                                  }));
                                 },
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 275),
