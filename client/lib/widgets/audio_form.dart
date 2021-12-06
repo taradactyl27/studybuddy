@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,10 +7,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-
+import 'package:studybuddy/services/sound_recorder.dart';
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/services/database.dart' as database
     show newLectureRef, getUserCourseStream;
+import 'package:studybuddy/routes/routes.dart' as routes;
 
 class AudioForm extends StatefulWidget {
   /// {@macro add_todo_popup_card}
@@ -98,9 +101,11 @@ class _AudioFormState extends State<AudioForm> {
                             uploading = true;
                           });
                           String audioID = database.newLectureRef(courseID).id;
+                          File file = File(result.files.single.path!);
+                          String name = result.files.single.name;
 
                           UploadTask upload = storage.createUpload(
-                              user, courseID, audioID, result);
+                              user, courseID, audioID, file, name);
 
                           upload.snapshotEvents.listen((event) {
                             setState(() {
@@ -135,6 +140,56 @@ class _AudioFormState extends State<AudioForm> {
                                 color: Colors.white,
                               )),
                     ),
+                    ElevatedButton(
+                        onPressed: () async {
+                          // _formKey.currentState!.save();
+                          // String courseID =
+                          //     _formKey.currentState!.value['courseID'];
+
+                          await Navigator.pushNamed(
+                              context, routes.recordingPage);
+
+                          print("came back from route");
+                        },
+                        child: const Text('Record')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          _formKey.currentState!.save();
+                          String courseID =
+                              _formKey.currentState!.value['courseID'];
+
+                          String temp = recentFilePath;
+                          String tempFileName = "test File 1";
+                          print("recording file and name updated");
+
+                          setState(() {
+                            uploading = true;
+                          });
+                          print("started uploading");
+
+                          String audioID = database.newLectureRef(courseID).id;
+                          File file = File(temp);
+                          String name = tempFileName;
+
+                          UploadTask upload = storage.createUpload(
+                              user, courseID, audioID, file, name);
+
+                          upload.snapshotEvents.listen((event) {
+                            setState(() {
+                              progress =
+                                  (event.bytesTransferred / event.totalBytes);
+                            });
+                          });
+
+                          await upload;
+                          print('audio UPLOAD done!!!');
+
+                          setState(() {
+                            uploading = false;
+                            progress = 0;
+                          });
+                        },
+                        child: const Text('Upload Most Recent Recording'))
                   ],
                 ),
               ),

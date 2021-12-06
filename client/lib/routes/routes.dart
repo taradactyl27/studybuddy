@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:studybuddy/screens/course.dart';
 import 'package:studybuddy/screens/login.dart';
 import 'package:studybuddy/screens/register.dart';
+import 'package:studybuddy/screens/recording_page.dart';
 import 'package:studybuddy/screens/settings.dart';
 import 'package:studybuddy/screens/transcript.dart';
 import 'package:studybuddy/screens/layout.dart';
@@ -16,6 +17,7 @@ const String homePage = '/home';
 const String coursePage = '/courses';
 const String settingsPage = '/settings';
 const String transcriptPage = '/transcript';
+const String recordingPage = '/recording';
 
 Route<dynamic> controller(RouteSettings settings) {
   // routing logic
@@ -38,6 +40,8 @@ Route<dynamic> controller(RouteSettings settings) {
             transcript: arguments["transcript"],
             courseId: arguments["course_id"],
           );
+        case recordingPage:
+          return const RecordingPage();
         default:
           return const Scaffold(
             body: Center(
