@@ -13,7 +13,7 @@ const ALGOLIA_INDEX_NAME = "audios";
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 client.initIndex(ALGOLIA_INDEX_NAME).setSettings({
-  attributesForFaceting: ['filterOnly(owner)']
+  attributesForFaceting: ["filterOnly(owner)"],
 });
 
 const audioDocPath = "courses/{courseID}/audios/{audioID}";

@@ -15,11 +15,12 @@ void main() async {
   await Firebase.initializeApp();
   await dotenv.load();
 
-  if (dotenv.env['EMULATE_FUNCTIONS'] == 'true') {
+  // TODO: check empty string vs null
+  if (dotenv.get('EMULATE_FUNCTIONS', fallback: '') == 'y') {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
 
-  if (dotenv.env['EMULATE_FIRESTORE'] == 'true') {
+  if (dotenv.get('EMULATE_FIRESTORE', fallback: '') == 'y') {
     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   }
 

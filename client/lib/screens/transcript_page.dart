@@ -8,8 +8,6 @@ import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:http/http.dart' as http;
 import 'package:studybuddy/services/database.dart' as database;
 
-import '../services/storage.dart' show attemptTranscript;
-
 class TranscriptPage extends StatefulWidget {
   const TranscriptPage(
       {Key? key,
@@ -40,11 +38,6 @@ class _TranscriptPageState extends State<TranscriptPage> {
     tabID = widget.tabID;
     transcriptMut = widget.transcript;
     var data = transcriptMut.data();
-
-    if (data != null && data['isTranscribing']) {
-      attemptTranscript(
-          widget.courseId, widget.transcript.id, data['transcriptRef']);
-    }
 
     List<dynamic> initTextData = [
       {

@@ -10,7 +10,6 @@ import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:studybuddy/services/storage.dart';
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
 
@@ -107,14 +106,9 @@ class _CoursePageState extends State<CoursePage> {
                                   children:
                                       snapshot.data!.docs.map((transcript) {
                                     var data = transcript.data();
-                                    if (data.containsKey('isTranscribing') &&
-                                        data['isTranscribing'] &&
-                                        data.containsKey('transcriptRef')) {
-                                      attemptTranscript(
-                                          widget.course.get('course_id'),
-                                          transcript.id,
-                                          data['transcriptRef']);
-                                    }
+                                    final courseID =
+                                        widget.course.get('course_id');
+
                                     if (transcript.data().containsKey('text')) {
                                       return InkWell(
                                         onTap: () {
@@ -122,14 +116,12 @@ class _CoursePageState extends State<CoursePage> {
                                               context, routes.transcriptPage,
                                               arguments: {
                                                 'transcript': transcript,
-                                                'course_id': widget.course
-                                                    .get('course_id')
+                                                'course_id': courseID
                                               });
                                         },
                                         child: TranscriptTile(
                                           transcript: transcript,
-                                          courseId:
-                                              widget.course.get('course_id'),
+                                          courseId: courseID,
                                         ),
                                       );
                                     } else {
@@ -137,8 +129,7 @@ class _CoursePageState extends State<CoursePage> {
                                         onTap: null,
                                         child: TranscriptTile(
                                           transcript: transcript,
-                                          courseId:
-                                              widget.course.get('course_id'),
+                                          courseId: courseID,
                                         ),
                                       );
                                     }

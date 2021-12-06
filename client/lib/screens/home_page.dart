@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage>
     });
     uid = context.read<User>().uid;
     _courseIds = database.getUserCourseList(uid);
-    _searchApiKey = getSearchKey();
+    _searchApiKey = getSearchKey(true);
   }
 
   @override
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage>
 
   void submitSearch(AsyncSnapshot<String> snapshot) async {
     if (snapshot.connectionState == ConnectionState.done) {
-      if (snapshot.hasData) {
+      if (snapshot.hasData && snapshot.data != "") {
         setState(() {
           isSearching = true;
           isLoading = true;
@@ -97,6 +97,7 @@ class _HomePageState extends State<HomePage>
           isLoading = false;
         });
       } else {
+        print("retrying algolia key!!");
         _retryKey();
       }
     }
