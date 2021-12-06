@@ -15,7 +15,6 @@ void main() async {
   await Firebase.initializeApp();
   await dotenv.load();
 
-  // TODO: check empty string vs null
   if (dotenv.get('EMULATE_FUNCTIONS', fallback: '') == 'y') {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }
