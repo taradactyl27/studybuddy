@@ -18,6 +18,19 @@ Future<void> createUserDoc(User? user) async {
   }
 }
 
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(String uid) {
+  return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
+}
+
+Future<dynamic> getCoursePermList(String courseId) async {
+  DocumentSnapshot doc = await courses.doc(courseId).get();
+  if (doc.exists) {
+    return doc.get('roles');
+  } else {
+    return {};
+  }
+}
+
 Future<void> createCourse(
     String uid, String email, String name, String description) async {
   DocumentReference<Object?> value = await courses.add({
@@ -56,13 +69,18 @@ Future<void> deleteCourse(String uid, String courseId) async {
   await courses.doc(courseId).delete();
 }
 
-Future<dynamic> getCoursePermList(String courseId) async {
-  DocumentSnapshot doc = await courses.doc(courseId).get();
-  if (doc.exists) {
-    return doc.get('roles');
-  } else {
-    return {};
-  }
+DocumentReference<Map<String, dynamic>> newLectureRef(String courseID) {
+  return courses.doc(courseID).collection('audios').doc();
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
+    String courseId) {
+  return courses.doc(courseId).collection('audios').snapshots();
+}
+
+Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
+    String transcriptId, String courseId) {
+  return courses.doc(courseId).collection('audios').doc(transcriptId).get();
 }
 
 Future<void> uploadStudyNotes(
@@ -93,22 +111,4 @@ Future<void> uploadDocumentDeltas(String delta, String fieldName,
       .doc(transcriptId)
       .update({fieldName: delta});
   print("Deltas Saved");
-}
-
-Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
-    String transcriptId, String courseId) {
-  return courses.doc(courseId).collection('audios').doc(transcriptId).get();
-}
-
-Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
-    String courseId) {
-  return courses.doc(courseId).collection('audios').snapshots();
-}
-
-Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(String uid) {
-  return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
-}
-
-DocumentReference<Map<String, dynamic>> getNewAudioRef(String courseID) {
-  return courses.doc(courseID).collection('audios').doc();
 }

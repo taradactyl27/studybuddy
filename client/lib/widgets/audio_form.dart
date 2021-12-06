@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/services/database.dart' as database
-    show getNewAudioRef;
+    show newLectureRef;
 
 class AudioForm extends StatefulWidget {
   /// {@macro add_todo_popup_card}
@@ -88,7 +88,7 @@ class _AudioFormState extends State<AudioForm> {
                           setState(() {
                             uploading = true;
                           });
-                          String audioID = database.getNewAudioRef(courseID).id;
+                          String audioID = database.newLectureRef(courseID).id;
 
                           UploadTask upload = storage.createUpload(
                               user, courseID, audioID, result);
