@@ -111,7 +111,7 @@ class _SharingFormState extends State<SharingForm> {
                         cursorColor: Colors.white,
                       ),
                     widget.isOwner
-                        ? Container(
+                        ? SizedBox(
                             width: 150,
                             child: ElevatedButton(
                               onPressed: () async {
