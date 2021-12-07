@@ -7,7 +7,6 @@ import 'package:studybuddy/widgets/user_tile.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 
 class SharingForm extends StatefulWidget {
-  /// {@macro add_todo_popup_card}
   const SharingForm({
     Key? key,
     required this.course,
@@ -112,7 +111,7 @@ class _SharingFormState extends State<SharingForm> {
                         cursorColor: Colors.white,
                       ),
                     widget.isOwner
-                        ? Container(
+                        ? SizedBox(
                             width: 150,
                             child: ElevatedButton(
                               onPressed: () async {

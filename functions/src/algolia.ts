@@ -13,11 +13,13 @@ const ALGOLIA_INDEX_NAME = "audios";
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 client.initIndex(ALGOLIA_INDEX_NAME).setSettings({
-  attributesForFaceting: ['filterOnly(owner)']
+  attributesForFaceting: ["filterOnly(owner)"],
 });
 
+const audioDocPath = "courses/{courseID}/audios/{audioID}";
+
 export const onAudioCreated = functions.firestore
-  .document("courses/{courseID}/audios/{audioID}")
+  .document(audioDocPath)
   .onUpdate((change, context) => {
     // Get the updated document
     const audio = change.after.data();
@@ -35,7 +37,7 @@ export const onAudioCreated = functions.firestore
   });
 
 export const onAudioDeleted = functions.firestore
-  .document("courses/{courseID}/audios/{audioID}")
+  .document(audioDocPath)
   .onDelete((_snap, context) => {
     const index = client.initIndex(ALGOLIA_INDEX_NAME);
     return index.deleteObject(context.params.audioID);

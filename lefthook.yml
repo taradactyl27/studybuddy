@@ -2,13 +2,30 @@
 # https://github.com/evilmartians/lefthook/blob/master/docs/full_guide.md
 
 pre-commit:
+  piped: true
+  skip:
+    - merge
+    - rebase
   commands:
-    lint_code:
+    1_format_client:
       glob: '*.dart'
+      run: flutter format {staged_files}
+    2_stage_files:
+      files: git diff --name-only
+      run: git add client
+
+pre-push:
+  piped: true
+  skip:
+    - merge
+    - rebase
+  commands:
+    1_analyze_client:
+      glob: 'client/*.dart'
       run: dart fix client --apply && git add client
-    format_code:
-      glob: '*.dart'
-      run: flutter format {staged_files} && git add client
+    2_add_fix_commit:
+      files: git diff --staged --name-only
+      run: LEFTHOOK=0 git commit -m "dart fix"
 
 # Example
 # pre-commit:

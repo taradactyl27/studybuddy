@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class ClassCreationCard extends StatefulWidget {
-  /// {@macro add_todo_popup_card}
   const ClassCreationCard({Key? key}) : super(key: key);
   @override
   State<ClassCreationCard> createState() => _ClassCreationCardState();
