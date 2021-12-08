@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' show User;
 
 final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -16,6 +15,19 @@ Future<void> createUserDoc(User? user) async {
   } on FirebaseException catch (e) {
     return Future.error(e);
     // TODO: fail harder and delete accounts if doc creation fails
+  }
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(String uid) {
+  return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
+}
+
+Future<dynamic> getCoursePermList(String courseId) async {
+  DocumentSnapshot doc = await courses.doc(courseId).get();
+  if (doc.exists) {
+    return doc.get('roles');
+  } else {
+    return {};
   }
 }
 
@@ -57,6 +69,20 @@ Future<void> deleteCourse(String uid, String courseId) async {
   await courses.doc(courseId).delete();
 }
 
+DocumentReference<Map<String, dynamic>> newLectureRef(String courseID) {
+  return courses.doc(courseID).collection('audios').doc();
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
+    String courseId) {
+  return courses.doc(courseId).collection('audios').snapshots();
+}
+
+Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
+    String transcriptId, String courseId) {
+  return courses.doc(courseId).collection('audios').doc(transcriptId).get();
+}
+
 Future<void> uploadStudyNotes(
     String notes, String transcriptId, String courseId) async {
   await courses
@@ -65,25 +91,6 @@ Future<void> uploadStudyNotes(
       .doc(transcriptId)
       .update({'studyNotes': notes, 'notesGenerated': true});
   print("NOTES UPLOADED");
-}
-
-Future<void> uploadDocumentDeltas(String delta, String fieldName,
-    String transcriptId, String courseId) async {
-  await courses
-      .doc(courseId)
-      .collection('audios')
-      .doc(transcriptId)
-      .update({fieldName: delta});
-  print("Deltas Saved");
-}
-
-Future<dynamic> getCoursePermList(String courseId) async {
-  DocumentSnapshot doc = await courses.doc(courseId).get();
-  if (doc.exists) {
-    return doc.get('roles');
-  } else {
-    return {};
-  }
 }
 
 Future<String> getStudyNotes(String transcriptId, String courseId) async {
@@ -96,59 +103,12 @@ Future<String> getStudyNotes(String transcriptId, String courseId) async {
   }
 }
 
-Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
-    String transcriptId, String courseId) {
-  return courses.doc(courseId).collection('audios').doc(transcriptId).get();
-}
-
-Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
-    String courseId) {
-  return courses.doc(courseId).collection('audios').snapshots();
-}
-
-Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(String uid) {
-  return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
-}
-
-Future<void> createAudioDoc(User user, String courseID, String path) async {
-  String uid = user.uid;
-  try {
-    DocumentReference<Map<String, dynamic>> audioDoc =
-        courses.doc(courseID).collection('audios').doc();
-
-    await audioDoc.set({
-      'owner': uid,
-      'created': Timestamp.now(),
-      'audioRef': path,
-      'notesGenerated': false,
-    });
-
-    HttpsCallable callable = FirebaseFunctions.instance
-        .httpsCallable('transcription-mockTranscript');
-
-    final result = await callable({
-      'storagePath': path,
-    });
-
-    final data = Map<String, dynamic>.from(result.data);
-
-    if (data['path'] != null) {
-      await audioDoc.update({
-        'transcriptRef': data['path'],
-        'isTranscribing': true,
-      });
-      return;
-    }
-
-    // TODO: release control here and set necessary data for background transcription loading
-
-    if (data['operationID'] != null) {
-      print(data['operationID']);
-    }
-
-    print("error in transcribing process");
-    return;
-  } on FirebaseException catch (e) {
-    print(e);
-  }
+Future<void> uploadDocumentDeltas(String delta, String fieldName,
+    String transcriptId, String courseId) async {
+  await courses
+      .doc(courseId)
+      .collection('audios')
+      .doc(transcriptId)
+      .update({fieldName: delta});
+  print("Deltas Saved");
 }

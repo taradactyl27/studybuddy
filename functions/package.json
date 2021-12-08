@@ -18,9 +18,14 @@
   "dependencies": {
     "@google-cloud/firestore": "^4.15.1",
     "@google-cloud/speech": "^4.9.0",
+    "@types/ffmpeg-static": "^3.0.0",
+    "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/node": "^16.11.10",
     "algoliasearch": "^4.11.0",
+    "ffmpeg-static": "^4.4.0",
     "firebase-admin": "^9.12.0",
     "firebase-functions": "^3.16.0",
+    "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security"
   },
   "devDependencies": {

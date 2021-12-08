@@ -47,10 +47,14 @@ class _TranscriptTileState extends State<TranscriptTile> {
             Visibility(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Text("gone transcribin'. check back soon"),
-                  Text(
+                children: [
+                  const Text("gone transcribin'. check back soon"),
+                  const Text(
                       "(it's not like YOU ever actually study right after class)"),
+                  Text("status: " +
+                      (widget.transcript.data().containsKey("status")
+                          ? widget.transcript['status']
+                          : "stealing ur data...")),
                 ],
               ),
               visible: !hasText,

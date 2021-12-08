@@ -5,7 +5,10 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-Future<String> getSearchKey() async {
+Future<String> getSearchKey([bool devMode = false]) async {
+  if (devMode) {
+    return "";
+  }
   HttpsCallable callable =
       FirebaseFunctions.instance.httpsCallable('algolia-generateSearchKey');
   final result = await callable();
@@ -13,12 +16,6 @@ Future<String> getSearchKey() async {
 }
 
 Future<Map> getSearchResults(String key, String query) async {
-  // TODO: delete post mvp
-  // HttpsCallable callable =
-  //     FirebaseFunctions.instance.httpsCallable('algolia-generateSearchKey');
-  // final result = await callable();
-  // String key = result.data['key'];
-
   Map<String, String> _headers = <String, String>{
     'X-Algolia-Application-Id': 'STFQQELZGY',
     'X-Algolia-API-Key': key,
