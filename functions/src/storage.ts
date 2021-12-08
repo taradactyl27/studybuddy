@@ -5,14 +5,11 @@ import * as fs from "fs";
 import ffmpegCommand from "fluent-ffmpeg";
 import ffmpeg_static from "ffmpeg-static";
 import { startTranscribe } from "./transcription";
-import { defaultMockTranscriptPath } from "./mocks";
 
 import { admin, bucket } from "./config";
 
-export const toTranscriptPath = (audioPath: string) => {
-  const { dir, name } = path.parse(audioPath);
-  return `${path.join(dir, name)}_transcript.json`;
-};
+const defaultMockTranscriptPath = "mock_transcript.json";
+const extensionRegex = /\.[^/.]+$/;
 
 export const onObjectUploaded = functions
   .runWith({
@@ -99,7 +96,7 @@ export const onObjectUploaded = functions
 
       const transcriptPath = `${courseID}/${audioID}/${
         mocker.includes("admin") ? "admin/" : ""
-      }${toTranscriptPath(path.basename(filePath))}`;
+      }${filePath.replace(extensionRegex, "_transcript.json")}`;
 
       await audioDoc.update({
         status: "transcribing file...",
@@ -152,7 +149,7 @@ const convertToFlac = async (
 ) => {
   const fileName = path.basename(filePath);
   const tempFilePath = path.join(os.tmpdir(), fileName);
-  const targetTempFileName = fileName.replace(/\.[^/.]+$/, "") + ".flac";
+  const targetTempFileName = fileName.replace(extensionRegex, ".flac");
   const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
   const targetStorageFilePath = path.join(
     path.dirname(filePath),
