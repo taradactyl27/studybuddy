@@ -52,6 +52,10 @@ dependencies:
   flutter_speed_dial: ^4.6.6
   flutterfire_ui: ^0.1.0-dev.2
   flutter_facebook_auth: ^3.5.7
+  flutter_local_notifications: ^9.1.4
+  flutter_native_timezone: ^2.0.0
+  timezone: ^0.8.0
+  device_info: ^2.0.3
 
 dev_dependencies:
   flutter_test:
