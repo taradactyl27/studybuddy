@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ import 'package:studybuddy/services/api.dart'
 import 'package:studybuddy/widgets/course_tile.dart';
 import 'package:studybuddy/widgets/search_result.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
+
+import '../responsive.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -106,7 +109,9 @@ class _HomePageState extends State<HomePage>
         ),
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButtonLocation: kIsWeb
+            ? FloatingActionButtonLocation.endFloat
+            : FloatingActionButtonLocation.endDocked,
         floatingActionButton: SpeedDial(
           iconTheme: const IconThemeData(color: Colors.white),
           icon: Icons.add,
@@ -139,37 +144,53 @@ class _HomePageState extends State<HomePage>
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: ListView(
-            padding: const EdgeInsets.only(top: 25, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 45, left: 15, right: 15),
             children: [
-              Container(
-                  padding: const EdgeInsets.all(30),
-                  height: 100,
-                  child: FutureBuilder<String>(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  if (kIsWeb && !Responsive.isDesktop(context))
+                    IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {
+                        _scaffoldKey.currentState!.openDrawer();
+                      },
+                    ),
+                  FutureBuilder<String>(
                       future: _searchApiKey,
                       builder: (context, snapshot) {
-                        return TextField(
-                          onSubmitted: (value) async {
-                            submitSearch(snapshot);
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Search...",
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                              borderSide: const BorderSide(),
-                            ),
-                            suffixIcon: IconButton(
-                              onPressed: () async {
+                        return Expanded(
+                          child: SizedBox(
+                            height: 40,
+                            child: TextField(
+                              selectionHeightStyle: BoxHeightStyle.tight,
+                              onSubmitted: (value) async {
                                 submitSearch(snapshot);
                               },
-                              icon: const Icon(Icons.search),
+                              decoration: InputDecoration(
+                                labelText: "Search...",
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(),
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed: () async {
+                                    submitSearch(snapshot);
+                                  },
+                                  icon: const Icon(Icons.search),
+                                ),
+                              ),
+                              controller: _searchController,
                             ),
                           ),
-                          controller: _searchController,
                         );
-                      })),
+                      }),
+                ],
+              ),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
+              SizedBox(height: 20),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("Recently Edited",
                     style: GoogleFonts.nunito(
@@ -234,20 +255,22 @@ class _HomePageState extends State<HomePage>
             ],
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 8.0,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () {
-                      _scaffoldKey.currentState!.openDrawer();
-                    },
-                  ),
-                ])),
+        bottomNavigationBar: kIsWeb
+            ? null
+            : BottomAppBar(
+                shape: const CircularNotchedRectangle(),
+                notchMargin: 8.0,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                      ),
+                    ])),
       ),
     );
   }
