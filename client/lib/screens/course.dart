@@ -11,6 +11,7 @@ import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
@@ -224,10 +225,11 @@ class _CoursePageState extends State<CoursePage> {
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          CustomPaint(
-                            size: Size(MediaQuery.of(context).size.width, 80),
-                            painter: BNBCustomPainter(),
-                          ),
+                          if (!kIsWeb)
+                            CustomPaint(
+                              size: Size(MediaQuery.of(context).size.width, 80),
+                              painter: BNBCustomPainter(),
+                            ),
                           Stack(alignment: const Alignment(0, 0), children: [
                             Center(
                               heightFactor: 0.82,
@@ -245,62 +247,64 @@ class _CoursePageState extends State<CoursePage> {
                               ),
                             ),
                           ]),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 80,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.home,
-                                    color: currentIndex == 0
-                                        ? const Color(0xFF61A3FE)
-                                        : Colors.grey.shade400,
+                          if (!kIsWeb)
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 80,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.home,
+                                      color: currentIndex == 0
+                                          ? const Color(0xFF61A3FE)
+                                          : Colors.grey.shade400,
+                                    ),
+                                    onPressed: () {
+                                      setBottomBarIndex(0);
+                                    },
+                                    splashColor: Colors.white,
                                   ),
-                                  onPressed: () {
-                                    setBottomBarIndex(0);
-                                  },
-                                  splashColor: Colors.white,
-                                ),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.menu_book_rounded,
-                                      color: currentIndex == 1
-                                          ? const Color(0xFF61A3FE)
-                                          : Colors.grey.shade400,
-                                    ),
-                                    onPressed: () {
-                                      setBottomBarIndex(1);
-                                    }),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.20,
-                                ),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.bookmark,
-                                      color: currentIndex == 2
-                                          ? const Color(0xFF61A3FE)
-                                          : Colors.grey.shade400,
-                                    ),
-                                    onPressed: () {
-                                      setBottomBarIndex(2);
-                                    }),
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.settings_rounded,
-                                      color: currentIndex == 3
-                                          ? const Color(0xFF61A3FE)
-                                          : Colors.grey.shade400,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, routes.settingsPage);
-                                    }),
-                              ],
-                            ),
-                          )
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.menu_book_rounded,
+                                        color: currentIndex == 1
+                                            ? const Color(0xFF61A3FE)
+                                            : Colors.grey.shade400,
+                                      ),
+                                      onPressed: () {
+                                        setBottomBarIndex(1);
+                                      }),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.20,
+                                  ),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.bookmark,
+                                        color: currentIndex == 2
+                                            ? const Color(0xFF61A3FE)
+                                            : Colors.grey.shade400,
+                                      ),
+                                      onPressed: () {
+                                        setBottomBarIndex(2);
+                                      }),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.settings_rounded,
+                                        color: currentIndex == 3
+                                            ? const Color(0xFF61A3FE)
+                                            : Colors.grey.shade400,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, routes.settingsPage);
+                                      }),
+                                ],
+                              ),
+                            )
                         ],
                       ),
                     ),
