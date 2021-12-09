@@ -13,49 +13,31 @@ class CourseTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      transitionOnUserGestures: true,
-      tag: {course.id},
-      child: ClipPath(
-        clipper: SideCutClipper(),
-        child: Container(
-          height: 80,
-          width: 80,
-          margin: const EdgeInsets.only(bottom: 32),
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF61A3FE), Color(0xFF63FFD5)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: [const Color(0xFF61A3FE), const Color(0xFF63FFD5)]
-                    .last
-                    .withOpacity(0.4),
-                blurRadius: 8,
-                spreadRadius: 2,
-                offset: const Offset(4, 4),
-              ),
-            ],
-            borderRadius: const BorderRadius.all(Radius.circular(24)),
+    return Stack(
+      clipBehavior: Clip.hardEdge,
+      children: [
+        Container(
+          height: 100,
+          width: 150,
+          decoration: const BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                child: Text(course['name'],
-                    style: GoogleFonts.nunito(
-                      textStyle:
-                          const TextStyle(color: Colors.white, fontSize: 21),
-                    )),
+              Row(
+                children: [
+                  Text(course['name'],
+                      style: GoogleFonts.nunito(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 18),
+                      ))
+                ],
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

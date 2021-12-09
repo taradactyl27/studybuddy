@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ import 'package:studybuddy/services/api.dart'
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
 import 'package:studybuddy/widgets/search_result.dart';
+import 'package:studybuddy/widgets/side_menu.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -30,6 +32,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int currentIndex = 0;
   bool isSearching = false;
   bool isLoading = true;
@@ -37,7 +40,6 @@ class _HomePageState extends State<HomePage>
   Map searchResults = {};
   final TextEditingController _searchController = TextEditingController();
   late String uid;
-  late Future<List<dynamic>> _courseIds;
   late AnimationController _controller;
   late Animation _animation;
   late Future<String> _searchApiKey;
@@ -116,10 +118,47 @@ class _HomePageState extends State<HomePage>
         });
       },
       child: Scaffold(
+        key: _scaffoldKey,
+        drawer: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 250),
+          child: SideMenu(),
+        ),
+        extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
-        body: Container(
-          padding: const EdgeInsets.only(top: 55),
-          child: Stack(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: SpeedDial(
+          iconTheme: const IconThemeData(color: Colors.white),
+          icon: Icons.add,
+          activeIcon: Icons.close,
+          spacing: 10,
+          overlayColor: Colors.blueGrey,
+          overlayOpacity: 0.6,
+          children: [
+            SpeedDialChild(
+                child: const Icon(Icons.my_library_add_rounded,
+                    color: Colors.black),
+                label: "Add Course",
+                onTap: () {
+                  Navigator.of(context)
+                      .push(HeroDialogRoute(builder: (context) {
+                    return const ClassCreationCard();
+                  }));
+                }),
+            SpeedDialChild(
+                child: const Icon(Icons.mic_rounded, color: Colors.black),
+                label: 'Upload Lecture',
+                onTap: () {
+                  Navigator.of(context)
+                      .push(HeroDialogRoute(builder: (context) {
+                    return AudioForm();
+                  }));
+                })
+          ],
+        ),
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: ListView(
+            padding: const EdgeInsets.only(top: 25, left: 15, right: 15),
             children: [
               Container(
                   padding: const EdgeInsets.all(30),
@@ -148,30 +187,36 @@ class _HomePageState extends State<HomePage>
                           controller: _searchController,
                         );
                       })),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text("Recently Edited",
+                    style: GoogleFonts.nunito(
+                        textStyle: const TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w400,
+                    ))),
+                const SizedBox(height: 200)
+              ]),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.only(top: 80, left: 30),
-                    child: Text("Your Courses",
-                        style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.w400,
-                        ))),
-                  ),
+                  Text("Your Courses",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w400,
+                      ))),
                   StreamBuilder(
                       stream: database.getUserCourseStream(uid),
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return const SizedBox(
-                              height: 200,
+                              height: 300,
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
                         return SizedBox(
-                          height: 400,
+                          height: 300,
                           child: GridView.count(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -203,199 +248,213 @@ class _HomePageState extends State<HomePage>
               ),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                child: SizedBox(
-                  width: size.width,
-                  height: 80,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      if (!kIsWeb)
-                        CustomPaint(
-                          size: Size(size.width, 80),
-                          painter: BNBCustomPainter(),
-                        ),
-                      Stack(alignment: const Alignment(0, -1.4), children: [
-                        AnimatedAlign(
-                            duration: toggle
-                                ? const Duration(milliseconds: 275)
-                                : const Duration(milliseconds: 850),
-                            alignment: alignment1,
-                            curve: toggle ? Curves.easeIn : Curves.easeOut,
-                            child: StreamBuilder(
-                                stream: database.getUserCourseStream(uid),
-                                builder: (context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  var audioButtonContainer = AnimatedContainer(
-                                    duration: const Duration(milliseconds: 275),
-                                    curve:
-                                        toggle ? Curves.easeIn : Curves.easeOut,
-                                    height: size1,
-                                    width: size1,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF63FFD5),
-                                      borderRadius: BorderRadius.circular(40.0),
-                                    ),
-                                    child: const Icon(Icons.mic_rounded,
-                                        color: Colors.white),
-                                  );
-                                  if (!snapshot.hasData) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        print("loading course data");
-                                      },
-                                      child: audioButtonContainer,
-                                    );
-                                  }
-                                  if (snapshot.data != null) {
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        print("opening audio form");
-                                        await Navigator.of(context).push(
-                                            HeroDialogRoute(builder: (context) {
-                                          return AudioForm(
-                                            courseList: snapshot.data!.docs,
-                                          );
-                                        }));
-                                      },
-                                      child: audioButtonContainer,
-                                    );
-                                  } else {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        print("must create a course first");
-                                      },
-                                      child: audioButtonContainer,
-                                    );
-                                  }
-                                })),
-                        AnimatedAlign(
-                            duration: toggle
-                                ? const Duration(milliseconds: 275)
-                                : const Duration(milliseconds: 850),
-                            alignment: alignment2,
-                            curve: toggle ? Curves.easeIn : Curves.easeOut,
-                            child: Hero(
-                              tag: 'add',
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .push(HeroDialogRoute(builder: (context) {
-                                    return const ClassCreationCard();
-                                  }));
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 275),
-                                  curve:
-                                      toggle ? Curves.easeIn : Curves.easeOut,
-                                  height: size2,
-                                  width: size2,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF63FFD5),
-                                    borderRadius: BorderRadius.circular(40.0),
-                                  ),
-                                  child: const Icon(
-                                      Icons.my_library_add_rounded,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            )),
-                        Transform.rotate(
-                          angle: _animation.value * pi * (3 / 4),
-                          child: FloatingActionButton(
-                              backgroundColor: const Color(0xFF61A3FE),
-                              child: const Icon(Icons.add_rounded,
-                                  color: Colors.white),
-                              elevation: 0.1,
-                              onPressed: () {
-                                setState(() {
-                                  if (!toggle) {
-                                    toggle = !toggle;
-                                    _controller.forward();
-                                    Future.delayed(
-                                        const Duration(milliseconds: 10), () {
-                                      alignment1 = const Alignment(-0.35, -2.5);
-                                    });
-                                    Future.delayed(
-                                        const Duration(milliseconds: 10), () {
-                                      alignment2 = const Alignment(0.35, -2.5);
-                                    });
-                                  } else {
-                                    toggle = !toggle;
-                                    _controller.reverse();
-                                    alignment1 = const Alignment(0, -1.3);
-                                    alignment2 = const Alignment(0, -1.3);
-                                  }
-                                });
-                              }),
-                        ),
-                      ]),
-                      if (!kIsWeb)
-                        SizedBox(
-                          width: size.width,
-                          height: 80,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  Icons.home,
-                                  color: currentIndex == 0
-                                      ? const Color(0xFF61A3FE)
-                                      : Colors.grey.shade400,
-                                ),
-                                onPressed: () {
-                                  setBottomBarIndex(0);
-                                },
-                                splashColor: Colors.white,
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.menu_book_rounded,
-                                    color: currentIndex == 1
-                                        ? const Color(0xFF61A3FE)
-                                        : Colors.grey.shade400,
-                                  ),
-                                  onPressed: () {
-                                    setBottomBarIndex(1);
-                                  }),
-                              Container(
-                                width: size.width * 0.20,
-                              ),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.bookmark,
-                                    color: currentIndex == 2
-                                        ? const Color(0xFF61A3FE)
-                                        : Colors.grey.shade400,
-                                  ),
-                                  onPressed: () {
-                                    setBottomBarIndex(2);
-                                  }),
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.settings_rounded,
-                                    color: currentIndex == 3
-                                        ? const Color(0xFF61A3FE)
-                                        : Colors.grey.shade400,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, routes.settingsPage);
-                                  }),
-                            ],
-                          ),
-                        )
-                    ],
-                  ),
-                ),
-              )
+              // Positioned(
+              //   bottom: 0,
+              //   left: 0,
+              //   child: SizedBox(
+              //     width: size.width,
+              //     height: 80,
+              //     child: Stack(
+              //       clipBehavior: Clip.none,
+              //       children: [
+              //         // if (!kIsWeb)
+              //         //   CustomPaint(
+              //         //     size: Size(size.width, 80),
+              //         //     painter: BNBCustomPainter(),
+              //         //   ),
+              //         Stack(alignment: const Alignment(0, -1.4), children: [
+              //           AnimatedAlign(
+              //               duration: toggle
+              //                   ? const Duration(milliseconds: 275)
+              //                   : const Duration(milliseconds: 850),
+              //               alignment: alignment1,
+              //               curve: toggle ? Curves.easeIn : Curves.easeOut,
+              //               child: StreamBuilder(
+              //                   stream: database.getUserCourseStream(uid),
+              //                   builder: (context,
+              //                       AsyncSnapshot<QuerySnapshot> snapshot) {
+              //                     var audioButtonContainer = AnimatedContainer(
+              //                       duration: const Duration(milliseconds: 275),
+              //                       curve:
+              //                           toggle ? Curves.easeIn : Curves.easeOut,
+              //                       height: size1,
+              //                       width: size1,
+              //                       decoration: BoxDecoration(
+              //                         color: const Color(0xFF63FFD5),
+              //                         borderRadius: BorderRadius.circular(40.0),
+              //                       ),
+              //                       child: const Icon(Icons.mic_rounded,
+              //                           color: Colors.white),
+              //                     );
+              //                     if (!snapshot.hasData) {
+              //                       return GestureDetector(
+              //                         onTap: () {
+              //                           print("loading course data");
+              //                         },
+              //                         child: audioButtonContainer,
+              //                       );
+              //                     }
+              //                     if (snapshot.data != null) {
+              //                       return GestureDetector(
+              //                         onTap: () async {
+              //                           print("opening audio form");
+              //                           await Navigator.of(context).push(
+              //                               HeroDialogRoute(builder: (context) {
+              //                             return AudioForm(
+              //                               courseList: snapshot.data!.docs,
+              //                             );
+              //                           }));
+              //                         },
+              //                         child: audioButtonContainer,
+              //                       );
+              //                     } else {
+              //                       return GestureDetector(
+              //                         onTap: () {
+              //                           print("must create a course first");
+              //                         },
+              //                         child: audioButtonContainer,
+              //                       );
+              //                     }
+              //                   })),
+              //           AnimatedAlign(
+              //               duration: toggle
+              //                   ? const Duration(milliseconds: 275)
+              //                   : const Duration(milliseconds: 850),
+              //               alignment: alignment2,
+              //               curve: toggle ? Curves.easeIn : Curves.easeOut,
+              //               child: Hero(
+              //                 tag: 'add',
+              //                 child: GestureDetector(
+              //                   behavior: HitTestBehavior.translucent,
+              //                   onTap: () {
+              //                     Navigator.of(context)
+              //                         .push(HeroDialogRoute(builder: (context) {
+              //                       return const ClassCreationCard();
+              //                     }));
+              //                   },
+              //                   child: AnimatedContainer(
+              //                     duration: const Duration(milliseconds: 275),
+              //                     curve:
+              //                         toggle ? Curves.easeIn : Curves.easeOut,
+              //                     height: size2,
+              //                     width: size2,
+              //                     decoration: BoxDecoration(
+              //                       color: const Color(0xFF63FFD5),
+              //                       borderRadius: BorderRadius.circular(40.0),
+              //                     ),
+              //                     child: const Icon(
+              //                         Icons.my_library_add_rounded,
+              //                         color: Colors.white),
+              //                   ),
+              //                 ),
+              //               )),
+              //           Transform.rotate(
+              //             angle: _animation.value * pi * (3 / 4),
+              //             child: FloatingActionButton(
+              //                 backgroundColor: const Color(0xFF61A3FE),
+              //                 child: const Icon(Icons.add_rounded,
+              //                     color: Colors.white),
+              //                 elevation: 0.1,
+              //                 onPressed: () {
+              //                   setState(() {
+              //                     if (!toggle) {
+              //                       toggle = !toggle;
+              //                       _controller.forward();
+              //                       Future.delayed(
+              //                           const Duration(milliseconds: 10), () {
+              //                         alignment1 = const Alignment(-0.35, -2.5);
+              //                       });
+              //                       Future.delayed(
+              //                           const Duration(milliseconds: 10), () {
+              //                         alignment2 = const Alignment(0.35, -2.5);
+              //                       });
+              //                     } else {
+              //                       toggle = !toggle;
+              //                       _controller.reverse();
+              //                       alignment1 = const Alignment(0, -1.3);
+              //                       alignment2 = const Alignment(0, -1.3);
+              //                     }
+              //                   });
+              //                 }),
+              //           ),
+              //         ]),
+              // if (!kIsWeb)
+              //   SizedBox(
+              //     width: size.width,
+              //     height: 80,
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //       children: [
+              //         IconButton(
+              //           icon: Icon(
+              //             Icons.home,
+              //             color: currentIndex == 0
+              //                 ? const Color(0xFF61A3FE)
+              //                 : Colors.grey.shade400,
+              //           ),
+              //           onPressed: () {
+              //             setBottomBarIndex(0);
+              //           },
+              //           splashColor: Colors.white,
+              //         ),
+              //         IconButton(
+              //             icon: Icon(
+              //               Icons.menu_book_rounded,
+              //               color: currentIndex == 1
+              //                   ? const Color(0xFF61A3FE)
+              //                   : Colors.grey.shade400,
+              //             ),
+              //             onPressed: () {
+              //               setBottomBarIndex(1);
+              //             }),
+              //         Container(
+              //           width: size.width * 0.20,
+              //         ),
+              //         IconButton(
+              //             icon: Icon(
+              //               Icons.bookmark,
+              //               color: currentIndex == 2
+              //                   ? const Color(0xFF61A3FE)
+              //                   : Colors.grey.shade400,
+              //             ),
+              //             onPressed: () {
+              //               setBottomBarIndex(2);
+              //             }),
+              //         IconButton(
+              //             icon: Icon(
+              //               Icons.settings_rounded,
+              //               color: currentIndex == 3
+              //                   ? const Color(0xFF61A3FE)
+              //                   : Colors.grey.shade400,
+              //             ),
+              //             onPressed: () {
+              //               Navigator.pushNamed(
+              //                   context, routes.settingsPage);
+              //             }),
+              //       ],
+              //     ),
+              //   )
+              //       ],
+              //     ),
+              //   ),
+              // )
             ],
           ),
         ),
+        bottomNavigationBar: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8.0,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {
+                      _scaffoldKey.currentState!.openDrawer();
+                    },
+                  ),
+                ])),
       ),
     );
   }

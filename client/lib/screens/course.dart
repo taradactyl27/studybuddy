@@ -241,7 +241,7 @@ class _CoursePageState extends State<CoursePage> {
                                 onPressed: () async {
                                   await Navigator.of(context)
                                       .push(HeroDialogRoute(builder: (context) {
-                                    return AudioForm(courseList: []);
+                                    return AudioForm();
                                   }));
                                 },
                               ),
