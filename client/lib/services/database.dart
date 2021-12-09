@@ -23,8 +23,8 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseStream(String uid) {
 }
 
 Stream<DocumentSnapshot<Map<String, dynamic>>> getCourseStream(
-    String course_id) {
-  return courses.doc(course_id).snapshots();
+    String courseId) {
+  return courses.doc(courseId).snapshots();
 }
 
 Future<dynamic> getCoursePermList(String courseId) async {

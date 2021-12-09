@@ -109,7 +109,7 @@ class _AudioFormState extends State<AudioForm> {
                             });
                           });
 
-                          final uploadResult = await upload;
+                          await upload;
                           print('audio UPLOAD done!!!');
 
                           setState(() {

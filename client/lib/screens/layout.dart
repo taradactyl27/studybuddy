@@ -19,9 +19,9 @@ class _LayoutState extends State<Layout> {
     return Scaffold(
       body: Responsive(
         // Let's work on our mobile part
-        mobile: HomePage(),
+        mobile: const HomePage(),
         tablet: Row(
-          children: [
+          children: const [
             Expanded(
               flex: 6,
               child: HomePage(),
@@ -38,15 +38,15 @@ class _LayoutState extends State<Layout> {
             // Now there is no error if our width is less then 1340
             Expanded(
               flex: _size.width > 1340 ? 3 : 5,
-              child: SideMenu(),
+              child: const SideMenu(),
             ),
             Expanded(
               flex: _size.width > 1340 ? 4 : 6,
-              child: HomePage(),
+              child: const HomePage(),
             ),
             Expanded(
               flex: _size.width > 1340 ? 6 : 8,
-              child: CoursePage(),
+              child: const CoursePage(),
             ),
           ],
         ),

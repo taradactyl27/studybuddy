@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,6 @@ import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:studybuddy/widgets/bottom_bar_painter.dart';
 import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
@@ -40,13 +38,12 @@ class _CoursePageState extends State<CoursePage> {
     Stream<DocumentSnapshot<Map<String, dynamic>>>? course =
         Provider.of<CourseState>(context).courseStream;
     final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-    print(course != null);
     return Provider.of<CourseState>(context).currentCourseId != ""
         ? Scaffold(
             key: _scaffoldKey,
             drawer: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 250),
-              child: SideMenu(),
+              child: const SideMenu(),
             ),
             resizeToAvoidBottomInset: false,
             floatingActionButtonLocation:
@@ -65,7 +62,7 @@ class _CoursePageState extends State<CoursePage> {
                     onTap: () {
                       Navigator.of(context)
                           .push(HeroDialogRoute(builder: (context) {
-                        return AudioForm();
+                        return const AudioForm();
                       }));
                     })
               ],
@@ -111,7 +108,7 @@ class _CoursePageState extends State<CoursePage> {
                                   .currentCourseId);
                       await Navigator.of(context)
                           .push(HeroDialogRoute(builder: (context) {
-                        return SharingForm();
+                        return const SharingForm();
                       }));
                     },
                     icon: const Icon(
@@ -130,19 +127,18 @@ class _CoursePageState extends State<CoursePage> {
               child: ListView(
                 padding: const EdgeInsets.only(top: 0, left: 15, right: 15),
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 150,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                          child: Text("Your Transcripts",
-                              style: GoogleFonts.nunito(
-                                  textStyle: const TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.w400,
-                              )))),
+                      Text("Your Transcripts",
+                          style: GoogleFonts.nunito(
+                              textStyle: const TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w400,
+                          ))),
                       StreamBuilder(
                           stream: database.getCourseTranscriptions(
                               Provider.of<CourseState>(context)
@@ -170,7 +166,7 @@ class _CoursePageState extends State<CoursePage> {
                                         Provider.of<CourseState>(context)
                                             .currentCourseId;
 
-                                    if (transcript.data().containsKey('text')) {
+                                    if (data.containsKey('text')) {
                                       return InkWell(
                                         onTap: () {
                                           Navigator.pushNamed(

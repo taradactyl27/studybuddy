@@ -55,7 +55,6 @@ class _SharingFormState extends State<SharingForm> {
                     builder: (context,
                         AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                             snapshot) {
-                      print(snapshot);
                       if (!snapshot.hasData) {
                         return const SizedBox(
                             height: 50,

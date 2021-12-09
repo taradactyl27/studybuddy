@@ -7,19 +7,19 @@ class CourseState extends ChangeNotifier {
   String currentCourseName = "";
   String currentCourseId = "";
 
-  void changeCourseStream(String course_id) {
-    if (course_id != currentCourseId) {
-      print("COURSE CHANGED:" + course_id);
-      courseStream = getCourseStream(course_id);
-      currentCourseId = course_id;
+  void changeCourseStream(String courseId) {
+    if (courseId != currentCourseId) {
+      print("COURSE CHANGED:" + courseId);
+      courseStream = getCourseStream(courseId);
+      currentCourseId = courseId;
       notifyListeners();
     }
   }
 
-  void resetCourseStream(String course_id) {
-    print("Stream Reset:" + course_id);
-    courseStream = getCourseStream(course_id);
-    currentCourseId = course_id;
+  void resetCourseStream(String courseId) {
+    print("Stream Reset:" + courseId);
+    courseStream = getCourseStream(courseId);
+    currentCourseId = courseId;
     notifyListeners();
   }
 }

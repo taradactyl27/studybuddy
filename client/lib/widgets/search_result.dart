@@ -31,12 +31,9 @@ class SearchResultBox extends StatelessWidget {
               children: results['hits'].map<Widget>((hit) {
                 return InkWell(
                     onTap: () async {
-                      print(hit['objectID']);
-                      print(hit['course']);
                       DocumentSnapshot<Map<String, dynamic>> transcript =
                           await database.getTranscription(
                               hit['objectID'], hit['course']);
-                      print(transcript.exists);
                       Navigator.pushNamed(context, routes.transcriptPage,
                           arguments: {
                             'transcript': transcript,

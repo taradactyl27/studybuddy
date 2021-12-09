@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -90,7 +89,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -105,7 +103,7 @@ class _HomePageState extends State<HomePage>
         key: _scaffoldKey,
         drawer: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 250),
-          child: SideMenu(),
+          child: const SideMenu(),
         ),
         extendBodyBehindAppBar: true,
         resizeToAvoidBottomInset: false,
@@ -136,7 +134,7 @@ class _HomePageState extends State<HomePage>
                 onTap: () {
                   Navigator.of(context)
                       .push(HeroDialogRoute(builder: (context) {
-                    return AudioForm();
+                    return const AudioForm();
                   }));
                 })
           ],
@@ -156,6 +154,8 @@ class _HomePageState extends State<HomePage>
                         _scaffoldKey.currentState!.openDrawer();
                       },
                     ),
+                  if (kIsWeb && !Responsive.isDesktop(context))
+                    const SizedBox(width: 20),
                   FutureBuilder<String>(
                       future: _searchApiKey,
                       builder: (context, snapshot) {
@@ -190,7 +190,7 @@ class _HomePageState extends State<HomePage>
               ),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("Recently Edited",
                     style: GoogleFonts.nunito(
