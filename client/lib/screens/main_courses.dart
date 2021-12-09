@@ -168,6 +168,8 @@ class _HomePageState extends State<HomePage>
                           controller: _searchController,
                         );
                       })),
+              if (isSearching)
+                SearchResultBox(isLoading: isLoading, results: searchResults),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("Recently Edited",
                     style: GoogleFonts.nunito(
@@ -202,8 +204,10 @@ class _HomePageState extends State<HomePage>
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
                             crossAxisCount: 2,
-                            padding: const EdgeInsets.all(30.0),
+                            padding:
+                                const EdgeInsets.only(top: 15.0, bottom: 15.0),
                             children: snapshot.data!.docs.map((course) {
                               return InkWell(
                                 onTap: () {
@@ -227,8 +231,6 @@ class _HomePageState extends State<HomePage>
                       })
                 ],
               ),
-              if (isSearching)
-                SearchResultBox(isLoading: isLoading, results: searchResults),
             ],
           ),
         ),

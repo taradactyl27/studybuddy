@@ -4,6 +4,7 @@ import 'package:studybuddy/services/database.dart' show getCourseStream;
 
 class CourseState extends ChangeNotifier {
   Stream<DocumentSnapshot<Map<String, dynamic>>>? courseStream;
+  String currentCourseName = "";
   String currentCourseId = "";
 
   void changeCourseStream(String course_id) {
