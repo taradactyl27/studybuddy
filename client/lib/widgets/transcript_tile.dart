@@ -37,8 +37,8 @@ class _TranscriptTileState extends State<TranscriptTile> {
         title: Text(widget.transcript['audioRef'].split('/')[1].split('.')[0]),
         subtitle: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Wrap(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(DateFormat.yMMMMEEEEd().format(date)),
                 Text(DateFormat.Hms().format(date))

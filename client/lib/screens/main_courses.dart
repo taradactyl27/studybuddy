@@ -9,10 +9,12 @@ import 'package:provider/provider.dart';
 
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/widgets/class_creation_card.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/services/auth.dart' show User;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:studybuddy/services/api.dart'
     show getSearchResults, getSearchKey;
 import 'package:studybuddy/widgets/bottom_bar_painter.dart';
@@ -159,7 +161,7 @@ class _HomePageState extends State<HomePage>
                         ))),
                   ),
                   StreamBuilder(
-                      stream: database.getCourseStream(uid),
+                      stream: database.getUserCourseStream(uid),
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
@@ -179,9 +181,15 @@ class _HomePageState extends State<HomePage>
                             children: snapshot.data!.docs.map((course) {
                               return InkWell(
                                 onTap: () {
-                                  Navigator.pushNamed(
-                                      context, routes.coursePage,
-                                      arguments: {'course': course});
+                                  Provider.of<CourseState>(context,
+                                          listen: false)
+                                      .changeCourseStream(course.id);
+                                  if (!kIsWeb) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      routes.coursePage,
+                                    );
+                                  }
                                 },
                                 child: CourseTile(
                                   course: course,
@@ -204,10 +212,11 @@ class _HomePageState extends State<HomePage>
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      CustomPaint(
-                        size: Size(size.width, 80),
-                        painter: BNBCustomPainter(),
-                      ),
+                      if (!kIsWeb)
+                        CustomPaint(
+                          size: Size(size.width, 80),
+                          painter: BNBCustomPainter(),
+                        ),
                       Stack(alignment: const Alignment(0, -1.4), children: [
                         AnimatedAlign(
                             duration: toggle
@@ -216,7 +225,7 @@ class _HomePageState extends State<HomePage>
                             alignment: alignment1,
                             curve: toggle ? Curves.easeIn : Curves.easeOut,
                             child: StreamBuilder(
-                                stream: database.getCourseStream(uid),
+                                stream: database.getUserCourseStream(uid),
                                 builder: (context,
                                     AsyncSnapshot<QuerySnapshot> snapshot) {
                                   var audioButtonContainer = AnimatedContainer(
@@ -324,61 +333,62 @@ class _HomePageState extends State<HomePage>
                               }),
                         ),
                       ]),
-                      SizedBox(
-                        width: size.width,
-                        height: 80,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.home,
-                                color: currentIndex == 0
-                                    ? const Color(0xFF61A3FE)
-                                    : Colors.grey.shade400,
+                      if (!kIsWeb)
+                        SizedBox(
+                          width: size.width,
+                          height: 80,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.home,
+                                  color: currentIndex == 0
+                                      ? const Color(0xFF61A3FE)
+                                      : Colors.grey.shade400,
+                                ),
+                                onPressed: () {
+                                  setBottomBarIndex(0);
+                                },
+                                splashColor: Colors.white,
                               ),
-                              onPressed: () {
-                                setBottomBarIndex(0);
-                              },
-                              splashColor: Colors.white,
-                            ),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.menu_book_rounded,
-                                  color: currentIndex == 1
-                                      ? const Color(0xFF61A3FE)
-                                      : Colors.grey.shade400,
-                                ),
-                                onPressed: () {
-                                  setBottomBarIndex(1);
-                                }),
-                            Container(
-                              width: size.width * 0.20,
-                            ),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.bookmark,
-                                  color: currentIndex == 2
-                                      ? const Color(0xFF61A3FE)
-                                      : Colors.grey.shade400,
-                                ),
-                                onPressed: () {
-                                  setBottomBarIndex(2);
-                                }),
-                            IconButton(
-                                icon: Icon(
-                                  Icons.settings_rounded,
-                                  color: currentIndex == 3
-                                      ? const Color(0xFF61A3FE)
-                                      : Colors.grey.shade400,
-                                ),
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, routes.settingsPage);
-                                }),
-                          ],
-                        ),
-                      )
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.menu_book_rounded,
+                                    color: currentIndex == 1
+                                        ? const Color(0xFF61A3FE)
+                                        : Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    setBottomBarIndex(1);
+                                  }),
+                              Container(
+                                width: size.width * 0.20,
+                              ),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.bookmark,
+                                    color: currentIndex == 2
+                                        ? const Color(0xFF61A3FE)
+                                        : Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    setBottomBarIndex(2);
+                                  }),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.settings_rounded,
+                                    color: currentIndex == 3
+                                        ? const Color(0xFF61A3FE)
+                                        : Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, routes.settingsPage);
+                                  }),
+                            ],
+                          ),
+                        )
                     ],
                   ),
                 ),

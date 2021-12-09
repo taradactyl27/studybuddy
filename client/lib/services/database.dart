@@ -18,8 +18,13 @@ Future<void> createUserDoc(User? user) async {
   }
 }
 
-Stream<QuerySnapshot<Map<String, dynamic>>> getCourseStream(String uid) {
+Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseStream(String uid) {
   return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
+}
+
+Stream<DocumentSnapshot<Map<String, dynamic>>> getCourseStream(
+    String course_id) {
+  return courses.doc(course_id).snapshots();
 }
 
 Future<dynamic> getCoursePermList(String courseId) async {
