@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/services/course_state.dart';
 
 import '../services/auth.dart';
 import 'routes/routes.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
             return oldUser != newUser;
           },
         ),
+        ChangeNotifierProvider(create: (_) => CourseState())
       ],
       child: MaterialApp(
         title: 'Study Buddy',

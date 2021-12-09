@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class UserTile extends StatefulWidget {
@@ -10,7 +8,6 @@ class UserTile extends StatefulWidget {
       required this.isOwner,
       required this.uid,
       required this.courseId,
-      required this.refreshPermList,
       required this.permStatus})
       : super(key: key);
   final String email;
@@ -18,7 +15,6 @@ class UserTile extends StatefulWidget {
   final String uid;
   final String courseId;
   final bool isOwner;
-  final Function refreshPermList;
 
   @override
   State<UserTile> createState() => _UserTileState();
@@ -53,7 +49,6 @@ class _UserTileState extends State<UserTile> {
                 onTap: () async {
                   await database.removeUserFromCourse(
                       widget.courseId, widget.uid);
-                  widget.refreshPermList();
                 },
                 child: const Icon(Icons.cancel_rounded,
                     size: 20, color: Colors.red))

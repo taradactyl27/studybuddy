@@ -15,7 +15,6 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
 
   String? get _errorText {
     final text = _namecontroller.value.text;
-
     if (text.length > 20) {
       return 'Too long';
     }
