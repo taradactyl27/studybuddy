@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage>
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: ListView(
-            padding: const EdgeInsets.only(top: 45, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 65, left: 15, right: 15),
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -226,7 +226,11 @@ class _HomePageState extends State<HomePage>
                             shrinkWrap: true,
                             crossAxisSpacing: 20,
                             mainAxisSpacing: 20,
-                            crossAxisCount: 2,
+                            crossAxisCount:
+                                MediaQuery.of(context).size.width < 940 &&
+                                        MediaQuery.of(context).size.width > 600
+                                    ? 1
+                                    : 2,
                             padding:
                                 const EdgeInsets.only(top: 15.0, bottom: 15.0),
                             children: snapshot.data!.docs.map((course) {
