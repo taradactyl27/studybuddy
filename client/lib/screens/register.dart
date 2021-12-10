@@ -29,10 +29,10 @@ class _RegisterPageState extends State<RegisterPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height * 0.35,
+              height: 250,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fitHeight,
                   image: AssetImage("theme/sbuddy.png"),
                 ),
               ),

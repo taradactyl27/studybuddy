@@ -31,10 +31,11 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height * 0.35,
+              padding: const EdgeInsets.only(right:15,left:15),
+              height: 250,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fitHeight,
                   image: AssetImage("theme/sbuddy.png"),
                 ),
               ),

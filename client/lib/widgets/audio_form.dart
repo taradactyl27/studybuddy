@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,15 +8,13 @@ import 'package:provider/provider.dart';
 
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/services/database.dart' as database
-    show newLectureRef;
+    show newLectureRef, getUserCourseStream;
 
 class AudioForm extends StatefulWidget {
   /// {@macro add_todo_popup_card}
-  const AudioForm({Key? key, required this.courseList}) : super(key: key);
+  const AudioForm({Key? key}) : super(key: key);
   @override
   State<AudioForm> createState() => _AudioFormState();
-
-  final List<dynamic> courseList;
 }
 
 class _AudioFormState extends State<AudioForm> {
@@ -53,23 +52,33 @@ class _AudioFormState extends State<AudioForm> {
                       skipDisabled: true,
                       child: Column(
                         children: <Widget>[
-                          FormBuilderDropdown(
-                            name: 'courseID',
-                            decoration: const InputDecoration(
-                              labelText: 'Course',
-                            ),
-                            initialValue: widget.courseList.isNotEmpty
-                                ? widget.courseList[0].id
-                                : '',
-                            allowClear: true,
-                            hint: const Text('Select Course'),
-                            items: widget.courseList
-                                .map((course) => DropdownMenuItem(
-                                      value: course.id,
-                                      child: Text(course.get('name')),
-                                    ))
-                                .toList(),
-                          ),
+                          StreamBuilder(
+                              stream: database.getUserCourseStream(user.uid),
+                              builder: (context,
+                                  AsyncSnapshot<
+                                          QuerySnapshot<Map<String, dynamic>>>
+                                      snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const SizedBox(
+                                      height: 50,
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
+                                }
+                                return FormBuilderDropdown(
+                                  name: 'courseID',
+                                  decoration: const InputDecoration(
+                                    labelText: 'Course',
+                                  ),
+                                  allowClear: true,
+                                  hint: const Text('Select Course'),
+                                  items: snapshot.data!.docs
+                                      .map((course) => DropdownMenuItem(
+                                            value: course.id,
+                                            child: Text(course.get('name')),
+                                          ))
+                                      .toList(),
+                                );
+                              }),
                         ],
                       ),
                     ),
@@ -100,7 +109,7 @@ class _AudioFormState extends State<AudioForm> {
                             });
                           });
 
-                          final uploadResult = await upload;
+                          await upload;
                           print('audio UPLOAD done!!!');
 
                           setState(() {
