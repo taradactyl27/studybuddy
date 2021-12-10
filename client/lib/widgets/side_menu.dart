@@ -7,7 +7,7 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(color: Colors.white),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.only(left:20, right: 20, bottom:20, top: 45),
         height: double.infinity,
         child: Column(
           children: [
