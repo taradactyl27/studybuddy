@@ -143,7 +143,7 @@ class _SharingFormState extends State<SharingForm> {
                               : ElevatedButton(
                                   onPressed: () async {
                                     await database.removeUserFromCourse(
-                                        Provider.of<CourseState>(context)
+                                        Provider.of<CourseState>(context, listen: false)
                                             .currentCourseId,
                                         uid);
                                     Navigator.of(context).popUntil(
