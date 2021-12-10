@@ -42,8 +42,8 @@ class SideMenu extends StatelessWidget {
             ),
             InkWell(
               child: ListTile(
-                leading: const Icon(Icons.account_circle,color: Colors.black),
-                title: Text("Profile", style: GoogleFonts.nunito(
+                leading: const Icon(Icons.star,color: Colors.black),
+                title: Text("Favorites", style: GoogleFonts.nunito(
                             textStyle: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,

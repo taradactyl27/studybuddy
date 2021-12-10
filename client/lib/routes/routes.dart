@@ -32,7 +32,7 @@ Route<dynamic> controller(RouteSettings settings) {
         case settingsPage:
           return const SettingsPage();
         case coursePage:
-          return CoursePage();
+          return const CoursePage();
         case transcriptPage:
           final arguments = settings.arguments as Map<String, dynamic>;
           return TranscriptPage(
