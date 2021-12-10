@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:studybuddy/screens/course.dart';
 import '../widgets/side_menu.dart';
-import '../screens/main_courses.dart';
+import '../screens/home.dart';
 import '../responsive.dart';
 
 class Layout extends StatefulWidget {
