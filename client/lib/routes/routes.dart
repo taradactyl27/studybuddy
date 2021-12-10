@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/screens/course.dart';
-import 'package:studybuddy/screens/main_courses.dart';
 import 'package:studybuddy/screens/login.dart';
 import 'package:studybuddy/screens/register.dart';
 import 'package:studybuddy/screens/settings.dart';
