@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' show User, signOut;
+import 'package:studybuddy/widgets/side_menu.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -11,12 +13,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  int currentIndex = 3;
-  setBottomBarIndex(index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +22,25 @@ class _SettingsPageState extends State<SettingsPage> {
         ? user.displayName!
         : user.email!;
     return Scaffold(
+      key: _scaffoldKey,
+        drawer: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 250),
+          child: const SideMenu(),
+        ),
+        bottomNavigationBar: kIsWeb
+            ? null
+            : BottomAppBar(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                      ),
+                    ])),
         body: Stack(
       children: [
         Center(

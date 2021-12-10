@@ -9,7 +9,6 @@ import 'package:studybuddy/screens/transcript.dart';
 import 'package:studybuddy/screens/layout.dart';
 
 import '../services/auth.dart';
-import 'dashboard_route.dart';
 
 const String rootUrl = '/';
 const String loginPage = '/login';
@@ -59,10 +58,6 @@ Route<dynamic> controller(RouteSettings settings) {
 
   // route wrappers
   switch (settings.name) {
-    case settingsPage:
-      return DashboardPageRoute(
-        builder: build,
-      );
     default:
       return MaterialPageRoute(
         settings: settings,
