@@ -1,13 +1,10 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' show User, signOut;
 import 'package:studybuddy/widgets/side_menu.dart';
-import "../services/notifications.dart";
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -26,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ? user.displayName!
         : user.email!;
     return Scaffold(
-      key: _scaffoldKey,
+        key: _scaffoldKey,
         drawer: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 250),
           child: const SideMenu(),
@@ -38,49 +35,32 @@ class _SettingsPageState extends State<SettingsPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    ])),
+                    IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {
+                        _scaffoldKey.currentState!.openDrawer();
+                      },
+                    ),
+                  ])),
         body: Stack(
-      children: [
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(username),
-              ElevatedButton(
-                  onPressed: () async {
-                    await signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        routes.loginPage, (route) => false);
-                  },
-                  child: const Text('Sign Out')
-                  ),
-              ElevatedButton(
-                  onPressed: () async {
-                    await flutterLocalNotificationsPlugin.zonedSchedule(
-                        0,
-                        'scheduled: bing bong',
-                        'yeet',
-                        tz.TZDateTime.now(tz.local)
-                            .add(const Duration(seconds: 10)),
-                        platformChannelSpecifics,
-                        androidAllowWhileIdle: true,
-                        uiLocalNotificationDateInterpretation:
-                            UILocalNotificationDateInterpretation
-                                .absoluteTime);
-                  },
-                  child: const Text('Notification in 10')
-              )
-            ],
-          ),
-        ),
-      ],
-    ));
+          children: [
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(username),
+                  ElevatedButton(
+                      onPressed: () async {
+                        await signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            routes.loginPage, (route) => false);
+                      },
+                      child: const Text('Sign Out')),
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 }
