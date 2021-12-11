@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
           applyElevationOverlayColor: true,
         ),
-        themeMode: ThemeMode.system,
+        navigatorKey: navigatorKey,
         onGenerateRoute: controller,
         initialRoute: rootUrl,
       ),

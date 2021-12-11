@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/color_constants.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' show User, signOut;
 import 'package:studybuddy/widgets/side_menu.dart';
-import "../services/notifications.dart";
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -102,22 +99,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     style:
                         GoogleFonts.nunito(color: Colors.white, fontSize: 16)),
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    await flutterLocalNotificationsPlugin.zonedSchedule(
-                        0,
-                        'scheduled: bing bong',
-                        'yeet',
-                        tz.TZDateTime.now(tz.local)
-                            .add(const Duration(seconds: 10)),
-                        platformChannelSpecifics,
-                        androidAllowWhileIdle: true,
-                        uiLocalNotificationDateInterpretation:
-                            UILocalNotificationDateInterpretation
-                                .absoluteTime);
-                  },
-                  child: const Text('Notification in 10')
-              )
             ],
           ),
         ));
