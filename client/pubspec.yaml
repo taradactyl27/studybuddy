@@ -50,6 +50,8 @@ dependencies:
   intl: ^0.17.0
   shared_preferences: ^2.0.9
   flutter_speed_dial: ^4.6.6
+  flutterfire_ui: ^0.1.0-dev.2
+  flutter_facebook_auth: ^3.5.7
 
 dev_dependencies:
   flutter_test:
