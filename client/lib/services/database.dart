@@ -48,11 +48,12 @@ Future<void> createCourse(
   courses.doc(value.id).update({"course_id": value.id});
 }
 
-Future<void> createFlashcardSet(String courseId) async {
-  await courses
+Future<String> createFlashcardSet(String courseId) async {
+  DocumentReference<Object?> value = await courses
       .doc(courseId)
       .collection("flashcards")
       .add({"name": "Untitled", "cards": []});
+    return value.id;
 }
 
 Future<void> addUserToCourse(String courseId, String email) async {
@@ -128,4 +129,16 @@ Future<void> uploadDocumentDeltas(String delta, String fieldName,
       .doc(transcriptId)
       .update({fieldName: delta});
   print("Deltas Saved");
+}
+
+Future<void> deleteFlashcardset(String courseId, String cardsetId) async {
+  await courses.doc(courseId).collection('flashcards').doc(cardsetId).delete();
+}
+
+Future<void> createFlashcard(String courseId, String cardsetId, String question, String answer) async {
+  await courses
+      .doc(courseId)
+      .collection("flashcards")
+      .doc(cardsetId)
+      .update({"card": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
 }
