@@ -12,6 +12,7 @@ import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:studybuddy/widgets/flashcard_tile.dart';
 import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
@@ -150,10 +151,42 @@ class _CoursePageState extends State<CoursePage> {
                               fontSize: 21,
                               fontWeight: FontWeight.w400,
                             ))),
-                        const SizedBox(
-                          height: 200,
-                        )
+                        StreamBuilder(
+                            stream: database.getCourseFlashcards(
+                                Provider.of<CourseState>(context)
+                                    .currentCourseId),
+                            builder: (context,
+                                AsyncSnapshot<
+                                        QuerySnapshot<Map<String, dynamic>>>
+                                    snapshot) {
+                              if (!snapshot.hasData) {
+                                return const SizedBox(
+                                    height: 150,
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+                              }
+                              return SizedBox(
+                                  height: 150,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: GridView.count(
+                                    crossAxisCount: 1,
+                                    mainAxisSpacing: 15,
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.all(10.0),
+                                    children:
+                                        snapshot.data!.docs.map((cardset) {
+                                      return InkWell(
+                                        onTap: null,
+                                        child: FlashCardTile(
+                                          name: cardset['name'],
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ));
+                            })
                       ]),
+                  Divider(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

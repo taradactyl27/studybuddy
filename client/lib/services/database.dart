@@ -90,6 +90,11 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
   return courses.doc(courseId).collection('audios').snapshots();
 }
 
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseFlashcards(
+    String courseId) {
+  return courses.doc(courseId).collection('flashcards').snapshots();
+}
+
 Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
     String transcriptId, String courseId) {
   return courses.doc(courseId).collection('audios').doc(transcriptId).get();
