@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
 import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/services/course_state.dart';

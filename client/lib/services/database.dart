@@ -52,7 +52,7 @@ Future<void> createFlashcardSet(String courseId) async {
   await courses
       .doc(courseId)
       .collection("flashcards")
-      .add({"name": "Untitled", "cards": {}});
+      .add({"name": "Untitled", "cards": []});
 }
 
 Future<void> addUserToCourse(String courseId, String email) async {
