@@ -7,6 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
@@ -111,16 +112,16 @@ class _HomePageState extends State<HomePage>
             ? FloatingActionButtonLocation.endFloat
             : FloatingActionButtonLocation.endDocked,
         floatingActionButton: SpeedDial(
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: kLightModeIconSecondary),
           icon: Icons.add,
           activeIcon: Icons.close,
           spacing: 10,
-          overlayColor: Colors.blueGrey,
+          overlayColor: kOverlayColor,
           overlayOpacity: 0.6,
           children: [
             SpeedDialChild(
                 child: const Icon(Icons.my_library_add_rounded,
-                    color: Colors.black),
+                    color: kLightModeIcon),
                 label: "Add Course",
                 onTap: () {
                   Navigator.of(context)
@@ -129,7 +130,7 @@ class _HomePageState extends State<HomePage>
                   }));
                 }),
             SpeedDialChild(
-                child: const Icon(Icons.mic_rounded, color: Colors.black),
+                child: const Icon(Icons.mic_rounded, color: kLightModeIcon),
                 label: 'Upload Lecture',
                 onTap: () {
                   Navigator.of(context)
@@ -169,7 +170,11 @@ class _HomePageState extends State<HomePage>
                               },
                               decoration: InputDecoration(
                                 labelText: "Search...",
-                                fillColor: Colors.white,
+                                labelStyle: GoogleFonts.nunito(
+                                  textStyle:
+                                      const TextStyle(color: kDarkTextColor),
+                                ),
+                                fillColor: kBgLightColor,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25.0),
                                   borderSide: const BorderSide(),

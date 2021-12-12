@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/color_constants.dart';
 
 class FlashCardTile extends StatelessWidget {
   const FlashCardTile({Key? key, required this.name}) : super(key: key);
@@ -20,9 +21,7 @@ class FlashCardTile extends StatelessWidget {
             children: [
               Container(
                 height: 10,
-                decoration: const BoxDecoration(
-                    gradient:
-                        LinearGradient(colors: [Colors.blue, Colors.blueGrey])),
+                decoration: const BoxDecoration(gradient: primaryGradient),
               ),
               Center(
                 child: Container(
@@ -30,8 +29,8 @@ class FlashCardTile extends StatelessWidget {
                   child: Text(name,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.nunito(
-                        textStyle:
-                            const TextStyle(color: Colors.black, fontSize: 16),
+                        textStyle: const TextStyle(
+                            color: kDarkTextColor, fontSize: 16),
                       )),
                 ),
               ),

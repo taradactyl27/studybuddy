@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -27,15 +28,15 @@ class _FlashcardPageState extends State<FlashcardPage> {
       floatingActionButton: kIsWeb
           ? null
           : SpeedDial(
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: kLightModeIconSecondary),
               icon: Icons.menu_open,
               activeIcon: Icons.close,
               spacing: 10,
-              overlayColor: Colors.blueGrey,
+              overlayColor: kOverlayColor,
               overlayOpacity: 0.6,
               children: [
                 SpeedDialChild(
-                    child: const Icon(Icons.mic_rounded, color: Colors.black),
+                    child: const Icon(Icons.mic_rounded, color: kLightModeIcon),
                     label: 'Add a Card',
                     onTap: () {
                       await database.createFlashcardSet(
@@ -44,9 +45,9 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                             routes.flashcardPage, (route) => false);}),
                 SpeedDialChild(
-                    backgroundColor: Colors.redAccent,
-                    labelBackgroundColor: Colors.redAccent,
-                    child: const Icon(Icons.delete, color: Colors.black),
+                    backgroundColor: kDangerColor,
+                    labelBackgroundColor: kDangerColor,
+                    child: const Icon(Icons.delete, color: kLightModeIcon),
                     label: 'Delete Card Set',
                     onTap: () async {}),
               ],

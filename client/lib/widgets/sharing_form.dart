@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/widgets/user_tile.dart';
@@ -42,10 +44,10 @@ class _SharingFormState extends State<SharingForm> {
         child: Hero(
           tag: 'add',
           child: Material(
-            color: Colors.white,
+            color: kBgLightColor,
             elevation: 2,
             shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 3, color: Colors.black45),
+                side: const BorderSide(width: 3, color: kBorderColor),
                 borderRadius: BorderRadius.circular(32)),
             child: SingleChildScrollView(
               child: Padding(
@@ -65,7 +67,11 @@ class _SharingFormState extends State<SharingForm> {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text("Users with access to course"),
+                          Text("Users with access to course",
+                              style: GoogleFonts.nunito(
+                                textStyle:
+                                    const TextStyle(color: kDarkTextColor),
+                              )),
                           const Divider(
                             height: 10,
                             indent: 1,
@@ -97,11 +103,15 @@ class _SharingFormState extends State<SharingForm> {
                           if (roleList[uid]['role'] == 'owner')
                             TextFormField(
                               controller: _namecontroller,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
+                                hintStyle: GoogleFonts.nunito(
+                                  textStyle:
+                                      const TextStyle(color: kDarkTextColor),
+                                ),
                                 hintText: 'New User Email',
                                 border: InputBorder.none,
                               ),
-                              cursorColor: Colors.white,
+                              cursorColor: kBgLightColor,
                             ),
                           roleList[uid]['role'] == 'owner'
                               ? SizedBox(
@@ -132,26 +142,33 @@ class _SharingFormState extends State<SharingForm> {
                                               width: 15,
                                               child: CircularProgressIndicator(
                                                   strokeWidth: 2.0,
-                                                  color: Colors.white),
+                                                  color: kBgLightColor),
                                             ),
                                           )
-                                        : const Text("Add a User",
-                                            style:
-                                                TextStyle(color: Colors.white)),
+                                        : Text("Add a User",
+                                            style: GoogleFonts.nunito(
+                                              textStyle: const TextStyle(
+                                                  color: kLightTextColor),
+                                            )),
                                   ),
                                 )
                               : ElevatedButton(
                                   onPressed: () async {
                                     await database.removeUserFromCourse(
-                                        Provider.of<CourseState>(context, listen: false)
+                                        Provider.of<CourseState>(context,
+                                                listen: false)
                                             .currentCourseId,
                                         uid);
                                     Navigator.of(context).popUntil(
                                         ModalRoute.withName(routes.homePage));
                                   },
                                   style: ElevatedButton.styleFrom(
-                                      primary: Colors.red),
-                                  child: const Text("Leave Course"),
+                                      primary: kDangerColor),
+                                  child: Text("Leave Course",
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            color: kDarkTextColor),
+                                      )),
                                 )
                         ],
                       );

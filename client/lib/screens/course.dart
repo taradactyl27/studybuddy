@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/services/course_state.dart';
@@ -51,16 +52,17 @@ class _CoursePageState extends State<CoursePage> {
             floatingActionButton: kIsWeb
                 ? null
                 : SpeedDial(
-                    iconTheme: const IconThemeData(color: Colors.white),
+                    iconTheme:
+                        const IconThemeData(color: kLightModeIconSecondary),
                     icon: Icons.add,
                     activeIcon: Icons.close,
                     spacing: 10,
-                    overlayColor: Colors.blueGrey,
+                    overlayColor: kOverlayColor,
                     overlayOpacity: 0.6,
                     children: [
                       SpeedDialChild(
                           child: const Icon(Icons.view_carousel,
-                              color: Colors.black),
+                              color: kLightModeIcon),
                           label: 'Create Flashcard Set',
                           onTap: () async {
                             await database.createFlashcardSet(
@@ -71,7 +73,7 @@ class _CoursePageState extends State<CoursePage> {
                           }),
                       SpeedDialChild(
                           child: const Icon(Icons.mic_rounded,
-                              color: Colors.black),
+                              color: kLightModeIcon),
                           label: 'Upload Lecture',
                           onTap: () {
                             Navigator.of(context)
@@ -126,7 +128,7 @@ class _CoursePageState extends State<CoursePage> {
                     },
                     icon: const Icon(
                       Icons.folder_shared,
-                      color: Colors.white,
+                      color: kLightModeIconSecondary,
                       size: 24.0,
                     ),
                     label: const Text("Share",
@@ -266,7 +268,7 @@ class _CoursePageState extends State<CoursePage> {
                               child: Center(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.red,
+                                    primary: kDangerColor,
                                   ),
                                   onPressed: () async {
                                     await database.deleteCourse(

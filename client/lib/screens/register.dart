@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' as auth;
 
@@ -58,10 +60,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(220, 36)),
-                  child: const Text('Sign up',
-                      style: TextStyle(
-                        color: Colors.white,
-                      )),
+                  child: Text(
+                    'Sign up',
+                    style: GoogleFonts.nunito(
+                      textStyle: const TextStyle(color: kLightTextColor),
+                    ),
+                  ),
                   onPressed: () async {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/color_constants.dart';
 
 import '../routes/routes.dart' as routes;
 import '../services/database.dart' as database;
@@ -17,8 +19,8 @@ class SearchResultBox extends StatelessWidget {
       margin: const EdgeInsets.all(30),
       height: 300,
       decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.black45),
+          color: kBgLightColor,
+          border: Border.all(color: kBorderColor),
           borderRadius: BorderRadius.circular(15.0)),
       child: isLoading
           ? const Center(
@@ -58,12 +60,19 @@ class SearchResult extends StatelessWidget {
         leading: const Icon(
           Icons.insert_drive_file_outlined,
           size: 35,
-          color: Colors.lightBlueAccent,
+          color: kPrimaryColor,
         ),
-        title: Text(hit['audioRef'].split('/')[1].split('.')[0]),
-        subtitle: Text(DateTime.fromMillisecondsSinceEpoch(
-                hit['created']['_seconds'] * 1000)
-            .toString()),
+        title: Text(hit['audioRef'].split('/')[1].split('.')[0],
+            style: GoogleFonts.nunito(
+              textStyle: const TextStyle(color: kDarkTextColor),
+            )),
+        subtitle: Text(
+            DateTime.fromMillisecondsSinceEpoch(
+                    hit['created']['_seconds'] * 1000)
+                .toString(),
+            style: GoogleFonts.nunito(
+              textStyle: const TextStyle(color: kDarkTextColor),
+            )),
         trailing: const Icon(Icons.arrow_forward_ios_rounded),
         isThreeLine: true,
       ),
