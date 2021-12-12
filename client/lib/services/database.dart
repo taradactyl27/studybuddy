@@ -129,3 +129,14 @@ Future<void> uploadDocumentDeltas(String delta, String fieldName,
       .update({fieldName: delta});
   print("Deltas Saved");
 }
+
+Future<void> deleteFlashcardset(String courseId, String cardsetId) async {
+  await courses.doc(courseId).collection('flashcards').doc(cardsetId).delete();
+}
+
+Future<void> createFlashcard(String courseId) async {
+  await courses
+      .doc(courseId)
+      .collection("flashcards")
+      .add({"name": "Untitled", "cards": {}});
+}

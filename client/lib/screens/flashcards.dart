@@ -4,9 +4,18 @@ import 'package:provider/provider.dart';
 import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:studybuddy/routes/hero_route.dart';
+import 'package:studybuddy/routes/routes.dart' as routes;
+import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/services/database.dart' as database;
+
+
+
 
 class FlashcardPage extends StatefulWidget {
   FlashcardPage({Key? key, required this.cardsetId}) : super(key: key);
+  final String cardsetId;
+  
 
   @override
   _FlashcardPageState createState() => _FlashcardPageState();
@@ -38,17 +47,20 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     child: const Icon(Icons.mic_rounded, color: Colors.black),
                     label: 'Add a Card',
                     onTap: () {
-                      await database.createFlashcardSet(
-                            Provider.of<CourseState>(context, listen: false)
-                                .currentCourseId);
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            routes.flashcardPage, (route) => false);}),
+                        Navigator.of(context)
+                      .push(HeroDialogRoute(builder: (context) {
+                    return const FlashcardCreation();
+                  }));}),
                 SpeedDialChild(
                     backgroundColor: Colors.redAccent,
                     labelBackgroundColor: Colors.redAccent,
                     child: const Icon(Icons.delete, color: Colors.black),
                     label: 'Delete Card Set',
-                    onTap: () async {}),
+                    onTap: () async {await database.deleteFlashcardset(
+                                        Provider.of<CourseState>(context, listen: false)
+                                    .currentCourseId, widget.cardsetId);
+                                        
+                                    Navigator.pop(context);})
               ],
             ),
             body: SizedBox(
