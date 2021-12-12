@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/services/course_state.dart';
+import 'package:studybuddy/widgets/flashcardcreation.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:studybuddy/routes/hero_route.dart';
@@ -49,7 +50,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     onTap: () {
                         Navigator.of(context)
                       .push(HeroDialogRoute(builder: (context) {
-                    return const FlashcardCreation();
+                    return FlashCardCreationForm(cardsetId: widget.cardsetId,);
                   }));}),
                 SpeedDialChild(
                     backgroundColor: Colors.redAccent,

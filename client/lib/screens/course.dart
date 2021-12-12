@@ -63,11 +63,11 @@ class _CoursePageState extends State<CoursePage> {
                               color: Colors.black),
                           label: 'Create Flashcard Set',
                           onTap: () async {
-                            await database.createFlashcardSet(
+                            String cardSetID = await database.createFlashcardSet(
                                 Provider.of<CourseState>(context, listen: false)
                                     .currentCourseId);
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                routes.flashcardPage, (route) => false);
+                            Navigator.of(context).pushNamed(
+                                routes.flashcardPage, arguments: {"cardsetId" : cardSetID});
                           }),
                       SpeedDialChild(
                           child: const Icon(Icons.mic_rounded,

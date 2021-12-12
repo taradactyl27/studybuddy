@@ -48,11 +48,12 @@ Future<void> createCourse(
   courses.doc(value.id).update({"course_id": value.id});
 }
 
-Future<void> createFlashcardSet(String courseId) async {
-  await courses
+Future<String> createFlashcardSet(String courseId) async {
+  DocumentReference<Object?> value = await courses
       .doc(courseId)
       .collection("flashcards")
       .add({"name": "Untitled", "cards": []});
+    return value.id;
 }
 
 Future<void> addUserToCourse(String courseId, String email) async {
