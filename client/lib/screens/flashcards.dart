@@ -6,7 +6,7 @@ import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class FlashcardPage extends StatefulWidget {
-  FlashcardPage({Key? key}) : super(key: key);
+  FlashcardPage({Key? key, required this.cardsetId}) : super(key: key);
 
   @override
   _FlashcardPageState createState() => _FlashcardPageState();
@@ -37,7 +37,12 @@ class _FlashcardPageState extends State<FlashcardPage> {
                 SpeedDialChild(
                     child: const Icon(Icons.mic_rounded, color: Colors.black),
                     label: 'Add a Card',
-                    onTap: () {}),
+                    onTap: () {
+                      await database.createFlashcardSet(
+                            Provider.of<CourseState>(context, listen: false)
+                                .currentCourseId);
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            routes.flashcardPage, (route) => false);}),
                 SpeedDialChild(
                     backgroundColor: Colors.redAccent,
                     labelBackgroundColor: Colors.redAccent,
@@ -45,6 +50,28 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     label: 'Delete Card Set',
                     onTap: () async {}),
               ],
+            ),
+            body: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: ListView(
+                padding: const EdgeInsets.only(top: 0, left: 15, right: 15),
+                children: [
+                  const SizedBox(height: 15),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Flashcards",
+                            style: GoogleFonts.nunito(
+                                textStyle: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w400,
+                            ))),
+                        const SizedBox(
+                          height: 200,
+                        )
+                      ]),
+                ],
+              ),
             ),
       bottomNavigationBar: !kIsWeb
           ? BottomAppBar(
