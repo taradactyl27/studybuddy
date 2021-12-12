@@ -48,26 +48,39 @@ class _CoursePageState extends State<CoursePage> {
             resizeToAvoidBottomInset: false,
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.endDocked,
-            floatingActionButton: SpeedDial(
-              iconTheme: const IconThemeData(color: Colors.white),
-              icon: Icons.add,
-              activeIcon: Icons.close,
-              spacing: 10,
-              overlayColor: Colors.blueGrey,
-              overlayOpacity: 0.6,
-              children: [
-                SpeedDialChild(
-                    child: const Icon(Icons.mic_rounded, color: Colors.black),
-                    label: 'Upload Lecture',
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(HeroDialogRoute(builder: (context) {
-                        return const AudioForm();
-                      }));
-                    })
-              ],
-            ),
-            extendBodyBehindAppBar: true,
+            floatingActionButton: kIsWeb
+                ? null
+                : SpeedDial(
+                    iconTheme: const IconThemeData(color: Colors.white),
+                    icon: Icons.add,
+                    activeIcon: Icons.close,
+                    spacing: 10,
+                    overlayColor: Colors.blueGrey,
+                    overlayOpacity: 0.6,
+                    children: [
+                      SpeedDialChild(
+                          child: const Icon(Icons.view_carousel,
+                              color: Colors.black),
+                          label: 'Create Flashcard Set',
+                          onTap: () async {
+                            await database.createFlashcardSet(
+                                Provider.of<CourseState>(context, listen: false)
+                                    .currentCourseId);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                routes.flashcardPage, (route) => false);
+                          }),
+                      SpeedDialChild(
+                          child: const Icon(Icons.mic_rounded,
+                              color: Colors.black),
+                          label: 'Upload Lecture',
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(HeroDialogRoute(builder: (context) {
+                              return const AudioForm();
+                            }));
+                          })
+                    ],
+                  ),
             appBar: AppBar(
               elevation: 0,
               backgroundColor: Colors.transparent,
@@ -127,9 +140,20 @@ class _CoursePageState extends State<CoursePage> {
               child: ListView(
                 padding: const EdgeInsets.only(top: 0, left: 15, right: 15),
                 children: [
-                  const SizedBox(
-                    height: 150,
-                  ),
+                  const SizedBox(height: 15),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Flashcards",
+                            style: GoogleFonts.nunito(
+                                textStyle: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w400,
+                            ))),
+                        const SizedBox(
+                          height: 200,
+                        )
+                      ]),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

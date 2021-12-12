@@ -48,6 +48,13 @@ Future<void> createCourse(
   courses.doc(value.id).update({"course_id": value.id});
 }
 
+Future<void> createFlashcardSet(String courseId) async {
+  await courses
+      .doc(courseId)
+      .collection("flashcards")
+      .add({"name": "Untitled", "cards": {}});
+}
+
 Future<void> addUserToCourse(String courseId, String email) async {
   QuerySnapshot userdoc = await users.where("email", isEqualTo: email).get();
   if (userdoc.size == 0) {
