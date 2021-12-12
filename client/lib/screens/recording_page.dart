@@ -52,6 +52,7 @@ class _RecordingPageState extends State<RecordingPage> {
         children: [
           Center(
               child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(

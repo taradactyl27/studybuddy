@@ -70,7 +70,7 @@ packages:
       name: cloud_firestore
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.4"
+    version: "3.1.4"
   cloud_firestore_platform_interface:
     dependency: transitive
     description:
@@ -369,7 +369,7 @@ packages:
       name: flutter_speed_dial
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.6"
+    version: "5.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -932,5 +932,5 @@ packages:
     source: hosted
     version: "8.0.0"
 sdks:
-  dart: ">=2.14.0 <3.0.0"
-  flutter: ">=2.5.3"
+  dart: ">=2.15.0-268.18.beta <3.0.0"
+  flutter: ">=2.8.0-3.3.pre"
