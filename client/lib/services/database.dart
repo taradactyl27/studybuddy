@@ -134,9 +134,10 @@ Future<void> deleteFlashcardset(String courseId, String cardsetId) async {
   await courses.doc(courseId).collection('flashcards').doc(cardsetId).delete();
 }
 
-Future<void> createFlashcard(String courseId) async {
+Future<void> createFlashcard(String courseId, String cardsetId, String question, String answer) async {
   await courses
       .doc(courseId)
       .collection("flashcards")
-      .add({"name": "Untitled", "cards": {}});
+      .doc(cardsetId)
+      .update({"card": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
 }
