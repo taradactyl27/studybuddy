@@ -48,18 +48,24 @@ class CourseTile extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () async {
-                      if (course['roles'][uid]['favorite']) {
-                        await removeCourseFromFavorite(course.id, uid);
-                      } else {
+                      if (course['roles'][uid]['favorite'] == null) {
                         await addCourseToFavorite(course.id, uid);
+                      } else {
+                        if (course['roles'][uid]['favorite']) {
+                          await removeCourseFromFavorite(course.id, uid);
+                        } else {
+                          await addCourseToFavorite(course.id, uid);
+                        }
                       }
                     },
                     child: Container(
                         margin: const EdgeInsets.only(top: 7, right: 6),
-                        child: course['roles'][uid]['favorite']
-                            ? const Icon(Icons.star,
-                                color: Colors.amber, size: 20)
-                            : const Icon(Icons.star_border, size: 20)),
+                        child: course['roles'][uid]['favorite'] == null
+                            ? const Icon(Icons.star_border, size: 20)
+                            : course['roles'][uid]['favorite']
+                                ? const Icon(Icons.star,
+                                    color: Colors.amber, size: 20)
+                                : const Icon(Icons.star_border, size: 20)),
                   ),
                 ],
               ),
