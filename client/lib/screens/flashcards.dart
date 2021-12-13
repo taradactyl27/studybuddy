@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/src/list_extensions.dart';
 import 'package:flash_card/flash_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -72,9 +75,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: ListView(
-          padding: const EdgeInsets.only(top: 0, left: 15, right: 15),
+          padding:
+              const EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 10),
           children: [
-            const SizedBox(height: 15),
+            const SizedBox(height: 55),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text("Flashcards",
                   style: GoogleFonts.nunito(
@@ -92,25 +96,39 @@ class _FlashcardPageState extends State<FlashcardPage> {
                           snapshot) {
                     if (!snapshot.hasData) {
                       return const SizedBox(
-                          height: 150,
+                          height: 450,
                           child: Center(child: CircularProgressIndicator()));
                     }
-                    return SizedBox(
-                        height: 150,
-                        width: MediaQuery.of(context).size.width,
-                        child: GridView.count(
-                          crossAxisCount: 1,
-                          mainAxisSpacing: 15,
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          padding: const EdgeInsets.all(10.0),
-                          children:
-                              snapshot.data!.get("cards").map<Widget>((card) {
-                            return FlashCard(
-                                frontWidget: Text(card["question"]),
-                                backWidget: Text(card["answer"]));
-                          }).toList(),
-                        ));
+                    print('has data');
+                    List<dynamic> cards = snapshot.data!.get('cards');
+                    if (cards.isEmpty) {
+                      return const SizedBox(
+                          height: 450,
+                          child: Center(
+                              child: Text(
+                                  "No flashcards created. Create one below!")));
+                    } else {
+                      return SizedBox(
+                          height: 450,
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: ListView(
+                              padding: const EdgeInsets.only(top: 5),
+                              children: cards.mapIndexed<Widget>((index, card) {
+                                return FlashCard(
+                                    key: Key(index.toString()),
+                                    width: 300,
+                                    height: 300,
+                                    frontWidget: Center(
+                                        child:
+                                            Text(card["question"] ?? 'empty')),
+                                    backWidget: Center(
+                                        child:
+                                            Text(card["answer"] ?? 'empty')));
+                              }).toList(),
+                            ),
+                          ));
+                    }
                   })
             ]),
           ],

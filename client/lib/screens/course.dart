@@ -218,7 +218,7 @@ class _CoursePageState extends State<CoursePage> {
                                       child: CircularProgressIndicator()));
                             }
                             return SizedBox(
-                                height: 400,
+                                height: 300,
                                 width: MediaQuery.of(context).size.width,
                                 child: ListView(
                                   scrollDirection: Axis.vertical,
@@ -268,27 +268,22 @@ class _CoursePageState extends State<CoursePage> {
                         if (!snapshot.hasData) return Container();
                         if (snapshot.data!.get("roles")[uid]["role"] ==
                             "owner") {
-                          return Positioned(
-                              width: MediaQuery.of(context).size.width,
-                              bottom: 100,
-                              left: 0,
-                              child: Center(
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.red,
-                                  ),
-                                  onPressed: () async {
-                                    await database.deleteCourse(
-                                        uid,
-                                        Provider.of<CourseState>(context,
-                                                listen: false)
-                                            .currentCourseId);
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text("Delete Course"),
-                                ),
-                              ));
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                            ),
+                            onPressed: () async {
+                              await database.deleteCourse(
+                                  uid,
+                                  Provider.of<CourseState>(context,
+                                          listen: false)
+                                      .currentCourseId);
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Delete Course"),
+                          );
                         }
+                        print('intersting');
                         return Container();
                       }),
                 ],
