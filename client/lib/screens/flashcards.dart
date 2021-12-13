@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flash_card/flash_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/services/course_state.dart';
+import 'package:studybuddy/widgets/flashcard_tile.dart';
 import 'package:studybuddy/widgets/flashcardcreation.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -79,9 +82,35 @@ class _FlashcardPageState extends State<FlashcardPage> {
                               fontSize: 21,
                               fontWeight: FontWeight.w400,
                             ))),
-                        const SizedBox(
-                          height: 200,
-                        )
+                        StreamBuilder(
+                            stream: database.getFlashcard(
+                                Provider.of<CourseState>(context, listen: false)
+                                    .currentCourseId, widget.cardsetId),
+                            builder: (context,
+                                AsyncSnapshot<
+                                       DocumentSnapshot<Map<String, dynamic>>>
+                                    snapshot) {
+                              if (!snapshot.hasData) {
+                                return const SizedBox(
+                                    height: 150,
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+                              }
+                              return SizedBox(
+                                  height: 150,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: GridView.count(
+                                    crossAxisCount: 1,
+                                    mainAxisSpacing: 15,
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.all(10.0),
+                                    children:
+                                        snapshot.data!.get("cards").map<Widget>((card) {
+                                      return FlashCard(frontWidget: Text(card["question"]), backWidget: Text(card["answer"]));
+                                    }).toList(),
+                                  ));
+                            })
                       ]),
                 ],
               ),

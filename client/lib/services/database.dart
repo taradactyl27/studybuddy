@@ -140,5 +140,9 @@ Future<void> createFlashcard(String courseId, String cardsetId, String question,
       .doc(courseId)
       .collection("flashcards")
       .doc(cardsetId)
-      .update({"card": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
+      .update({"cards": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
+}
+
+Stream<DocumentSnapshot<Map<String, dynamic>>> getFlashcard(String courseId, String cardsetId) {
+  return courses.doc(courseId).collection('flashcards').doc(cardsetId).snapshots();
 }
