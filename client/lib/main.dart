@@ -53,6 +53,17 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.cyan,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: ButtonStyle(
+              textStyle: MaterialStateProperty.all<TextStyle>(
+                  const TextStyle(fontSize: 18)),
+              padding: MaterialStateProperty.all<EdgeInsets>(
+                const EdgeInsets.all(13),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            ),
+          ),
         ),
         onGenerateRoute: controller,
         initialRoute: rootUrl,
