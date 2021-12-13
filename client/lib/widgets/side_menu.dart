@@ -25,7 +25,7 @@ class SideMenu extends StatelessWidget {
                 ),
               ),
             ),
-            Divider(),
+            const Divider(),
             InkWell(
               onTap: () {
                 Navigator.of(context)

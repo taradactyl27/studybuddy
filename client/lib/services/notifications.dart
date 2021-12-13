@@ -11,7 +11,7 @@ const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
 final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings();
+    const IOSInitializationSettings();
 
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
