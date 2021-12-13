@@ -72,6 +72,12 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     })
               ],
             ),
+            appBar: AppBar(
+              iconTheme: const IconThemeData(
+              color: Colors.white,
+              
+          ),
+            ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: ListView(
@@ -113,6 +119,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                           width: MediaQuery.of(context).size.width,
                           child: Center(
                             child: ListView(
+                              scrollDirection: Axis.horizontal,
                               padding: const EdgeInsets.only(top: 5),
                               children: cards.mapIndexed<Widget>((index, card) {
                                 return FlashCard(
@@ -121,10 +128,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                     height: 300,
                                     frontWidget: Center(
                                         child:
-                                            Text(card["question"] ?? 'empty')),
+                                            Text(card["answer"] ?? 'empty')),
                                     backWidget: Center(
                                         child:
-                                            Text(card["answer"] ?? 'empty')));
+                                          Text(card["question"] ?? 'empty')));
                               }).toList(),
                             ),
                           ));
