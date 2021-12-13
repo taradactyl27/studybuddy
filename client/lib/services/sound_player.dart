@@ -6,6 +6,7 @@ import 'package:studybuddy/services/sound_recorder.dart';
 
 class SoundPlayer {
   FlutterSoundPlayer? _audioPlayer;
+  bool get isPlaying => _audioPlayer!.isPlaying;
 
   Future init() async {
     _audioPlayer = FlutterSoundPlayer();

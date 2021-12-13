@@ -141,6 +141,10 @@ class _AudioFormState extends State<AudioForm> {
                               )),
                     ),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 2,
+                        primary: Colors.blue,
+                      ),
                         onPressed: () async {
                           // _formKey.currentState!.save();
                           // String courseID =
@@ -151,15 +155,23 @@ class _AudioFormState extends State<AudioForm> {
 
                           print("came back from route");
                         },
-                        child: const Text('Record')),
+                        child: const Text('Record', 
+                          style: TextStyle(
+                          color: Colors.white,)
+                        )),
                     ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 2,
+                          primary: Colors.blue,
+                        ),
                         onPressed: () async {
                           _formKey.currentState!.save();
                           String courseID =
                               _formKey.currentState!.value['courseID'];
 
                           String temp = recentFilePath;
-                          String tempFileName = "test File 1";
+                          //String tempFileName = "test File 1";
+                          //String tempFileName = tempfilename;
                           print("recording file and name updated");
 
                           setState(() {
@@ -169,7 +181,7 @@ class _AudioFormState extends State<AudioForm> {
 
                           String audioID = database.newLectureRef(courseID).id;
                           File file = File(temp);
-                          String name = tempFileName;
+                          String name = tempfilename;
 
                           UploadTask upload = storage.createUpload(
                               user, courseID, audioID, file, name);
@@ -189,7 +201,10 @@ class _AudioFormState extends State<AudioForm> {
                             progress = 0;
                           });
                         },
-                        child: const Text('Upload Most Recent Recording'))
+                        child: const Text('Upload Recording',
+                              style: TextStyle(
+                                color: Colors.white,
+                              )))
                   ],
                 ),
               ),

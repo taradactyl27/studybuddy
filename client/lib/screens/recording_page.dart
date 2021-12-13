@@ -41,7 +41,7 @@ class _RecordingPageState extends State<RecordingPage> {
     final primary1 = isRecording ? Colors.red : Colors.white;
     final onPrimary1 = isRecording ? Colors.white : Colors.red;
 
-    final isPlaying = false;
+    final isPlaying = player.isPlaying;
     final icon2 = isPlaying ? Icons.stop : Icons.play_arrow;
     final text2 = isPlaying ? 'Stop Playing' : 'Start Playing';
     final primary2 = isPlaying ? Colors.red : Colors.white;
@@ -63,9 +63,12 @@ class _RecordingPageState extends State<RecordingPage> {
                 icon: Icon(icon1),
                 label: Text(text1),
                 onPressed: () async {
-                  final isRecording = await recorder.toggleRecording();
+                 await recorder.toggleRecording();
                   setState(() {});
                 },
+              ),
+              const SizedBox(
+                height: 50,
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
@@ -76,14 +79,25 @@ class _RecordingPageState extends State<RecordingPage> {
                 icon: Icon(icon2),
                 label: Text(text2),
                 onPressed: () async {
-                  await player.togglePlaying(whenFinished: () {});
+                  await player.togglePlaying(whenFinished: () => setState(() {}));
+                  setState(() {});
                 },
               ),
-              ElevatedButton(
+              const SizedBox(
+                height: 50,
+              ),
+              ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                  minimumSize: Size(175, 50),
+                  primary:  Colors.white,
+                  onPrimary: Colors.red,
+                ),
                   onPressed: () async {
                     Navigator.pop(context);
                   },
-                  child: const Text('Finished'))
+                  icon: Icon(Icons.check),
+                  label: Text('Finished'))
+                  //child: const Text('Finished'))
             ],
           ))
         ],

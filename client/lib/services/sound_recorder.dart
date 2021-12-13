@@ -3,9 +3,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final pathForSavedAudio = 'example_audio.aac';
+//final pathForSavedAudio = 'example_audio.aac';
 String recentFilePath = "";
-
+String tempfilename = "";
 class SoundRecorder {
   FlutterSoundRecorder? _audioRecorder;
   bool _isRecorderInitialized = false;
@@ -36,10 +36,15 @@ class SoundRecorder {
     print('recording started');
 
     Directory directory = await getApplicationDocumentsDirectory();
-    String filepath = directory.path +
-        '/' +
-        DateTime.now().millisecondsSinceEpoch.toString() +
-        '.aac';
+    String filepath = directory.path;
+        //'/' +
+        //DateTime.now().millisecondsSinceEpoch.toString() +
+        //'.aac';
+
+    String TempDateTime = DateTime.now().millisecondsSinceEpoch.toString();
+    filepath += '/' + TempDateTime + '.aac';
+    tempfilename = TempDateTime;
+
     print(filepath);
     recentFilePath = filepath;
     await _audioRecorder!.startRecorder(
