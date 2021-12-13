@@ -14,6 +14,7 @@ const kBadgeColor = Color(0xFFEE376E);
 const kGrayColor = Color(0xFF8793B2);
 const kTitleTextColor = Color(0xFF30384D);
 const kTextColor = Color(0xFF4D5875);
+const kInactiveTileColor = Colors.black12;
 const kDarkTextColor = Colors.black;
 const kLightTextColor = Colors.white;
 const kBorderColor = Colors.black45;

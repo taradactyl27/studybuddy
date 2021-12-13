@@ -29,7 +29,7 @@ class _TranscriptTileState extends State<TranscriptTile> {
     DateTime date = widget.transcript['created'].toDate();
     return Card(
       child: ListTile(
-        tileColor: hasText ? kLightTextColor : kInactiveColor,
+        tileColor: hasText ? kLightTextColor : kInactiveTileColor,
         leading: const Icon(
           Icons.insert_drive_file_outlined,
           size: 35,

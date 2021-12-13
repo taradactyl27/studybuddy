@@ -59,7 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(220, 36)),
+                      primary: kPrimaryColor, minimumSize: const Size(220, 36)),
                   child: Text(
                     'Sign up',
                     style: GoogleFonts.nunito(
