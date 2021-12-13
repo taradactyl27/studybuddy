@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/sound_player.dart';
 import 'package:studybuddy/services/sound_recorder.dart';
-import 'package:studybuddy/services/sound_player.dart';
 //import 'package:flutter_sound/flutter_sound.dart';
 //import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 //import 'package:permission_handler/permission_handler.dart';
@@ -16,6 +16,7 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingPageState extends State<RecordingPage> {
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer();
   final recorder = SoundRecorder();
   final player = SoundPlayer();
 
@@ -27,9 +28,10 @@ class _RecordingPageState extends State<RecordingPage> {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     player.dispose();
     recorder.dispose();
+    await _stopWatchTimer.dispose();
     super.dispose();
   }
 
@@ -54,6 +56,19 @@ class _RecordingPageState extends State<RecordingPage> {
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              StreamBuilder(
+                stream: _stopWatchTimer.rawTime,
+                builder: (context, AsyncSnapshot<int> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const CircularProgressIndicator();
+                  }
+                  return Text(StopWatchTimer.getDisplayTime(snapshot.data ?? 0),
+                      style: const TextStyle(fontSize: 32));
+                },
+              ),
+              const SizedBox(
+                height: 25,
+              ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(175, 50),
@@ -63,12 +78,18 @@ class _RecordingPageState extends State<RecordingPage> {
                 icon: Icon(icon1),
                 label: Text(text1),
                 onPressed: () async {
-                 await recorder.toggleRecording();
+                  await recorder.toggleRecording();
+                  if (isRecording) {
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                  } else {
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+                  }
                   setState(() {});
                 },
               ),
               const SizedBox(
-                height: 50,
+                height: 25,
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
@@ -79,25 +100,26 @@ class _RecordingPageState extends State<RecordingPage> {
                 icon: Icon(icon2),
                 label: Text(text2),
                 onPressed: () async {
-                  await player.togglePlaying(whenFinished: () => setState(() {}));
+                  await player.togglePlaying(
+                      whenFinished: () => setState(() {}));
                   setState(() {});
                 },
               ),
               const SizedBox(
-                height: 50,
+                height: 25,
               ),
               ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                  minimumSize: Size(175, 50),
-                  primary:  Colors.white,
-                  onPrimary: Colors.red,
-                ),
+                    minimumSize: Size(175, 50),
+                    primary: Colors.white,
+                    onPrimary: Colors.red,
+                  ),
                   onPressed: () async {
                     Navigator.pop(context);
                   },
                   icon: Icon(Icons.check),
                   label: Text('Finished'))
-                  //child: const Text('Finished'))
+              //child: const Text('Finished'))
             ],
           ))
         ],

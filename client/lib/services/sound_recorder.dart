@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 //final pathForSavedAudio = 'example_audio.aac';
 String recentFilePath = "";
 String tempfilename = "";
+
 class SoundRecorder {
   FlutterSoundRecorder? _audioRecorder;
   bool _isRecorderInitialized = false;
@@ -15,9 +16,13 @@ class SoundRecorder {
   Future init() async {
     _audioRecorder = FlutterSoundRecorder();
 
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
+    final micStatus = await Permission.microphone.request();
+    if (micStatus != PermissionStatus.granted) {
       throw RecordingPermissionException('Microphone Permission Not Granted');
+    }
+    final storeStatus = await Permission.storage.request();
+    if (storeStatus != PermissionStatus.granted) {
+      throw RecordingPermissionException('Storage Permission Not Granted');
     }
     await _audioRecorder!.openAudioSession();
     _isRecorderInitialized = true;
@@ -37,13 +42,13 @@ class SoundRecorder {
 
     Directory directory = await getApplicationDocumentsDirectory();
     String filepath = directory.path;
-        //'/' +
-        //DateTime.now().millisecondsSinceEpoch.toString() +
-        //'.aac';
+    //'/' +
+    //DateTime.now().millisecondsSinceEpoch.toString() +
+    //'.aac';
 
-    String TempDateTime = DateTime.now().millisecondsSinceEpoch.toString();
-    filepath += '/' + TempDateTime + '.aac';
-    tempfilename = TempDateTime;
+    String tempDateTime = DateTime.now().millisecondsSinceEpoch.toString();
+    filepath += '/$tempDateTime.aac';
+    tempfilename = '$tempDateTime.aac';
 
     print(filepath);
     recentFilePath = filepath;
