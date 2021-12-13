@@ -60,12 +60,11 @@ class CourseTile extends StatelessWidget {
                     },
                     child: Container(
                         margin: const EdgeInsets.only(top: 7, right: 6),
-                        child: course['roles'][uid]['favorite'] == null
+                        child: course['roles'][uid]['favorite'] == null ||
+                                !course['roles'][uid]['favorite']
                             ? const Icon(Icons.star_border, size: 20)
-                            : course['roles'][uid]['favorite']
-                                ? const Icon(Icons.star,
-                                    color: Colors.amber, size: 20)
-                                : const Icon(Icons.star_border, size: 20)),
+                            : const Icon(Icons.star,
+                                color: Colors.amber, size: 20)),
                   ),
                 ],
               ),
