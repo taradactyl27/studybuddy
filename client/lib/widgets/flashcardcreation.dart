@@ -5,7 +5,8 @@ import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class FlashCardCreationForm extends StatefulWidget {
-  const FlashCardCreationForm({Key? key, required this.cardsetId}) : super(key: key);
+  const FlashCardCreationForm({Key? key, required this.cardsetId})
+      : super(key: key);
   final String cardsetId;
   @override
   State<FlashCardCreationForm> createState() => _FlashCardCreationFormState();
@@ -32,22 +33,18 @@ class _FlashCardCreationFormState extends State<FlashCardCreationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final courseId = Provider.of<CourseState>(context).currentCourseId; 
-    
+    final courseId = Provider.of<CourseState>(context).currentCourseId;
+
     return ValueListenableBuilder(
         valueListenable: _questioncontroller,
         builder: (context, TextEditingValue value, __) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
-              child: Hero(
-                tag: 'add',
+              child: Material(
+                elevation: 20,
                 child: Material(
-                  color: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      side: const BorderSide(width: 3, color: Colors.black45),
-                      borderRadius: BorderRadius.circular(32)),
+                  elevation: 20,
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -64,7 +61,6 @@ class _FlashCardCreationFormState extends State<FlashCardCreationForm> {
                             cursorColor: Colors.white,
                           ),
                           const Divider(
-                            color: Colors.black45,
                             thickness: 0.4,
                           ),
                           TextFormField(
@@ -77,7 +73,6 @@ class _FlashCardCreationFormState extends State<FlashCardCreationForm> {
                             maxLines: 6,
                           ),
                           const Divider(
-                            color: Colors.black45,
                             thickness: 0.4,
                           ),
                           ElevatedButton(

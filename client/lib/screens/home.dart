@@ -7,6 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
@@ -106,21 +107,25 @@ class _HomePageState extends State<HomePage>
           child: const SideMenu(),
         ),
         extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+        ),
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: kIsWeb
             ? FloatingActionButtonLocation.endFloat
             : FloatingActionButtonLocation.endDocked,
         floatingActionButton: SpeedDial(
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: kLightModeIconSecondary),
           icon: Icons.add,
           activeIcon: Icons.close,
           spacing: 10,
-          overlayColor: Colors.blueGrey,
+          overlayColor: kOverlayColor,
           overlayOpacity: 0.6,
           children: [
             SpeedDialChild(
-                child: const Icon(Icons.my_library_add_rounded,
-                    color: Colors.black),
+                child: const Icon(Icons.my_library_add_rounded),
                 label: "Add Course",
                 onTap: () {
                   Navigator.of(context)
@@ -129,7 +134,7 @@ class _HomePageState extends State<HomePage>
                   }));
                 }),
             SpeedDialChild(
-                child: const Icon(Icons.mic_rounded, color: Colors.black),
+                child: const Icon(Icons.mic_rounded),
                 label: 'Upload Lecture',
                 onTap: () {
                   Navigator.of(context)
@@ -169,7 +174,8 @@ class _HomePageState extends State<HomePage>
                               },
                               decoration: InputDecoration(
                                 labelText: "Search...",
-                                fillColor: Colors.white,
+                                labelStyle: GoogleFonts.nunito(),
+                                fillColor: kBgLightColor,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25.0),
                                   borderSide: const BorderSide(),
@@ -188,9 +194,10 @@ class _HomePageState extends State<HomePage>
                       }),
                 ],
               ),
+              const SizedBox(height: 20),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              const SizedBox(height: 20),
+              if (isSearching) const SizedBox(height: 20),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("Recently Edited",
                     style: GoogleFonts.nunito(
@@ -218,6 +225,37 @@ class _HomePageState extends State<HomePage>
                               height: 300,
                               child:
                                   Center(child: CircularProgressIndicator()));
+                        }
+                        if (snapshot.data!.size == 0) {
+                          return Column(children: [
+                            const SizedBox(height: 20),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                top: 15,
+                                right: 15,
+                                left: 15,
+                                bottom: 15,
+                              ),
+                              height: 200,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fitHeight,
+                                    image:
+                                        AssetImage("theme/courses_empty.png")),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Center(
+                              child: SizedBox(
+                                width: 200,
+                                child: Text(
+                                  "You are not a part of any course yet. Click the + button on the bottom right to begin!",
+                                  style: GoogleFonts.nunito(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            )
+                          ]);
                         }
                         return SizedBox(
                           height: 300,

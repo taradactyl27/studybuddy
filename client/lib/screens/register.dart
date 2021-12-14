@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' as auth;
 
@@ -30,10 +32,13 @@ class _RegisterPageState extends State<RegisterPage> {
           children: <Widget>[
             Container(
               height: 250,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fitHeight,
-                  image: AssetImage("theme/sbuddy.png"),
+                  image: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? const AssetImage("theme/sbuddy.png")
+                      : const AssetImage("theme/sbuddy_dark.png"),
                 ),
               ),
             ),
@@ -57,11 +62,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(220, 36)),
-                  child: const Text('Sign up',
-                      style: TextStyle(
-                        color: Colors.white,
-                      )),
+                      primary: kPrimaryColor, minimumSize: const Size(220, 36)),
+                  child: Text(
+                    'Sign up',
+                    style: GoogleFonts.nunito(
+                      textStyle: const TextStyle(color: kLightTextColor),
+                    ),
+                  ),
                   onPressed: () async {
                     _email = _usercontroller.text;
                     _password = _passwordcontroller.text;

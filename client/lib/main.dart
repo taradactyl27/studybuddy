@@ -5,9 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/services/course_state.dart';
-
 import '../services/auth.dart';
 import 'routes/routes.dart';
 
@@ -23,10 +23,6 @@ void main() async {
   if (dotenv.get('EMULATE_FIRESTORE', fallback: '') == 'y') {
     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   }
-
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
 
   runApp(const MyApp());
 }
@@ -51,9 +47,26 @@ class MyApp extends StatelessWidget {
         title: 'Study Buddy',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark)),
+          brightness: Brightness.light,
           primarySwatch: Colors.cyan,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
+        darkTheme: ThemeData(
+          appBarTheme: const AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light)),
+          brightness: Brightness.dark,
+          colorScheme: const ColorScheme.dark(),
+          primarySwatch: Colors.cyan,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          applyElevationOverlayColor: true,
+        ),
+        themeMode: ThemeMode.system,
         onGenerateRoute: controller,
         initialRoute: rootUrl,
       ),

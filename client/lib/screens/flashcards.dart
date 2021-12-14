@@ -1,18 +1,15 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/src/list_extensions.dart';
 import 'package:flash_card/flash_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/course_state.dart';
-import 'package:studybuddy/widgets/flashcard_tile.dart';
 import 'package:studybuddy/widgets/flashcardcreation.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:studybuddy/routes/hero_route.dart';
-import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
@@ -26,137 +23,164 @@ class FlashcardPage extends StatefulWidget {
 
 class _FlashcardPageState extends State<FlashcardPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int index = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 250),
-        child: const SideMenu(),
-      ),
-      resizeToAvoidBottomInset: false,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: kIsWeb
-          ? null
-          : SpeedDial(
-              iconTheme: const IconThemeData(color: Colors.white),
-              icon: Icons.menu_open,
-              activeIcon: Icons.close,
-              spacing: 10,
-              overlayColor: Colors.blueGrey,
-              overlayOpacity: 0.6,
-              children: [
-                SpeedDialChild(
-                    child: const Icon(Icons.mic_rounded, color: Colors.black),
-                    label: 'Add a Card',
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(HeroDialogRoute(builder: (context) {
-                        return FlashCardCreationForm(
-                          cardsetId: widget.cardsetId,
-                        );
-                      }));
-                    }),
-                SpeedDialChild(
-                    backgroundColor: Colors.redAccent,
-                    labelBackgroundColor: Colors.redAccent,
-                    child: const Icon(Icons.delete, color: Colors.black),
-                    label: 'Delete Card Set',
-                    onTap: () async {
-                      await database.deleteFlashcardset(
-                          Provider.of<CourseState>(context, listen: false)
-                              .currentCourseId,
-                          widget.cardsetId);
+    return StreamBuilder(
+        stream: database.getFlashcard(
+            Provider.of<CourseState>(context, listen: false).currentCourseId,
+            widget.cardsetId),
+        builder: (context,
+            AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          List<Widget> cards = List<dynamic>.from(snapshot.data!.get('cards'))
+              .mapIndexed<Widget>((index, card) {
+            return FlashCard(
+                key: Key(index.toString()),
+                width: 300,
+                height: 300,
+                frontWidget: Center(child: Text(card["answer"] ?? 'empty')),
+                backWidget: Center(child: Text(card["question"] ?? 'empty')));
+          }).toList();
+          return Scaffold(
+            key: _scaffoldKey,
+            drawer: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 250),
+              child: const SideMenu(),
+            ),
+            resizeToAvoidBottomInset: false,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.endDocked,
+            floatingActionButton: kIsWeb
+                ? null
+                : SpeedDial(
+                    iconTheme:
+                        const IconThemeData(color: kLightModeIconSecondary),
+                    icon: Icons.menu_open,
+                    activeIcon: Icons.close,
+                    spacing: 10,
+                    overlayColor: kOverlayColor,
+                    overlayOpacity: 0.6,
+                    children: [
+                      SpeedDialChild(
+                          child: const Icon(Icons.mic_rounded),
+                          label: 'Add a Card',
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(HeroDialogRoute(builder: (context) {
+                              return FlashCardCreationForm(
+                                cardsetId: widget.cardsetId,
+                              );
+                            }));
+                          }),
+                      SpeedDialChild(
+                          backgroundColor: kDangerColor,
+                          labelBackgroundColor: kDangerColor,
+                          child: const Icon(Icons.delete),
+                          label: 'Delete Card Set',
+                          onTap: () async {
+                            await database.deleteFlashcardset(
+                                Provider.of<CourseState>(context, listen: false)
+                                    .currentCourseId,
+                                widget.cardsetId);
 
-                      Navigator.pop(context);
-                    })
-              ],
-            ),
+                            Navigator.pop(context);
+                          })
+                    ],
+                  ),
             appBar: AppBar(
-              iconTheme: const IconThemeData(
-              color: Colors.white,
-              
-          ),
-            ),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: ListView(
-          padding:
-              const EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 10),
-          children: [
-            const SizedBox(height: 55),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text("Flashcards",
-                  style: GoogleFonts.nunito(
-                      textStyle: const TextStyle(
-                    fontSize: 21,
-                    fontWeight: FontWeight.w400,
-                  ))),
-              StreamBuilder(
-                  stream: database.getFlashcard(
+              title:
+                  Text(snapshot.data!.get("name"), style: GoogleFonts.nunito()),
+              leading: IconButton(
+                  onPressed: () {
+                    if (kIsWeb) {
                       Provider.of<CourseState>(context, listen: false)
-                          .currentCourseId,
-                      widget.cardsetId),
-                  builder: (context,
-                      AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
-                          snapshot) {
-                    if (!snapshot.hasData) {
-                      return const SizedBox(
-                          height: 450,
-                          child: Center(child: CircularProgressIndicator()));
-                    }
-                    print('has data');
-                    List<dynamic> cards = snapshot.data!.get('cards');
-                    if (cards.isEmpty) {
-                      return const SizedBox(
-                          height: 450,
-                          child: Center(
-                              child: Text(
-                                  "No flashcards created. Create one below!")));
+                          .removeCourseStream();
                     } else {
-                      return SizedBox(
-                          height: 450,
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.only(top: 5),
-                              children: cards.mapIndexed<Widget>((index, card) {
-                                return FlashCard(
-                                    key: Key(index.toString()),
-                                    width: 300,
-                                    height: 300,
-                                    frontWidget: Center(
-                                        child:
-                                            Text(card["answer"] ?? 'empty')),
-                                    backWidget: Center(
-                                        child:
-                                          Text(card["question"] ?? 'empty')));
-                              }).toList(),
-                            ),
-                          ));
+                      Navigator.of(context).pop();
                     }
-                  })
-            ]),
-          ],
-        ),
-      ),
-      bottomNavigationBar: !kIsWeb
-          ? BottomAppBar(
-              shape: const CircularNotchedRectangle(),
-              notchMargin: 8.0,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.menu),
-                      onPressed: () {
-                        _scaffoldKey.currentState!.openDrawer();
-                      },
-                    ),
-                  ]))
-          : null,
-    );
+                  },
+                  icon: const Icon(Icons.arrow_back_ios_new_sharp)),
+            ),
+            body: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: ListView(
+                padding: const EdgeInsets.only(
+                    top: 10, left: 15, right: 15, bottom: 10),
+                children: [
+                  const SizedBox(height: 55),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Flashcards",
+                            style: GoogleFonts.nunito(
+                                textStyle: const TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w400,
+                            ))),
+                        cards.isEmpty
+                            ? const SizedBox(
+                                height: 450,
+                                child: Center(
+                                    child: Text(
+                                        "No flashcards created. Create one below!")))
+                            : SizedBox(
+                                height: 350,
+                                width: MediaQuery.of(context).size.width,
+                                child: Center(child: cards[index])),
+                        if (cards.isNotEmpty)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              OutlinedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      index -= 1;
+                                      if (index < 0) {
+                                        index = cards.length - 1;
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(Icons.chevron_left),
+                                  label: Text('Prev',
+                                      style: GoogleFonts.nunito())),
+                              OutlinedButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      index += 1;
+                                      if (index > cards.length - 1) {
+                                        index = 0;
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(Icons.chevron_right),
+                                  label: Text('Next',
+                                      style: GoogleFonts.nunito())),
+                            ],
+                          )
+                      ]),
+                ],
+              ),
+            ),
+            bottomNavigationBar: !kIsWeb
+                ? BottomAppBar(
+                    shape: const CircularNotchedRectangle(),
+                    notchMargin: 8.0,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () {
+                              _scaffoldKey.currentState!.openDrawer();
+                            },
+                          ),
+                        ]))
+                : null,
+          );
+        });
   }
 }
