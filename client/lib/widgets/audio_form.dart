@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -25,7 +26,13 @@ class AudioForm extends StatefulWidget {
 
 class _AudioFormState extends State<AudioForm> {
   final _formKey = GlobalKey<FormBuilderState>();
+  late TextEditingController _controller;
   double progress = 0;
+  File? _pickedFile;
+  String fileName = "";
+  String fileEnding = "";
+  bool filePicked = false;
+  bool _editing = false;
   bool uploading = false;
   @override
   void dispose() {
@@ -68,7 +75,8 @@ class _AudioFormState extends State<AudioForm> {
                                 }
                                 return FormBuilderDropdown(
                                   name: 'courseID',
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
+                                    labelStyle: GoogleFonts.nunito(),
                                     labelText: 'Course',
                                   ),
                                   allowClear: true,
@@ -90,123 +98,257 @@ class _AudioFormState extends State<AudioForm> {
                       color: Colors.transparent,
                       thickness: 0.4,
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        _formKey.currentState!.save();
-                        String courseID =
-                            _formKey.currentState!.value['courseID'];
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles();
-                        if (result != null) {
-                          setState(() {
-                            uploading = true;
-                          });
-                          String audioID = database.newLectureRef(courseID).id;
-                          File file = File(result.files.single.path!);
-                          String name = result.files.single.name;
+                    filePicked
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Material(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.library_music,
+                                            size: 30),
+                                        const SizedBox(width: 10),
+                                        SizedBox(
+                                          width: 190,
+                                          child: TextField(
+                                            style: GoogleFonts.nunito(),
+                                            controller: _controller,
+                                            onSubmitted: (edit) {
+                                              setState(() {
+                                                fileName = edit;
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                              border: _editing
+                                                  ? null
+                                                  : InputBorder.none,
+                                            ),
+                                            readOnly: !_editing,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        _editing
+                                            ? InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    fileName = _controller.text;
+                                                    _editing = false;
+                                                  });
+                                                },
+                                                child: const Icon(Icons.check,
+                                                    size: 18))
+                                            : InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _editing = true;
+                                                  });
+                                                },
+                                                child: const Icon(Icons.edit,
+                                                    size: 18)),
+                                        InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                _pickedFile = null;
+                                                filePicked = false;
+                                              });
+                                            },
+                                            child: const Icon(Icons.close,
+                                                size: 18))
+                                      ],
+                                    ),
+                                  )),
+                              const SizedBox(height: 10),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    _formKey.currentState!.save();
+                                    String courseID = _formKey
+                                        .currentState!.value['courseID'];
+                                    setState(() {
+                                      uploading = true;
+                                    });
 
-                          UploadTask upload = storage.createUpload(
-                              user, courseID, audioID, file, name);
+                                    String audioID =
+                                        database.newLectureRef(courseID).id;
 
-                          upload.snapshotEvents.listen((event) {
-                            setState(() {
-                              progress =
-                                  (event.bytesTransferred / event.totalBytes);
-                            });
-                          });
+                                    UploadTask upload = storage.createUpload(
+                                        user,
+                                        courseID,
+                                        audioID,
+                                        _pickedFile!,
+                                        "$fileName$fileEnding");
 
-                          await upload;
-                          print('audio UPLOAD done!!!');
+                                    upload.snapshotEvents.listen((event) {
+                                      setState(() {
+                                        progress = (event.bytesTransferred /
+                                            event.totalBytes);
+                                      });
+                                    });
 
-                          setState(() {
-                            uploading = false;
-                            progress = 0;
-                          });
-                          // TODO: pop context with result of operation
-                        } else {
-                          // User canceled the picker
-                        }
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: uploading ? 0 : 2,
-                        primary: uploading ? Colors.transparent : kPrimaryColor,
-                      ),
-                      child: uploading
-                          ? LinearProgressIndicator(
-                              value: progress,
-                            )
-                          : Text('Choose File',
-                              style: GoogleFonts.nunito(
-                                textStyle:
-                                    const TextStyle(color: kLightTextColor),
-                              )),
-                    ),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 2,
-                          primary: Colors.blue,
-                        ),
-                        onPressed: () async {
-                          // _formKey.currentState!.save();
-                          // String courseID =
-                          //     _formKey.currentState!.value['courseID'];
+                                    await upload;
+                                    print('audio UPLOAD done!!!');
 
-                          await Navigator.pushNamed(
-                              context, routes.recordingPage);
+                                    setState(() {
+                                      uploading = false;
+                                      progress = 0;
+                                    });
+                                    // TODO: pop context with result of operation
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: uploading ? 0 : 2,
+                                    primary: uploading
+                                        ? Colors.transparent
+                                        : Colors.blue,
+                                  ),
+                                  child: uploading
+                                      ? LinearProgressIndicator(
+                                          value: progress,
+                                        )
+                                      : const Text('Upload File',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          )),
+                                ),
+                              ),
+                            ],
+                          )
+                        : GestureDetector(
+                            onTap: () async {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles();
+                              if (result != null) {
+                                setState(() {
+                                  _pickedFile = File(result.files.single.path!);
+                                  fileName = _pickedFile!.path
+                                      .split('/')
+                                      .last
+                                      .split(".")
+                                      .first;
+                                  fileEnding =
+                                      ".${_pickedFile!.path.split('/').last.split(".").last}";
+                                  _controller =
+                                      TextEditingController(text: fileName);
+                                  filePicked = true;
+                                });
+                                // TODO: pop context with result of operation
+                              } else {
+                                // User canceled the picker
+                              }
+                            },
+                            child: uploading
+                                ? LinearProgressIndicator(
+                                    value: progress,
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: DottedBorder(
+                                      borderType: BorderType.RRect,
+                                      radius: const Radius.circular(10),
+                                      dashPattern: const [10, 4],
+                                      strokeCap: StrokeCap.round,
+                                      color: Colors.blue.shade400,
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 150,
+                                        decoration: BoxDecoration(
+                                            color: Colors.blue.shade50
+                                                .withOpacity(MediaQuery.of(
+                                                                context)
+                                                            .platformBrightness ==
+                                                        Brightness.light
+                                                    ? .3
+                                                    : 0.05),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.folder_open,
+                                              color: Colors.blue,
+                                              size: 48,
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              'Select your file',
+                                              style: GoogleFonts.nunito(
+                                                  textStyle: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors
+                                                          .grey.shade400)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )),
+                          ),
+                    // ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       elevation: 2,
+                    //       primary: Colors.blue,
+                    //     ),
+                    //     onPressed: () async {
+                    //       await Navigator.pushNamed(
+                    //           context, routes.recordingPage);
+                    //     },
+                    //     child: const Text('Record',
+                    //         style: TextStyle(
+                    //           color: Colors.white,
+                    //         ))),
+                    // ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       elevation: 2,
+                    //       primary: Colors.blue,
+                    //     ),
+                    //     onPressed: () async {
+                    //       _formKey.currentState!.save();
+                    //       String courseID =
+                    //           _formKey.currentState!.value['courseID'];
 
-                          print("came back from route");
-                        },
-                        child: const Text('Record',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ))),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 2,
-                          primary: Colors.blue,
-                        ),
-                        onPressed: () async {
-                          _formKey.currentState!.save();
-                          String courseID =
-                              _formKey.currentState!.value['courseID'];
+                    //       String temp = recentFilePath;
+                    //       //String tempFileName = "test File 1";
+                    //       //String tempFileName = tempfilename;
+                    //       print("recording file and name updated");
 
-                          String temp = recentFilePath;
-                          //String tempFileName = "test File 1";
-                          //String tempFileName = tempfilename;
-                          print("recording file and name updated");
+                    //       setState(() {
+                    //         uploading = true;
+                    //       });
+                    //       print("started uploading");
 
-                          setState(() {
-                            uploading = true;
-                          });
-                          print("started uploading");
+                    //       String audioID = database.newLectureRef(courseID).id;
+                    //       File file = File(temp);
+                    //       String name = tempfilename;
 
-                          String audioID = database.newLectureRef(courseID).id;
-                          File file = File(temp);
-                          String name = tempfilename;
+                    //       UploadTask upload = storage.createUpload(
+                    //           user, courseID, audioID, file, name);
 
-                          UploadTask upload = storage.createUpload(
-                              user, courseID, audioID, file, name);
+                    //       upload.snapshotEvents.listen((event) {
+                    //         setState(() {
+                    //           progress =
+                    //               (event.bytesTransferred / event.totalBytes);
+                    //         });
+                    //       });
 
-                          upload.snapshotEvents.listen((event) {
-                            setState(() {
-                              progress =
-                                  (event.bytesTransferred / event.totalBytes);
-                            });
-                          });
+                    //       await upload;
+                    //       print('audio UPLOAD done!!!');
 
-                          await upload;
-                          print('audio UPLOAD done!!!');
-
-                          setState(() {
-                            uploading = false;
-                            progress = 0;
-                          });
-                        },
-                        child: const Text('Upload Recording',
-                            style: TextStyle(
-                              color: Colors.white,
-                            )))
+                    //       setState(() {
+                    //         uploading = false;
+                    //         progress = 0;
+                    //       });
+                    //     },
+                    //     child: const Text('Upload Recording',
+                    //         style: TextStyle(
+                    //           color: Colors.white,
+                    //         )))
                   ],
                 ),
               ),
