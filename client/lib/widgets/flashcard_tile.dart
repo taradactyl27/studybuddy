@@ -12,6 +12,9 @@ class FlashCardTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 5, right: 5),
       child: Material(
+        color: MediaQuery.of(context).platformBrightness == Brightness.light
+            ? null
+            : const Color(0xFF424242),
         elevation: 5,
         child: SizedBox(
           height: 150,
@@ -25,12 +28,11 @@ class FlashCardTile extends StatelessWidget {
               ),
               Center(
                 child: Container(
-                  padding: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(name,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.nunito(
-                        textStyle: const TextStyle(
-                            color: kDarkTextColor, fontSize: 16),
+                        textStyle: const TextStyle(fontSize: 16),
                       )),
                 ),
               ),

@@ -76,6 +76,7 @@ flutter:
 
   assets:
     - theme/sbuddy.png
+    - theme/sbuddy_dark.png
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:

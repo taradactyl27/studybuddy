@@ -8,7 +8,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/services/course_state.dart';
-
 import '../services/auth.dart';
 import 'routes/routes.dart';
 
@@ -52,12 +51,18 @@ class MyApp extends StatelessWidget {
         title: 'Study Buddy',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          brightness: Brightness.light,
           primarySwatch: Colors.cyan,
           visualDensity: VisualDensity.adaptivePlatformDensity,
-          textTheme: GoogleFonts.nunitoTextTheme(
-            Theme.of(context).textTheme,
-          ),
         ),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          colorScheme: const ColorScheme.dark(),
+          primarySwatch: Colors.cyan,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          applyElevationOverlayColor: true,
+        ),
+        themeMode: ThemeMode.system,
         onGenerateRoute: controller,
         initialRoute: rootUrl,
       ),

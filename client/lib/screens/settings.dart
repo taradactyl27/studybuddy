@@ -50,6 +50,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(username),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(primary: kPrimaryColor),
                       onPressed: () async {

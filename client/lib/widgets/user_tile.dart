@@ -33,8 +33,8 @@ class _UserTileState extends State<UserTile> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 2,
       child: ListTile(
-        tileColor: kBgLightColor,
         leading: const Icon(
           Icons.account_box,
           size: 35,

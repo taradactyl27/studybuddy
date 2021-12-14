@@ -38,14 +38,10 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
-              child: Hero(
-                tag: 'add',
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 450),
                 child: Material(
-                  color: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      side: const BorderSide(width: 3, color: Colors.black45),
-                      borderRadius: BorderRadius.circular(32)),
+                  elevation: 20,
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -62,7 +58,6 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                             cursorColor: Colors.white,
                           ),
                           const Divider(
-                            color: Colors.black45,
                             thickness: 0.4,
                           ),
                           TextFormField(
@@ -75,7 +70,6 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                             maxLines: 6,
                           ),
                           const Divider(
-                            color: Colors.black45,
                             thickness: 0.4,
                           ),
                           ElevatedButton(

@@ -35,34 +35,43 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               padding: const EdgeInsets.only(right: 15, left: 15),
               height: 250,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fitHeight,
-                  image: AssetImage("theme/sbuddy.png"),
+                  image: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? const AssetImage("theme/sbuddy.png")
+                      : const AssetImage("theme/sbuddy_dark.png"),
                 ),
               ),
             ),
+            Center(
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: _usercontroller,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                  )),
+            ),
+            Center(
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: _passwordcontroller,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  )),
+            ),
             Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _usercontroller,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                )),
-            Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _passwordcontroller,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                )),
-            Container(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor, minimumSize: const Size(220, 36)),
+                      primary: kPrimaryColor, minimumSize: const Size(230, 44)),
                   child: Text('Sign in',
                       style: GoogleFonts.nunito(
                         textStyle: const TextStyle(color: kLightTextColor),
@@ -99,7 +108,10 @@ class _LoginPageState extends State<LoginPage> {
                     TextSpan(
                       text: "Don't have an account? ",
                       style: GoogleFonts.nunito(
-                        textStyle: const TextStyle(color: kDarkTextColor),
+                        color: MediaQuery.of(context).platformBrightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
                       ),
                     ),
                     TextSpan(

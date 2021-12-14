@@ -34,14 +34,10 @@ class _AudioFormState extends State<AudioForm> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Hero(
-          tag: 'addaudio',
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 450),
           child: Material(
-            color: kBgLightColor,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 3, color: kBorderColor),
-                borderRadius: BorderRadius.circular(32)),
+            elevation: 20,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -73,18 +69,12 @@ class _AudioFormState extends State<AudioForm> {
                                   ),
                                   allowClear: true,
                                   hint: Text('Select Course',
-                                      style: GoogleFonts.nunito(
-                                        textStyle: const TextStyle(
-                                            color: kDarkTextColor),
-                                      )),
+                                      style: GoogleFonts.nunito()),
                                   items: snapshot.data!.docs
                                       .map((course) => DropdownMenuItem(
                                             value: course.id,
                                             child: Text(course.get('name'),
-                                                style: GoogleFonts.nunito(
-                                                  textStyle: const TextStyle(
-                                                      color: kDarkTextColor),
-                                                )),
+                                                style: GoogleFonts.nunito()),
                                           ))
                                       .toList(),
                                 );

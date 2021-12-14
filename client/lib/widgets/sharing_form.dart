@@ -41,14 +41,10 @@ class _SharingFormState extends State<SharingForm> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Hero(
-          tag: 'add',
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 450),
           child: Material(
-            color: kBgLightColor,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 3, color: kBorderColor),
-                borderRadius: BorderRadius.circular(32)),
+            elevation: 20,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -68,15 +64,11 @@ class _SharingFormState extends State<SharingForm> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text("Users with access to course",
-                              style: GoogleFonts.nunito(
-                                textStyle:
-                                    const TextStyle(color: kDarkTextColor),
-                              )),
+                              style: GoogleFonts.nunito()),
                           const Divider(
                             height: 10,
                             indent: 1,
                             endIndent: 0,
-                            color: Colors.black45,
                             thickness: 0.5,
                           ),
                           SizedBox(
@@ -104,10 +96,7 @@ class _SharingFormState extends State<SharingForm> {
                             TextFormField(
                               controller: _namecontroller,
                               decoration: InputDecoration(
-                                hintStyle: GoogleFonts.nunito(
-                                  textStyle:
-                                      const TextStyle(color: kDarkTextColor),
-                                ),
+                                hintStyle: GoogleFonts.nunito(),
                                 hintText: 'New User Email',
                                 border: InputBorder.none,
                               ),

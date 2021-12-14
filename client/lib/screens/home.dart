@@ -120,8 +120,7 @@ class _HomePageState extends State<HomePage>
           overlayOpacity: 0.6,
           children: [
             SpeedDialChild(
-                child: const Icon(Icons.my_library_add_rounded,
-                    color: kLightModeIcon),
+                child: const Icon(Icons.my_library_add_rounded),
                 label: "Add Course",
                 onTap: () {
                   Navigator.of(context)
@@ -130,7 +129,7 @@ class _HomePageState extends State<HomePage>
                   }));
                 }),
             SpeedDialChild(
-                child: const Icon(Icons.mic_rounded, color: kLightModeIcon),
+                child: const Icon(Icons.mic_rounded),
                 label: 'Upload Lecture',
                 onTap: () {
                   Navigator.of(context)
@@ -170,10 +169,7 @@ class _HomePageState extends State<HomePage>
                               },
                               decoration: InputDecoration(
                                 labelText: "Search...",
-                                labelStyle: GoogleFonts.nunito(
-                                  textStyle:
-                                      const TextStyle(color: kDarkTextColor),
-                                ),
+                                labelStyle: GoogleFonts.nunito(),
                                 fillColor: kBgLightColor,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25.0),
@@ -193,9 +189,10 @@ class _HomePageState extends State<HomePage>
                       }),
                 ],
               ),
+              const SizedBox(height: 20),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              const SizedBox(height: 20),
+              if (isSearching) const SizedBox(height: 20),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("Recently Edited",
                     style: GoogleFonts.nunito(

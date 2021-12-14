@@ -32,10 +32,13 @@ class _RegisterPageState extends State<RegisterPage> {
           children: <Widget>[
             Container(
               height: 250,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fitHeight,
-                  image: AssetImage("theme/sbuddy.png"),
+                  image: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? const AssetImage("theme/sbuddy.png")
+                      : const AssetImage("theme/sbuddy_dark.png"),
                 ),
               ),
             ),

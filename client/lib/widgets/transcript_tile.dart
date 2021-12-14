@@ -28,8 +28,9 @@ class _TranscriptTileState extends State<TranscriptTile> {
     bool hasText = widget.transcript.data().containsKey('text');
     DateTime date = widget.transcript['created'].toDate();
     return Card(
+      elevation: 5,
       child: ListTile(
-        tileColor: hasText ? kLightTextColor : kInactiveTileColor,
+        tileColor: hasText ? null : kInactiveTileColor,
         leading: const Icon(
           Icons.insert_drive_file_outlined,
           size: 35,
@@ -37,6 +38,7 @@ class _TranscriptTileState extends State<TranscriptTile> {
         ),
         title: Text(widget.transcript['audioRef'].split('/')[1].split('.')[0]),
         subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Wrap(
               //mainAxisAlignment: MainAxisAlignment.spaceEvenly,

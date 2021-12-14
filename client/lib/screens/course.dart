@@ -47,6 +47,10 @@ class _CoursePageState extends State<CoursePage> {
               child: const SideMenu(),
             ),
             resizeToAvoidBottomInset: false,
+            backgroundColor: kIsWeb &&
+                    MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? const Color(0xFF323232)
+                : null,
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.endDocked,
             floatingActionButton: kIsWeb
@@ -61,8 +65,7 @@ class _CoursePageState extends State<CoursePage> {
                     overlayOpacity: 0.6,
                     children: [
                       SpeedDialChild(
-                          child: const Icon(Icons.view_carousel,
-                              color: kLightModeIcon),
+                          child: const Icon(Icons.view_carousel),
                           label: 'Create Flashcard Set',
                           onTap: () async {
                             await database.createFlashcardSet(
@@ -72,8 +75,7 @@ class _CoursePageState extends State<CoursePage> {
                                 routes.flashcardPage, (route) => false);
                           }),
                       SpeedDialChild(
-                          child: const Icon(Icons.mic_rounded,
-                              color: kLightModeIcon),
+                          child: const Icon(Icons.mic_rounded),
                           label: 'Upload Lecture',
                           onTap: () {
                             Navigator.of(context)
@@ -88,7 +90,12 @@ class _CoursePageState extends State<CoursePage> {
               backgroundColor: Colors.transparent,
               leading: IconButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    if (kIsWeb) {
+                      Provider.of<CourseState>(context, listen: false)
+                          .removeCourseStream();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
                   },
                   icon: const Icon(Icons.arrow_back_ios_new_sharp)),
               title: Stack(
@@ -303,6 +310,13 @@ class _CoursePageState extends State<CoursePage> {
                           ),
                         ]))
                 : null)
-        : const Center(child: Text("No Course Selected"));
+        : Container(
+            decoration: BoxDecoration(
+                color: kIsWeb &&
+                        MediaQuery.of(context).platformBrightness ==
+                            Brightness.dark
+                    ? const Color(0xFF323232)
+                    : null),
+            child: const Center(child: Text("No Course Selected")));
   }
 }
