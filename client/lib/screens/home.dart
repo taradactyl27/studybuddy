@@ -221,6 +221,37 @@ class _HomePageState extends State<HomePage>
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
+                        if (snapshot.data!.size == 0) {
+                          return Column(children: [
+                            const SizedBox(height: 20),
+                            Container(
+                              padding: const EdgeInsets.only(
+                                top: 15,
+                                right: 15,
+                                left: 15,
+                                bottom: 15,
+                              ),
+                              height: 200,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fitHeight,
+                                    image:
+                                        AssetImage("theme/courses_empty.png")),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Center(
+                              child: SizedBox(
+                                width: 200,
+                                child: Text(
+                                  "You are not a part of any course yet. Click the + button on the bottom right to begin!",
+                                  style: GoogleFonts.nunito(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            )
+                          ]);
+                        }
                         return SizedBox(
                           height: 300,
                           child: GridView.count(
