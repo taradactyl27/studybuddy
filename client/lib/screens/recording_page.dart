@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/sound_player.dart';
@@ -118,64 +120,21 @@ class _RecordingPageState extends State<RecordingPage> {
                     Navigator.pop(context);
                   },
                   icon: Icon(Icons.check),
-                  label: Text('Finished'))
-              //child: const Text('Finished'))
+                  label: Text('Finished')),
+              StreamBuilder(
+                stream: recorder.getRecorderStream,
+                builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                  if (!snapshot.hasData) {
+                    print("NO DATA");
+                    return Container();
+                  }
+                  return Text(snapshot.data.decibels);
+                },
+              ),
             ],
           ))
         ],
       ),
     );
   }
-
-/*
-  @override
-  Widget buildadad(BuildContext context) {
- 
-    final isRecording = recorder.isRecording;
-    final icon1 = isRecording ? Icons.stop : Icons.mic;
-    final text1 = isRecording ? 'STOP' : 'START';
-    final primary1 = isRecording ? Colors.red : Colors.white;
-    final onPrimary1 = isRecording ? Colors.white : Colors.red;
-
-      return ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          minimumSize: Size(175,50),
-          primary: primary,
-          onPrimary: onPrimary,
-        ),
-        icon: Icon(icon),
-        label: Text(text),
-          onPressed: () async {
-            final isRecording = await recorder.toggleRecording();
-            setState(() {});
-          },
-        );
-      
-      
-    
-    }
-  
-  Widget buildPlay(){
-    final isPlaying = false;
-    final icon2 = isPlaying ? Icons.stop : Icons.play_arrow;
-    final text2 = isPlaying ? 'Stop Playing' : 'Start Playing';
-    final primary2 = isPlaying ? Colors.red : Colors.white;
-    final onPrimary2 = isPlaying ? Colors.white : Colors.red;
-    
-    
-    return ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          minimumSize: Size(175,50),
-          primary: primary,
-          onPrimary: onPrimary,
-        ),
-        icon: Icon(icon),
-        label: Text(text),
-          onPressed: () async {
-            await player.togglePlaying(whenFinished: (){});
-          },
-        );
-  }
-  */
-
 }

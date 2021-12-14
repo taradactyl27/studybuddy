@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:studybuddy/services/sound_recorder.dart';
 
-//final pathToReadAudio = 'example_audio.aac';
-
 class SoundPlayer {
   FlutterSoundPlayer? _audioPlayer;
   bool get isPlaying => _audioPlayer!.isPlaying;
@@ -21,7 +19,6 @@ class SoundPlayer {
 
   Future _play(VoidCallback whenFinished) async {
     String pathToReadAudio = recentFilePath;
-    print("pathToReadAudio: " + pathToReadAudio);
     await _audioPlayer!.startPlayer(
       fromURI: pathToReadAudio,
       whenFinished: whenFinished,

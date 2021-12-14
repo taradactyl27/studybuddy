@@ -3,19 +3,18 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-//final pathForSavedAudio = 'example_audio.aac';
 String recentFilePath = "";
 String tempfilename = "";
 
 class SoundRecorder {
   FlutterSoundRecorder? _audioRecorder;
   bool _isRecorderInitialized = false;
+  Stream? get getRecorderStream =>
+      _audioRecorder!.isRecording ? _audioRecorder!.onProgress : null;
   bool get isRecording => _audioRecorder!.isRecording;
-  //String _recentFilePath = "";
 
   Future init() async {
     _audioRecorder = FlutterSoundRecorder();
-
     final micStatus = await Permission.microphone.request();
     if (micStatus != PermissionStatus.granted) {
       throw RecordingPermissionException('Microphone Permission Not Granted');
@@ -30,7 +29,6 @@ class SoundRecorder {
 
   void dispose() {
     if (!_isRecorderInitialized) return;
-
     _audioRecorder!.closeAudioSession();
     _audioRecorder = null;
     _isRecorderInitialized = false;
@@ -38,29 +36,19 @@ class SoundRecorder {
 
   Future _record() async {
     if (!_isRecorderInitialized) return;
-    print('recording started');
-
     Directory directory = await getApplicationDocumentsDirectory();
     String filepath = directory.path;
-    //'/' +
-    //DateTime.now().millisecondsSinceEpoch.toString() +
-    //'.aac';
-
     String tempDateTime = DateTime.now().millisecondsSinceEpoch.toString();
     filepath += '/$tempDateTime.aac';
     tempfilename = '$tempDateTime.aac';
-
-    print(filepath);
     recentFilePath = filepath;
     await _audioRecorder!.startRecorder(
       toFile: filepath,
     );
-    //await _audioRecorder!.startRecorder(toFile: pathForSavedAudio,);
   }
 
   Future _stop() async {
     if (!_isRecorderInitialized) return;
-    print('recording stopped');
     await _audioRecorder!.stopRecorder();
   }
 
@@ -71,7 +59,4 @@ class SoundRecorder {
       await _stop();
     }
   }
-
-  //String get recentFilePath => _recentFilePath;
-
 }
