@@ -71,10 +71,13 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor, minimumSize: const Size(230, 44)),
+                      primary: kPrimaryColor, minimumSize: const Size(220, 38)),
                   child: Text('Sign in',
                       style: GoogleFonts.nunito(
-                        textStyle: const TextStyle(color: kLightTextColor),
+                        textStyle: const TextStyle(
+                            color: kLightTextColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600),
                       )),
                   onPressed: () async {
                     _email = _usercontroller.text;

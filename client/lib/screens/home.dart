@@ -107,6 +107,11 @@ class _HomePageState extends State<HomePage>
           child: const SideMenu(),
         ),
         extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+        ),
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: kIsWeb
             ? FloatingActionButtonLocation.endFloat
