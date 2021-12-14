@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' as auth;
 
@@ -33,37 +35,49 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               padding: const EdgeInsets.only(right: 15, left: 15),
               height: 250,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fitHeight,
-                  image: AssetImage("theme/sbuddy.png"),
+                  image: MediaQuery.of(context).platformBrightness ==
+                          Brightness.light
+                      ? const AssetImage("theme/sbuddy.png")
+                      : const AssetImage("theme/sbuddy_dark.png"),
                 ),
               ),
             ),
+            Center(
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: _usercontroller,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                  )),
+            ),
+            Center(
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: _passwordcontroller,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  )),
+            ),
             Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _usercontroller,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                )),
-            Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _passwordcontroller,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                )),
-            Container(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(220, 36)),
-                  child: const Text('Sign in',
-                      style: TextStyle(
-                        color: Colors.white,
+                      primary: kPrimaryColor, minimumSize: const Size(220, 38)),
+                  child: Text('Sign in',
+                      style: GoogleFonts.nunito(
+                        textStyle: const TextStyle(
+                            color: kLightTextColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600),
                       )),
                   onPressed: () async {
                     _email = _usercontroller.text;
@@ -94,13 +108,20 @@ class _LoginPageState extends State<LoginPage> {
               child: RichText(
                 text: TextSpan(
                   children: [
-                    const TextSpan(
+                    TextSpan(
                       text: "Don't have an account? ",
-                      style: TextStyle(color: Colors.black),
+                      style: GoogleFonts.nunito(
+                        color: MediaQuery.of(context).platformBrightness ==
+                                Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
                     ),
                     TextSpan(
                         text: 'Sign Up!',
-                        style: const TextStyle(color: Colors.blue),
+                        style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(color: kPrimaryColor),
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             Navigator.pushNamed(context, routes.registerPage);

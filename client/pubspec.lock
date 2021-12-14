@@ -29,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.8.2"
-  audio_visualizer:
-    dependency: "direct main"
-    description:
-      name: audio_visualizer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -120,13 +113,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
-  complex:
-    dependency: transitive
-    description:
-      name: complex
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.1"
   convert:
     dependency: transitive
     description:
@@ -267,6 +253,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.4"
+  flash_card:
+    dependency: "direct main"
+    description:
+      name: flash_card
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.7"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -278,7 +271,7 @@ packages:
       name: flutter_colorpicker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.1"
+    version: "1.0.3"
   flutter_custom_clippers:
     dependency: "direct main"
     description:
@@ -348,7 +341,7 @@ packages:
       name: flutter_quill
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.2"
   flutter_signin_button:
     dependency: "direct main"
     description:
@@ -383,7 +376,7 @@ packages:
       name: flutter_speed_dial
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
+    version: "4.6.6"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -506,6 +499,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
+  lint:
+    dependency: transitive
+    description:
+      name: lint
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.8.1"
   lints:
     dependency: transitive
     description:
@@ -960,5 +960,5 @@ packages:
     source: hosted
     version: "8.0.0"
 sdks:
-  dart: ">=2.15.0-268.18.beta <3.0.0"
-  flutter: ">=2.8.0-3.3.pre"
+  dart: ">=2.15.0-7.0.dev <3.0.0"
+  flutter: ">=2.5.3"

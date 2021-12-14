@@ -22,4 +22,10 @@ class CourseState extends ChangeNotifier {
     currentCourseId = courseId;
     notifyListeners();
   }
+
+  void removeCourseStream() {
+    courseStream = null;
+    currentCourseId = "";
+    notifyListeners();
+  }
 }

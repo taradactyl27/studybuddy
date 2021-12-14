@@ -45,7 +45,6 @@ dependencies:
   flutter_signin_button: ^2.0.0
   flutter_sound: ^8.4.2
   flutter_sound_platform_interface: ^8.4.2
-  flutter_speed_dial: ^5.0.0
   google_fonts: ^2.1.0
   google_sign_in: ^5.1.1
   http: ^0.13.4
@@ -55,7 +54,8 @@ dependencies:
   provider: ^6.0.1
   shared_preferences: ^2.0.9
   stop_watch_timer: ^1.3.1
-  audio_visualizer: ^0.1.1
+  flutter_speed_dial: ^4.6.6
+  flash_card: ^0.0.7
 
 dev_dependencies:
 
@@ -80,6 +80,10 @@ flutter:
 
   assets:
     - theme/sbuddy.png
+    - theme/sbuddy_dark.png
+    - theme/courses_empty.png
+    - theme/questions_empty.png
+    - theme/lectures_empty.png
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:

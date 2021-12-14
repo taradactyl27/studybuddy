@@ -48,6 +48,14 @@ Future<void> createCourse(
   courses.doc(value.id).update({"course_id": value.id});
 }
 
+Future<String> createFlashcardSet(String courseId) async {
+  DocumentReference<Object?> value = await courses
+      .doc(courseId)
+      .collection("flashcards")
+      .add({"name": "Untitled", "cards": []});
+    return value.id;
+}
+
 Future<void> addUserToCourse(String courseId, String email) async {
   QuerySnapshot userdoc = await users.where("email", isEqualTo: email).get();
   if (userdoc.size == 0) {
@@ -83,6 +91,11 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getCourseTranscriptions(
   return courses.doc(courseId).collection('audios').snapshots();
 }
 
+Stream<QuerySnapshot<Map<String, dynamic>>> getCourseFlashcards(
+    String courseId) {
+  return courses.doc(courseId).collection('flashcards').snapshots();
+}
+
 Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
     String transcriptId, String courseId) {
   return courses.doc(courseId).collection('audios').doc(transcriptId).get();
@@ -116,4 +129,16 @@ Future<void> uploadDocumentDeltas(String delta, String fieldName,
       .doc(transcriptId)
       .update({fieldName: delta});
   print("Deltas Saved");
+}
+
+Future<void> deleteFlashcardset(String courseId, String cardsetId) async {
+  await courses.doc(courseId).collection('flashcards').doc(cardsetId).delete();
+}
+
+Future<void> createFlashcard(String courseId, String cardsetId, String question, String answer) async {
+  await courses
+      .doc(courseId)
+      .collection("flashcards")
+      .doc(cardsetId)
+      .update({"card": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
 }

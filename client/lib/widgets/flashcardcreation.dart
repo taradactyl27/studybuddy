@@ -1,20 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
-class ClassCreationCard extends StatefulWidget {
-  const ClassCreationCard({Key? key}) : super(key: key);
+class FlashCardCreationForm extends StatefulWidget {
+  const FlashCardCreationForm({Key? key, required this.cardsetId}) : super(key: key);
+  final String cardsetId;
   @override
-  State<ClassCreationCard> createState() => _ClassCreationCardState();
+  State<FlashCardCreationForm> createState() => _FlashCardCreationFormState();
 }
 
-class _ClassCreationCardState extends State<ClassCreationCard> {
-  final TextEditingController _namecontroller = TextEditingController();
-  final TextEditingController _descriptioncontroller = TextEditingController();
+class _FlashCardCreationFormState extends State<FlashCardCreationForm> {
+  final TextEditingController _questioncontroller = TextEditingController();
+  final TextEditingController _ansercontroller = TextEditingController();
 
   String? get _errorText {
-    final text = _namecontroller.value.text;
+    final text = _questioncontroller.value.text;
     if (text.length > 20) {
       return 'Too long';
     }
@@ -23,25 +25,29 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
 
   @override
   void dispose() {
-    _namecontroller.dispose();
-    _descriptioncontroller.dispose();
+    _questioncontroller.dispose();
+    _ansercontroller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.read<User>().uid;
-    final email = context.read<User>().email;
+    final courseId = Provider.of<CourseState>(context).currentCourseId; 
+    
     return ValueListenableBuilder(
-        valueListenable: _namecontroller,
+        valueListenable: _questioncontroller,
         builder: (context, TextEditingValue value, __) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 450),
+              child: Hero(
+                tag: 'add',
                 child: Material(
-                  elevation: 20,
+                  color: Colors.white,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      side: const BorderSide(width: 3, color: Colors.black45),
+                      borderRadius: BorderRadius.circular(32)),
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -49,38 +55,40 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextFormField(
-                            controller: _namecontroller,
+                            controller: _questioncontroller,
                             decoration: InputDecoration(
-                              hintText: 'Class Name',
+                              hintText: 'Question',
                               errorText: _errorText,
                               border: InputBorder.none,
                             ),
                             cursorColor: Colors.white,
                           ),
                           const Divider(
+                            color: Colors.black45,
                             thickness: 0.4,
                           ),
                           TextFormField(
-                            controller: _descriptioncontroller,
+                            controller: _ansercontroller,
                             decoration: const InputDecoration(
-                              hintText: 'Class Description',
+                              hintText: 'Answer',
                               border: InputBorder.none,
                             ),
                             cursorColor: Colors.white,
                             maxLines: 6,
                           ),
                           const Divider(
+                            color: Colors.black45,
                             thickness: 0.4,
                           ),
                           ElevatedButton(
-                            onPressed: _namecontroller.value.text.isNotEmpty
+                            onPressed: _questioncontroller.value.text.isNotEmpty
                                 ? () async {
                                     if (_errorText == null) {
-                                      await database.createCourse(
-                                          uid,
-                                          email!,
-                                          _namecontroller.text,
-                                          _descriptioncontroller.text);
+                                      await database.createFlashcard(
+                                          courseId,
+                                          widget.cardsetId,
+                                          _questioncontroller.text,
+                                          _ansercontroller.text);
                                       Navigator.pop(context);
                                     }
                                   }

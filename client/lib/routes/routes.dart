@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/screens/course.dart';
+import 'package:studybuddy/screens/flashcards.dart';
 import 'package:studybuddy/screens/login.dart';
 import 'package:studybuddy/screens/register.dart';
 import 'package:studybuddy/screens/recording_page.dart';
@@ -18,6 +19,7 @@ const String coursePage = '/courses';
 const String settingsPage = '/settings';
 const String transcriptPage = '/transcript';
 const String recordingPage = '/recording';
+const String flashcardPage = '/flashcard';
 
 Route<dynamic> controller(RouteSettings settings) {
   // routing logic
@@ -34,6 +36,11 @@ Route<dynamic> controller(RouteSettings settings) {
           return const SettingsPage();
         case coursePage:
           return const CoursePage();
+        case flashcardPage:
+          final arguments = settings.arguments as Map<String, dynamic>;
+          return FlashcardPage(
+            cardsetId: arguments["cardsetId"],
+          );
         case transcriptPage:
           final arguments = settings.arguments as Map<String, dynamic>;
           return TranscriptPage(
