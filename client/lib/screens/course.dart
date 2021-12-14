@@ -221,7 +221,7 @@ class _CoursePageState extends State<CoursePage> {
                                                 child: SizedBox(
                                                   width: 200,
                                                   child: Text(
-                                                    "You don't have any uploaded lectures yet. Click the + button on the bottom right to begin!",
+                                                    "You don't have any uploaded card sets yet. Click the + button on the bottom right to begin!",
                                                     style: GoogleFonts.nunito(),
                                                     textAlign: TextAlign.center,
                                                   ),

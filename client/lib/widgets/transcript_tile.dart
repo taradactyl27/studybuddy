@@ -36,7 +36,10 @@ class _TranscriptTileState extends State<TranscriptTile> {
           size: 35,
           color: kPrimaryColor,
         ),
-        title: Text(widget.transcript['audioRef'].split('/')[1].split('.')[0]),
+        title: Text(
+          widget.transcript['audioRef'].split('/')[1].split('.')[0],
+          overflow: TextOverflow.ellipsis,
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

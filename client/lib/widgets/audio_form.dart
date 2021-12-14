@@ -124,7 +124,7 @@ class _AudioFormState extends State<AudioForm> {
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: uploading ? 0 : 2,
-                        primary: uploading ? kBgLightColor : kPrimaryColor,
+                        primary: uploading ? Colors.transparent : kPrimaryColor,
                       ),
                       child: uploading
                           ? LinearProgressIndicator(
