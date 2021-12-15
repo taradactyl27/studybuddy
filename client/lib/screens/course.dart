@@ -30,6 +30,7 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   int currentIndex = 0;
   bool enabled = false;
+  String courseName = '';
   setBottomBarIndex(index) {
     setState(() {
       currentIndex = index;
@@ -93,6 +94,7 @@ class _CoursePageState extends State<CoursePage> {
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
+                        courseName = snapshot.data!.get("name");
                         return Text(snapshot.data!.get("name") ?? "error",
                             style: GoogleFonts.nunito(
                                 textStyle: const TextStyle(
@@ -106,10 +108,13 @@ class _CoursePageState extends State<CoursePage> {
                   padding: const EdgeInsets.all(10),
                   child: ElevatedButton.icon(
                     onPressed: () async {
+                      print(courseName);
                       setState(() {
                         enabled = !enabled;
-                        enableNotification(enabled,
-                            context.read<CourseState>().currentCourseId);
+                        enableNotification(
+                            enabled,
+                            context.read<CourseState>().currentCourseId,
+                            courseName);
                       });
                     },
                     icon: enabled

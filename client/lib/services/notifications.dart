@@ -52,34 +52,36 @@ void selectNotification(String? payload) async {
 
   String courseID = payload!.split('/')[0];
   String transcriptID = payload.split('/')[1];
+  String courseName = payload.split('/')[2];
   index += 1;
   final transcript = await database.getTranscription(transcriptID, courseID);
   navigatorKey.currentState!.pushNamed(routes.transcriptPage,
       arguments: {'transcript': transcript, 'course_id': courseID});
   print("end notif");
-  send(courseID);
+  send(courseID, courseName);
 }
 
-void enableNotification(bool enabled, String courseID) async {
+void enableNotification(
+    bool enabled, String courseID, String courseName) async {
   if (enabled) {
-    await send(courseID);
+    await send(courseID, courseName);
   } else {
     await flutterLocalNotificationsPlugin.cancelAll();
     print('canceled');
   }
 }
 
-Future<void> send(String courseID) async {
+Future<void> send(String courseID, String courseName) async {
   final transcript = await database.getRandomTranscription(courseID);
   String transcriptID = transcript.docs.first.id;
   print(transcriptID);
   await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
-      'Time to study!',
-      'ur buddies @ studybuddy',
+      'Your $courseName material is not going to study itself...',
+      'Tap this notification to start studying now!',
       tz.TZDateTime.now(tz.local).add(Duration(seconds: intervals[index])),
       platformChannelSpecifics,
-      payload: '$courseID/$transcriptID',
+      payload: '$courseID/$transcriptID/$courseName',
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime);
