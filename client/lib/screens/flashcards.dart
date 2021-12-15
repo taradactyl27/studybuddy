@@ -23,7 +23,23 @@ class FlashcardPage extends StatefulWidget {
 
 class _FlashcardPageState extends State<FlashcardPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late TextEditingController _controller;
+  FocusNode? focusNode;
+  bool _editing = false;
   int index = 0;
+
+  @override
+  void initState() {
+    focusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -35,6 +51,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
+          _controller = TextEditingController(text: snapshot.data!.get('name'));
           List<Widget> cards = List<dynamic>.from(snapshot.data!.get('cards'))
               .mapIndexed<Widget>((index, card) {
             return FlashCard(
@@ -91,8 +108,58 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     ],
                   ),
             appBar: AppBar(
-              title:
-                  Text(snapshot.data!.get("name"), style: GoogleFonts.nunito()),
+              title: Row(
+                children: [
+                  SizedBox(
+                    height: 67,
+                    width: 120,
+                    child: TextField(
+                      focusNode: focusNode,
+                      style: GoogleFonts.nunito(
+                          fontWeight: FontWeight.w600, fontSize: 28),
+                      controller: _controller,
+                      onSubmitted: (edit) async {
+                        await database.updateCardSetName(
+                            Provider.of<CourseState>(context, listen: false)
+                                .currentCourseId,
+                            widget.cardsetId,
+                            edit);
+                        setState(() {
+                          _editing = false;
+                          focusNode!.unfocus();
+                        });
+                      },
+                      decoration: InputDecoration(
+                        border: _editing ? null : InputBorder.none,
+                      ),
+                      readOnly: !_editing,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  _editing
+                      ? InkWell(
+                          onTap: () async {
+                            await database.updateCardSetName(
+                                Provider.of<CourseState>(context, listen: false)
+                                    .currentCourseId,
+                                widget.cardsetId,
+                                _controller.text);
+                            setState(() {
+                              focusNode!.unfocus();
+                              _editing = false;
+                            });
+                          },
+                          child: const Icon(Icons.check, size: 22))
+                      : InkWell(
+                          onTap: () {
+                            setState(() {
+                              _editing = true;
+                              focusNode!.requestFocus();
+                            });
+                          },
+                          child: const Icon(Icons.edit, size: 22)),
+                ],
+              ),
               leading: IconButton(
                   onPressed: () {
                     if (kIsWeb) {

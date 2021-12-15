@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' show User;
 
@@ -53,7 +52,7 @@ Future<String> createFlashcardSet(String courseId) async {
       .doc(courseId)
       .collection("flashcards")
       .add({"name": "Untitled", "cards": []});
-    return value.id;
+  return value.id;
 }
 
 Future<void> addUserToCourse(String courseId, String email) async {
@@ -135,14 +134,29 @@ Future<void> deleteFlashcardset(String courseId, String cardsetId) async {
   await courses.doc(courseId).collection('flashcards').doc(cardsetId).delete();
 }
 
-Future<void> createFlashcard(String courseId, String cardsetId, String question, String answer) async {
+Future<void> createFlashcard(
+    String courseId, String cardsetId, String question, String answer) async {
+  await courses.doc(courseId).collection("flashcards").doc(cardsetId).update({
+    "cards": FieldValue.arrayUnion([
+      {"question": question, "answer": answer}
+    ])
+  });
+}
+
+Future<void> updateCardSetName(
+    String courseId, String cardsetId, String name) async {
   await courses
       .doc(courseId)
       .collection("flashcards")
       .doc(cardsetId)
-      .update({"cards": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
+      .update({"name": name});
 }
 
-Stream<DocumentSnapshot<Map<String, dynamic>>> getFlashcard(String courseId, String cardsetId) {
-  return courses.doc(courseId).collection('flashcards').doc(cardsetId).snapshots();
+Stream<DocumentSnapshot<Map<String, dynamic>>> getFlashcard(
+    String courseId, String cardsetId) {
+  return courses
+      .doc(courseId)
+      .collection('flashcards')
+      .doc(cardsetId)
+      .snapshots();
 }
