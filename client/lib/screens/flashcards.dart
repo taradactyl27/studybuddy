@@ -188,11 +188,35 @@ class _FlashcardPageState extends State<FlashcardPage> {
                               fontWeight: FontWeight.w400,
                             ))),
                         cards.isEmpty
-                            ? const SizedBox(
-                                height: 450,
-                                child: Center(
+                            ? Column(children: [
+                                const SizedBox(height: 60),
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                    top: 15,
+                                    right: 15,
+                                    left: 15,
+                                    bottom: 15,
+                                  ),
+                                  height: 150,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitHeight,
+                                        image: AssetImage(
+                                            "theme/questions_empty.png")),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Center(
+                                  child: SizedBox(
+                                    width: 200,
                                     child: Text(
-                                        "No flashcards created. Create one below!")))
+                                      "You haven't created any cards yet. Click the + button on the bottom right to begin!",
+                                      style: GoogleFonts.nunito(),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              ])
                             : SizedBox(
                                 height: 350,
                                 width: MediaQuery.of(context).size.width,

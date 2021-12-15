@@ -76,12 +76,14 @@ class _CoursePageState extends State<CoursePage> {
                                 child: const Icon(Icons.view_carousel),
                                 label: 'Create Flashcard Set',
                                 onTap: () async {
-                                  await database.createFlashcardSet(
-                                      Provider.of<CourseState>(context,
-                                              listen: false)
-                                          .currentCourseId);
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      routes.flashcardPage, (route) => false);
+                                  String cardsetId =
+                                      await database.createFlashcardSet(
+                                          Provider.of<CourseState>(context,
+                                                  listen: false)
+                                              .currentCourseId);
+                                  Navigator.of(context).pushNamed(
+                                      routes.flashcardPage,
+                                      arguments: {"cardsetId": cardsetId});
                                 }),
                             SpeedDialChild(
                                 child: const Icon(Icons.mic_rounded),
