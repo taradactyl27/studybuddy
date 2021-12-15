@@ -5,20 +5,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// class Notification {
-//   Stream<DocumentSnapshot<Map<String, dynamic>>>? defaultStream;
-
-// }
-
-// List<String> notifIntervals = <String>[];
-
-// FirebaseFirestore.instance
-//   .collection("defaults")
-//   .doc('notifications')
-//   .get().then((value)){
-//     List<String> notifIntervals = List.from(value.data['intervals']);
-//   }
-
 List<int> intervals = [5, 10, 60, 300, 600, 1800];
 int index = 0;
 
@@ -62,7 +48,7 @@ void selectNotification(String? payload) async {
   send();
 }
 
-void enableNotification(var enabled) async {
+void enableNotification(bool enabled) async {
   if (enabled) {
     send();
   } else {
@@ -74,8 +60,8 @@ void enableNotification(var enabled) async {
 void send() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
-      'scheduled: study stuff ',
-      '- ur buddies @ studybuddy',
+      'Time to study!',
+      'ur buddies @ studybuddy',
       tz.TZDateTime.now(tz.local).add(Duration(seconds: intervals[index])),
       platformChannelSpecifics,
       androidAllowWhileIdle: true,

@@ -29,7 +29,7 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   int currentIndex = 0;
-  var enabled = false;
+  bool enabled = false;
   setBottomBarIndex(index) {
     setState(() {
       currentIndex = index;
@@ -106,18 +106,22 @@ class _CoursePageState extends State<CoursePage> {
                   padding: const EdgeInsets.all(10),
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      if (enabled) {
-                        enabled = false;
-                      } else {
-                        enabled = true;
-                      }
-                      enableNotification(enabled);
+                      setState(() {
+                        enabled = !enabled;
+                        enableNotification(enabled);
+                      });
                     },
-                    icon: const Icon(
-                      Icons.notifications_none_outlined,
-                      color: Colors.white,
-                      size: 24.0,
-                    ),
+                    icon: enabled
+                        ? const Icon(
+                            Icons.notifications_none_outlined,
+                            color: Colors.white,
+                            size: 24.0,
+                          )
+                        : const Icon(
+                            Icons.notifications_off_outlined,
+                            color: Colors.white,
+                            size: 24.0,
+                          ),
                     label: const Text("Reminders",
                         style: TextStyle(color: Colors.white)),
                   ),
