@@ -217,10 +217,30 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                   ),
                                 )
                               ])
-                            : SizedBox(
-                                height: 350,
-                                width: MediaQuery.of(context).size.width,
-                                child: Center(child: cards[index])),
+                            : GestureDetector(
+                                onHorizontalDragEnd: (dragEndDetails) {
+                                  if (dragEndDetails.primaryVelocity! < 0) {
+                                    setState(() {
+                                      index += 1;
+                                      if (index > cards.length - 1) {
+                                        index = 0;
+                                      }
+                                    });
+                                  } else if (dragEndDetails.primaryVelocity! >
+                                      0) {
+                                    setState(() {
+                                      index -= 1;
+                                      if (index < 0) {
+                                        index = cards.length - 1;
+                                      }
+                                    });
+                                  }
+                                },
+                                child: SizedBox(
+                                    height: 350,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(child: cards[index])),
+                              ),
                         if (cards.isNotEmpty)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
