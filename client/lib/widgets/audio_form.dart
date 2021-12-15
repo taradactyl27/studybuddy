@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,8 +10,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/services/sound_recorder.dart';
-import 'package:studybuddy/color_constants.dart';
-
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/services/database.dart' as database
     show newLectureRef, getUserCourseStream;
@@ -27,6 +25,7 @@ class AudioForm extends StatefulWidget {
 class _AudioFormState extends State<AudioForm> {
   final _formKey = GlobalKey<FormBuilderState>();
   late TextEditingController _controller;
+  late FocusNode focusNode;
   double progress = 0;
   File? _pickedFile;
   String fileName = "";
@@ -34,9 +33,31 @@ class _AudioFormState extends State<AudioForm> {
   bool filePicked = false;
   bool _editing = false;
   bool uploading = false;
+
+  static String formatBytes(int bytes) {
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return ((bytes / pow(1024, i)).toStringAsFixed(2)) + ' ' + suffixes[i];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode = FocusNode();
+    if (recentFilePath.isNotEmpty) {
+      _pickedFile = File(recentFilePath);
+      fileName = recentFilePath.split('/').last.split(".").first;
+      fileEnding = ".${recentFilePath.split('/').last.split(".").last}";
+      _controller = TextEditingController(text: fileName);
+      filePicked = true;
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -105,29 +126,45 @@ class _AudioFormState extends State<AudioForm> {
                               Material(
                                   elevation: 2,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
+                                    padding: const EdgeInsets.only(
+                                        right: 10.0, left: 10.0, bottom: 10.0),
                                     child: Row(
                                       children: [
                                         const Icon(Icons.library_music,
                                             size: 30),
                                         const SizedBox(width: 10),
-                                        SizedBox(
-                                          width: 190,
-                                          child: TextField(
-                                            style: GoogleFonts.nunito(),
-                                            controller: _controller,
-                                            onSubmitted: (edit) {
-                                              setState(() {
-                                                fileName = edit;
-                                              });
-                                            },
-                                            decoration: InputDecoration(
-                                              border: _editing
-                                                  ? null
-                                                  : InputBorder.none,
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 42,
+                                              width: 190,
+                                              child: TextField(
+                                                focusNode: focusNode,
+                                                style: GoogleFonts.nunito(),
+                                                controller: _controller,
+                                                onSubmitted: (edit) {
+                                                  setState(() {
+                                                    fileName = edit;
+                                                    _editing = false;
+                                                    focusNode.unfocus();
+                                                  });
+                                                },
+                                                decoration: InputDecoration(
+                                                  border: _editing
+                                                      ? null
+                                                      : InputBorder.none,
+                                                ),
+                                                readOnly: !_editing,
+                                              ),
                                             ),
-                                            readOnly: !_editing,
-                                          ),
+                                            Text(
+                                                formatBytes(
+                                                    _pickedFile!.lengthSync()),
+                                                style: GoogleFonts.nunito(
+                                                    fontSize: 12))
+                                          ],
                                         ),
                                         const SizedBox(width: 10),
                                         _editing
@@ -135,6 +172,7 @@ class _AudioFormState extends State<AudioForm> {
                                                 onTap: () {
                                                   setState(() {
                                                     fileName = _controller.text;
+                                                    focusNode.unfocus();
                                                     _editing = false;
                                                   });
                                                 },
@@ -144,6 +182,7 @@ class _AudioFormState extends State<AudioForm> {
                                                 onTap: () {
                                                   setState(() {
                                                     _editing = true;
+                                                    focusNode.requestFocus();
                                                   });
                                                 },
                                                 child: const Icon(Icons.edit,
@@ -170,32 +209,25 @@ class _AudioFormState extends State<AudioForm> {
                                     setState(() {
                                       uploading = true;
                                     });
-
                                     String audioID =
                                         database.newLectureRef(courseID).id;
-
                                     UploadTask upload = storage.createUpload(
                                         user,
                                         courseID,
                                         audioID,
                                         _pickedFile!,
                                         "$fileName$fileEnding");
-
                                     upload.snapshotEvents.listen((event) {
                                       setState(() {
                                         progress = (event.bytesTransferred /
                                             event.totalBytes);
                                       });
                                     });
-
                                     await upload;
-                                    print('audio UPLOAD done!!!');
-
                                     setState(() {
                                       uploading = false;
                                       progress = 0;
                                     });
-                                    // TODO: pop context with result of operation
                                     Navigator.pop(context);
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -234,7 +266,6 @@ class _AudioFormState extends State<AudioForm> {
                                       TextEditingController(text: fileName);
                                   filePicked = true;
                                 });
-                                // TODO: pop context with result of operation
                               } else {
                                 // User canceled the picker
                               }

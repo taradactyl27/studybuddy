@@ -28,6 +28,7 @@ class SoundRecorder {
   }
 
   void dispose() {
+    recentFilePath = "";
     if (!_isRecorderInitialized) return;
     _audioRecorder!.closeAudioSession();
     _audioRecorder = null;

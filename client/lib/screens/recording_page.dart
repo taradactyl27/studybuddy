@@ -2,10 +2,13 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/sound_player.dart';
 import 'package:studybuddy/services/sound_recorder.dart';
+import 'package:studybuddy/widgets/audio_form.dart';
 //import 'package:flutter_sound/flutter_sound.dart';
 //import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 //import 'package:permission_handler/permission_handler.dart';
@@ -65,7 +68,8 @@ class _RecordingPageState extends State<RecordingPage> {
                     return const CircularProgressIndicator();
                   }
                   return Text(StopWatchTimer.getDisplayTime(snapshot.data ?? 0),
-                      style: const TextStyle(fontSize: 32));
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(fontSize: 36)));
                 },
               ),
               const SizedBox(
@@ -78,7 +82,8 @@ class _RecordingPageState extends State<RecordingPage> {
                   onPrimary: onPrimary1,
                 ),
                 icon: Icon(icon1),
-                label: Text(text1),
+                label: Text(text1,
+                    style: GoogleFonts.nunito(fontWeight: FontWeight.w600)),
                 onPressed: () async {
                   await recorder.toggleRecording();
                   if (isRecording) {
@@ -100,10 +105,20 @@ class _RecordingPageState extends State<RecordingPage> {
                   onPrimary: onPrimary2,
                 ),
                 icon: Icon(icon2),
-                label: Text(text2),
+                label: Text(text2,
+                    style: GoogleFonts.nunito(fontWeight: FontWeight.w600)),
                 onPressed: () async {
+                  if (isPlaying) {
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                  } else {
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.start);
+                  }
                   await player.togglePlaying(
-                      whenFinished: () => setState(() {}));
+                      whenFinished: () => setState(() {
+                            _stopWatchTimer.onExecute
+                                .add(StopWatchExecute.stop);
+                          }));
                   setState(() {});
                 },
               ),
@@ -113,14 +128,17 @@ class _RecordingPageState extends State<RecordingPage> {
               ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(175, 50),
-                    primary: Colors.white,
-                    onPrimary: Colors.red,
+                    onPrimary: Colors.white,
                   ),
                   onPressed: () async {
-                    Navigator.pop(context);
+                    Navigator.of(context)
+                        .push(HeroDialogRoute(builder: (context) {
+                      return const AudioForm();
+                    }));
                   },
                   icon: Icon(Icons.check),
-                  label: Text('Finished')),
+                  label: Text('Finished',
+                      style: GoogleFonts.nunito(fontWeight: FontWeight.w600))),
               StreamBuilder(
                 stream: recorder.getRecorderStream,
                 builder: (context, AsyncSnapshot<dynamic> snapshot) {
