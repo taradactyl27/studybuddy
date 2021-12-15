@@ -46,9 +46,7 @@ Future<void> configureLocalTimeZone() async {
 
 // payload = transcriptID + courseID
 void selectNotification(String? payload) async {
-  if (payload == null) {
-    print('no payload');
-  }
+  if (payload == null) {}
 
   String courseID = payload!.split('/')[0];
   String transcriptID = payload.split('/')[1];
@@ -57,7 +55,6 @@ void selectNotification(String? payload) async {
   final transcript = await database.getTranscription(transcriptID, courseID);
   navigatorKey.currentState!.pushNamed(routes.transcriptPage,
       arguments: {'transcript': transcript, 'course_id': courseID});
-  print("end notif");
   send(courseID, courseName);
 }
 
@@ -67,14 +64,12 @@ void enableNotification(
     await send(courseID, courseName);
   } else {
     await flutterLocalNotificationsPlugin.cancelAll();
-    print('canceled');
   }
 }
 
 Future<void> send(String courseID, String courseName) async {
   final transcript = await database.getRandomTranscription(courseID);
   String transcriptID = transcript.docs.first.id;
-  print(transcriptID);
   await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       'Your $courseName material is not going to study itself...',
@@ -85,5 +80,4 @@ Future<void> send(String courseID, String courseName) async {
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime);
-  print(intervals[index]);
 }

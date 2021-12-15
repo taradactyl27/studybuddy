@@ -108,7 +108,6 @@ class _CoursePageState extends State<CoursePage> {
                   padding: const EdgeInsets.all(10),
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      print(courseName);
                       setState(() {
                         enabled = !enabled;
                         enableNotification(
