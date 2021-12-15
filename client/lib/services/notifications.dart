@@ -3,6 +3,24 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+// class Notification {
+//   Stream<DocumentSnapshot<Map<String, dynamic>>>? defaultStream;
+
+// }
+
+// List<String> notifIntervals = <String>[];
+
+// FirebaseFirestore.instance
+//   .collection("defaults")
+//   .doc('notifications')
+//   .get().then((value)){
+//     List<String> notifIntervals = List.from(value.data['intervals']);
+//   }
+
+List<int> intervals = [5, 10, 60, 300, 600, 1800];
+int index = 0;
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -39,5 +57,29 @@ void selectNotification(String? payload) async {
   if (payload != null) {
     print('notification payload: $payload');
   }
+  index += 1;
   print("end notif");
+  send();
+}
+
+void enableNotification(var enabled) async {
+  if (enabled) {
+    send();
+  } else {
+    await flutterLocalNotificationsPlugin.cancelAll();
+    print('canceled');
+  }
+}
+
+void send() async {
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'scheduled: study stuff ',
+      '- ur buddies @ studybuddy',
+      tz.TZDateTime.now(tz.local).add(Duration(seconds: intervals[index])),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime);
+  print(intervals[index]);
 }

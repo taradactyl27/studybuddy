@@ -29,6 +29,7 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   int currentIndex = 0;
+  var enabled = false;
   setBottomBarIndex(index) {
     setState(() {
       currentIndex = index;
@@ -105,21 +106,12 @@ class _CoursePageState extends State<CoursePage> {
                   padding: const EdgeInsets.all(10),
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      print(DateTime.now().millisecondsSinceEpoch);
-                      await flutterLocalNotificationsPlugin.zonedSchedule(
-                          0,
-                          'scheduled: study stuff ',
-                          '- ur buddies @ studybuddy',
-                          tz.TZDateTime.now(tz.local)
-                              .add(const Duration(seconds: 1)),
-                          platformChannelSpecifics,
-                          androidAllowWhileIdle: true,
-                          uiLocalNotificationDateInterpretation:
-                              UILocalNotificationDateInterpretation
-                                  .absoluteTime);
-                      // await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-                      // 'repeating body', RepeatInterval.everyMinute, platformChannelSpecifics,
-                      // androidAllowWhileIdle: true);
+                      if (enabled) {
+                        enabled = false;
+                      } else {
+                        enabled = true;
+                      }
+                      enableNotification(enabled);
                     },
                     icon: const Icon(
                       Icons.notifications_none_outlined,

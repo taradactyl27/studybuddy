@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart' show User;
 final FirebaseFirestore db = FirebaseFirestore.instance;
 CollectionReference<Map<String, dynamic>> users = db.collection('users');
 CollectionReference<Map<String, dynamic>> courses = db.collection('courses');
+CollectionReference<Map<String, dynamic>> defaults = db.collection('defaults');
 
 Future<void> createUserDoc(User? user) async {
   try {
@@ -16,6 +17,11 @@ Future<void> createUserDoc(User? user) async {
     return Future.error(e);
     // TODO: fail harder and delete accounts if doc creation fails
   }
+}
+
+Stream<DocumentSnapshot<Map<String, dynamic>>> getDefaultStream(
+    String defaultsId) {
+  return defaults.doc(defaultsId).snapshots();
 }
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseStream(String uid) {
