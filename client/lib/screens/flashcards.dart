@@ -116,7 +116,9 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     child: TextField(
                       focusNode: focusNode,
                       style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w600, fontSize: 28),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 28),
                       controller: _controller,
                       onSubmitted: (edit) async {
                         await database.updateCardSetName(
@@ -149,7 +151,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                               _editing = false;
                             });
                           },
-                          child: const Icon(Icons.check, size: 22))
+                          child: const Icon(Icons.check,
+                              size: 22, color: Colors.white))
                       : InkWell(
                           onTap: () {
                             setState(() {
@@ -157,7 +160,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
                               focusNode!.requestFocus();
                             });
                           },
-                          child: const Icon(Icons.edit, size: 22)),
+                          child: const Padding(
+                            padding: EdgeInsets.only(bottom: 4.0),
+                            child:
+                                Icon(Icons.edit, size: 22, color: Colors.white),
+                          )),
                 ],
               ),
               leading: IconButton(
@@ -169,7 +176,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       Navigator.of(context).pop();
                     }
                   },
-                  icon: const Icon(Icons.arrow_back_ios_new_sharp)),
+                  icon: const Icon(Icons.arrow_back_ios_new_sharp,
+                      color: Colors.white)),
             ),
             body: SizedBox(
               height: MediaQuery.of(context).size.height,
