@@ -4,7 +4,7 @@ import 'package:studybuddy/screens/course.dart';
 import 'package:studybuddy/screens/flashcards.dart';
 import 'package:studybuddy/screens/login.dart';
 import 'package:studybuddy/screens/register.dart';
-import 'package:studybuddy/screens/recording_page.dart';
+import 'package:studybuddy/screens/recording.dart';
 import 'package:studybuddy/screens/settings.dart';
 import 'package:studybuddy/screens/transcript.dart';
 import 'package:studybuddy/screens/layout.dart';
