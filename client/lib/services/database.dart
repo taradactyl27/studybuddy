@@ -88,6 +88,39 @@ Future<DocumentSnapshot<Map<String, dynamic>>> getTranscription(
   return courses.doc(courseId).collection('audios').doc(transcriptId).get();
 }
 
+Future<List<dynamic>> getRecentActivity(String uid) async {
+  final recentDocs = await users
+      .doc(uid)
+      .collection('activity')
+      .orderBy("timestamp", descending: true)
+      .limit(5)
+      .get();
+
+  return recentDocs.docs.map((doc) => doc["transcriptDocPath"]).toList();
+}
+
+Stream<QuerySnapshot<Map<String, dynamic>>> getRecentTranscripts(
+    List<dynamic> docPaths) {
+  return db
+      .collectionGroup('audios')
+      .where(FieldPath.documentId, whereIn: docPaths)
+      .snapshots();
+}
+
+Future<void> updateTranscriptActivity(
+    String uid, String courseID, String transcriptID) async {
+  String fieldPath = 'courses/$courseID/audios/$transcriptID';
+  await users
+      .doc(uid)
+      .collection('activity')
+      .doc('$courseID-$transcriptID')
+      .set({
+    "action": "VIEW",
+    "transcriptDocPath": fieldPath,
+    "timestamp": Timestamp.now()
+  });
+}
+
 Future<void> uploadStudyNotes(
     String notes, String transcriptId, String courseId) async {
   await courses

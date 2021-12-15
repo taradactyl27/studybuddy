@@ -23,10 +23,10 @@ Route<dynamic> controller(RouteSettings settings) {
     User? user = context.watch<User?>();
     if (user != null) {
       switch (settings.name) {
-        case rootUrl:
         case loginPage:
         case registerPage:
         case homePage:
+        case rootUrl:
           return const Layout();
         case settingsPage:
           return const SettingsPage();

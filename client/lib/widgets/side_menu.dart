@@ -12,7 +12,7 @@ class SideMenu extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         height: double.infinity,
         child: ListView(
-          padding: const EdgeInsets.only(top:20),
+          padding: const EdgeInsets.only(top: 20),
           children: [
             Center(
               child: Container(
@@ -27,42 +27,42 @@ class SideMenu extends StatelessWidget {
             ),
             Divider(),
             InkWell(
-              onTap: (){
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                        routes.homePage, (route) => false);
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(routes.homePage, (route) => false);
               },
               child: ListTile(
-                leading: const Icon(Icons.home,color: Colors.black),
-                title: Text("Home", style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        )))
-              ),
+                  leading: const Icon(Icons.home, color: Colors.black),
+                  title: Text("Home",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      )))),
             ),
             InkWell(
               child: ListTile(
-                leading: const Icon(Icons.star,color: Colors.black),
-                title: Text("Favorites", style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        )))
-              ),
+                  leading: const Icon(Icons.star, color: Colors.black),
+                  title: Text("Favorites",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      )))),
             ),
             InkWell(
               onTap: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                        routes.settingsPage, (route) => false);
+                    routes.settingsPage, (route) => false);
               },
               child: ListTile(
-                leading: const Icon(Icons.settings, color: Colors.black),
-                title: Text("Settings", style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        )))
-              ),
+                  leading: const Icon(Icons.settings, color: Colors.black),
+                  title: Text("Settings",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      )))),
             ),
           ],
         ));

@@ -168,7 +168,10 @@ class _CoursePageState extends State<CoursePage> {
 
                                     if (data.containsKey('text')) {
                                       return InkWell(
-                                        onTap: () {
+                                        onTap: () async {
+                                          await database
+                                              .updateTranscriptActivity(
+                                                  uid, courseID, transcript.id);
                                           Navigator.pushNamed(
                                               context, routes.transcriptPage,
                                               arguments: {

@@ -22,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ? user.displayName!
         : user.email!;
     return Scaffold(
-      key: _scaffoldKey,
+        key: _scaffoldKey,
         drawer: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 250),
           child: const SideMenu(),
@@ -34,32 +34,32 @@ class _SettingsPageState extends State<SettingsPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {
-                          _scaffoldKey.currentState!.openDrawer();
-                        },
-                      ),
-                    ])),
+                    IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {
+                        _scaffoldKey.currentState!.openDrawer();
+                      },
+                    ),
+                  ])),
         body: Stack(
-      children: [
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(username),
-              ElevatedButton(
-                  onPressed: () async {
-                    await signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        routes.loginPage, (route) => false);
-                  },
-                  child: const Text('Sign Out')),
-            ],
-          ),
-        ),
-      ],
-    ));
+          children: [
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(username),
+                  ElevatedButton(
+                      onPressed: () async {
+                        await signOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            routes.loginPage, (route) => false);
+                      },
+                      child: const Text('Sign Out')),
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 }
