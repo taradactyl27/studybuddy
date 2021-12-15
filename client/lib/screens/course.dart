@@ -132,7 +132,7 @@ class _CoursePageState extends State<CoursePage> {
                                   style: GoogleFonts.nunito(
                                       textStyle: const TextStyle(
                                           fontSize: 32,
-                                          fontWeight: FontWeight.w200)))
+                                          fontWeight: FontWeight.w600)))
                             ],
                           )
                         : null,
