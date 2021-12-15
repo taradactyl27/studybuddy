@@ -108,7 +108,8 @@ class _CoursePageState extends State<CoursePage> {
                     onPressed: () async {
                       setState(() {
                         enabled = !enabled;
-                        enableNotification(enabled);
+                        enableNotification(enabled,
+                            context.read<CourseState>().currentCourseId);
                       });
                     },
                     icon: enabled

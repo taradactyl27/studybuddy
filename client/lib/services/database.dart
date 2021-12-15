@@ -24,6 +24,11 @@ Stream<DocumentSnapshot<Map<String, dynamic>>> getDefaultStream(
   return defaults.doc(defaultsId).snapshots();
 }
 
+Future<QuerySnapshot<Map<String, dynamic>>> getRandomTranscription(
+    String courseId) {
+  return courses.doc(courseId).collection('audios').limit(1).get();
+}
+
 Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseStream(String uid) {
   return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
 }

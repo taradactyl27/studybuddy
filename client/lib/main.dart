@@ -69,6 +69,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        navigatorKey: navigatorKey,
         onGenerateRoute: controller,
         initialRoute: rootUrl,
       ),
