@@ -167,8 +167,8 @@ class _HomePageState extends State<HomePage>
           icon: Icons.add,
           activeIcon: Icons.close,
           spacing: 10,
-          overlayColor: Theme.of(context).colorScheme.secondary,
-          overlayOpacity: 0.1,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.25,
           children: [
             SpeedDialChild(
                 child: const Icon(Icons.my_library_add_rounded),
