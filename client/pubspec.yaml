@@ -29,35 +29,39 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  circle_list: ^1.0.5
+  cloud_firestore: ^2.5.3
+  cloud_functions:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
-  firebase_core: "^1.7.0"
-  firebase_auth: "^3.1.3"
-  google_sign_in: ^5.1.1
-  google_fonts: ^2.1.0
-  flutter_signin_button: ^2.0.0
-  flutter_form_builder:
-  firebase_storage: ^10.0.4
+  dotted_border: ^2.0.0+2
   file_picker: ^4.1.3
-  cloud_firestore: ^2.5.3
-  cloud_functions:
-  flutter_custom_clippers: ^2.0.0
-  provider: ^6.0.1
-  http: ^0.13.4
-  flutter_dotenv: ^5.0.2
-  flutter_quill: ^2.0.13
-  intl: ^0.17.0
-  shared_preferences: ^2.0.9
-  flutter_speed_dial: ^4.6.6
-  flutterfire_ui: ^0.1.0-dev.2
-  flutter_facebook_auth: ^3.5.7
+  firebase_auth: "^3.1.3"
+  firebase_core: "^1.7.0"
+  firebase_storage: ^10.0.4
   flash_card: ^0.0.7
+  flutter_custom_clippers: ^2.0.0
+  flutter_dotenv: ^5.0.2
+  flutter_facebook_auth: ^3.5.7
+  flutter_form_builder:
+  flutter_quill: ^2.0.13
+  flutter_signin_button: ^2.0.0
+  flutter_sound: ^8.4.2
+  flutter_sound_platform_interface: ^8.4.2
+  flutter_speed_dial: ^4.6.6
+  google_fonts: ^2.1.0
+  google_sign_in: ^5.1.1
+  http: ^0.13.4
+  intl: ^0.17.0
+  permission_handler: ^8.3.0
+  provider: ^6.0.1
+  shared_preferences: ^2.0.9
+  stop_watch_timer: ^1.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -67,7 +71,6 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
 
@@ -87,13 +90,10 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

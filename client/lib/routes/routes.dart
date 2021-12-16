@@ -21,6 +21,7 @@ const String settingsPage = '/settings';
 const String transcriptPage = '/transcript';
 const String recordingPage = '/recording';
 const String flashcardPage = '/flashcard';
+const String favoritesPage = '/favorites';
 
 Route<dynamic> controller(RouteSettings settings) {
   // routing logic

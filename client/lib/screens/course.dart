@@ -76,12 +76,14 @@ class _CoursePageState extends State<CoursePage> {
                                 child: const Icon(Icons.view_carousel),
                                 label: 'Create Flashcard Set',
                                 onTap: () async {
-                                  await database.createFlashcardSet(
-                                      Provider.of<CourseState>(context,
-                                              listen: false)
-                                          .currentCourseId);
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      routes.flashcardPage, (route) => false);
+                                  String cardsetId =
+                                      await database.createFlashcardSet(
+                                          Provider.of<CourseState>(context,
+                                                  listen: false)
+                                              .currentCourseId);
+                                  Navigator.of(context).pushNamed(
+                                      routes.flashcardPage,
+                                      arguments: {"cardsetId": cardsetId});
                                 }),
                             SpeedDialChild(
                                 child: const Icon(Icons.mic_rounded),
@@ -130,7 +132,7 @@ class _CoursePageState extends State<CoursePage> {
                                   style: GoogleFonts.nunito(
                                       textStyle: const TextStyle(
                                           fontSize: 32,
-                                          fontWeight: FontWeight.w200)))
+                                          fontWeight: FontWeight.w600)))
                             ],
                           )
                         : null,
@@ -243,7 +245,13 @@ class _CoursePageState extends State<CoursePage> {
                                           children: snapshot.data!.docs
                                               .map((cardset) {
                                             return InkWell(
-                                              onTap: null,
+                                              onTap: () {
+                                                Navigator.of(context).pushNamed(
+                                                    routes.flashcardPage,
+                                                    arguments: {
+                                                      'cardsetId': cardset.id
+                                                    });
+                                              },
                                               child: FlashCardTile(
                                                 name: cardset['name'],
                                               ),
