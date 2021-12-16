@@ -152,6 +152,13 @@ Future<void> updateCardSetName(
       .update({"name": name});
 }
 
+Future<void> deleteFlashcard(
+    String courseId, String cardsetId, dynamic obj) async {
+  await courses.doc(courseId).collection("flashcards").doc(cardsetId).update({
+    "cards": FieldValue.arrayRemove([obj])
+  });
+}
+
 Stream<DocumentSnapshot<Map<String, dynamic>>> getFlashcard(
     String courseId, String cardsetId) {
   return courses

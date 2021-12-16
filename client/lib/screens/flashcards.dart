@@ -28,6 +28,30 @@ class _FlashcardPageState extends State<FlashcardPage> {
   bool _editing = false;
   int index = 0;
 
+  void resetIndex() {
+    setState(() {
+      index = 0;
+    });
+  }
+
+  void incrementIndex(int maxLen) {
+    setState(() {
+      index += 1;
+      if (index > maxLen - 1) {
+        index = 0;
+      }
+    });
+  }
+
+  void decrementIndex(int maxLen) {
+    setState(() {
+      index -= 1;
+      if (index < 0) {
+        index = maxLen - 1;
+      }
+    });
+  }
+
   @override
   void initState() {
     focusNode = FocusNode();
@@ -59,7 +83,28 @@ class _FlashcardPageState extends State<FlashcardPage> {
                 width: 300,
                 height: 300,
                 frontWidget: Center(child: Text(card["answer"] ?? 'empty')),
-                backWidget: Center(child: Text(card["question"] ?? 'empty')));
+                backWidget: Stack(
+                  children: [
+                    Positioned(
+                        top: 0,
+                        right: 0,
+                        child: InkWell(
+                            onTap: () async {
+                              int oldIndex = index;
+                              resetIndex();
+                              await database.deleteFlashcard(
+                                  Provider.of<CourseState>(context,
+                                          listen: false)
+                                      .currentCourseId,
+                                  widget.cardsetId,
+                                  snapshot.data!.get("cards")[oldIndex]);
+                              print(index);
+                            },
+                            child: const Icon(Icons.delete_outline,
+                                color: kDangerColor))),
+                    Center(child: Text(card["question"] ?? 'empty')),
+                  ],
+                ));
           }).toList();
           return Scaffold(
             key: _scaffoldKey,
@@ -228,20 +273,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
                             : GestureDetector(
                                 onHorizontalDragEnd: (dragEndDetails) {
                                   if (dragEndDetails.primaryVelocity! < 0) {
-                                    setState(() {
-                                      index += 1;
-                                      if (index > cards.length - 1) {
-                                        index = 0;
-                                      }
-                                    });
+                                    incrementIndex(cards.length);
                                   } else if (dragEndDetails.primaryVelocity! >
                                       0) {
-                                    setState(() {
-                                      index -= 1;
-                                      if (index < 0) {
-                                        index = cards.length - 1;
-                                      }
-                                    });
+                                    decrementIndex(cards.length);
                                   }
                                 },
                                 child: SizedBox(
@@ -265,6 +300,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                   icon: const Icon(Icons.chevron_left),
                                   label: Text('Prev',
                                       style: GoogleFonts.nunito())),
+                              Text('${index + 1} / ${cards.length}',
+                                  style: GoogleFonts.nunito()),
                               OutlinedButton.icon(
                                   onPressed: () {
                                     setState(() {
