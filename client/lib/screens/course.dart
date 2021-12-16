@@ -136,41 +136,34 @@ class _CoursePageState extends State<CoursePage> {
                     title: snapshot.data!.exists
                         ? Stack(
                             children: [
-                              Text(snapshot.data!.get("name") ?? "error",
+                              Text(snapshot.data!.get("name") ?? "",
                                   style: GoogleFonts.nunito(
                                       textStyle: const TextStyle(
-                                          fontSize: 32,
+                                          fontSize: 28,
                                           fontWeight: FontWeight.w600)))
                             ],
                           )
                         : null,
                     actions: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            setState(() {
-                              enabled = !enabled;
-                              enableNotification(
-                                  enabled,
-                                  context.read<CourseState>().currentCourseId,
-                                  courseName);
-                            });
-                          },
-                          icon: enabled
-                              ? const Icon(
-                                  Icons.notifications_none_outlined,
-                                  color: Colors.white,
-                                  size: 24.0,
-                                )
-                              : const Icon(
-                                  Icons.notifications_off_outlined,
-                                  color: Colors.white,
-                                  size: 24.0,
-                                ),
-                          label: const Text("Reminders",
-                              style: TextStyle(color: Colors.white)),
-                        ),
+                      IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            enabled = !enabled;
+                            enableNotification(
+                                enabled,
+                                context.read<CourseState>().currentCourseId,
+                                courseName);
+                          });
+                        },
+                        icon: enabled
+                            ? const Icon(
+                                Icons.notifications_none_outlined,
+                                size: 24.0,
+                              )
+                            : const Icon(
+                                Icons.notifications_off_outlined,
+                                size: 24.0,
+                              ),
                       ),
                       Container(
                         padding: const EdgeInsets.all(10),
@@ -259,7 +252,9 @@ class _CoursePageState extends State<CoursePage> {
                                                   width: 200,
                                                   child: Text(
                                                     "You don't have any uploaded card sets yet. Click the + button on the bottom right to begin!",
-                                                    style: GoogleFonts.nunito(),
+                                                    style: GoogleFonts.nunito(
+                                                        fontStyle:
+                                                            FontStyle.italic),
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
@@ -322,7 +317,7 @@ class _CoursePageState extends State<CoursePage> {
                                   }
                                   if (snapshot.data!.size == 0) {
                                     return Column(children: [
-                                      const SizedBox(height: 20),
+                                      const SizedBox(height: 35),
                                       Container(
                                         padding: const EdgeInsets.only(
                                           top: 15,
@@ -344,7 +339,8 @@ class _CoursePageState extends State<CoursePage> {
                                           width: 200,
                                           child: Text(
                                             "You don't have any uploaded lectures yet. Click the + button on the bottom right to begin!",
-                                            style: GoogleFonts.nunito(),
+                                            style: GoogleFonts.nunito(
+                                                fontStyle: FontStyle.italic),
                                             textAlign: TextAlign.center,
                                           ),
                                         ),

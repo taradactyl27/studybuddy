@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/color_constants.dart';
 
@@ -235,78 +236,151 @@ class _HomePageState extends State<HomePage>
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
               const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Recently Viewed",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w400,
+                      ))),
+                ],
+              ),
               FutureBuilder<List<dynamic>>(
                   future: _recentlyViewed,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {
                       if (snapshot.data!.isEmpty) {
-                        return const SizedBox(width: 0.0, height: 0.0);
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                    top: 15,
+                                    right: 15,
+                                    left: 15,
+                                    bottom: 15,
+                                  ),
+                                  height: 100,
+                                  width: 150,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitHeight,
+                                        image: AssetImage(
+                                            "theme/viewed_empty.png")),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Center(
+                                  child: SizedBox(
+                                    width: 175,
+                                    child: Text(
+                                      "Your recently viewed transcripts will automatically pop up here!",
+                                      style: GoogleFonts.nunito(
+                                          fontStyle: FontStyle.italic),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              ]),
+                        );
                       }
                       final recentIDs = snapshot.data!;
-                      print("LIST");
-                      print(recentIDs);
                       return SizedBox(
-                        height: 120,
-                        child: Column(children: [
-                          Text("Recently Viewed",
-                              style: GoogleFonts.nunito(
-                                  textStyle: const TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.w400,
-                              ))),
-                          Expanded(
-                            child: StreamBuilder(
-                                stream:
-                                    database.getRecentTranscripts(recentIDs),
-                                builder: (context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const SizedBox(
-                                        height: 200,
-                                        child: Center(
-                                            child:
-                                                CircularProgressIndicator()));
-                                  }
-                                  return ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    shrinkWrap: true,
-                                    children: orderRecents(
-                                            snapshot.data!.docs, recentIDs)
+                        height: 170,
+                        child: StreamBuilder(
+                            stream: database.getRecentTranscripts(recentIDs),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return const SizedBox(
+                                    height: 170,
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+                              }
+                              return ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children:
+                                    orderRecents(snapshot.data!.docs, recentIDs)
                                         .map((transcript) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                              context, routes.transcriptPage,
-                                              arguments: {
-                                                'transcript': transcript,
-                                                'course_id': transcript
-                                                    .reference.parent.parent!.id
-                                              });
-                                        },
-                                        child: ConstrainedBox(
-                                          constraints: const BoxConstraints(
-                                              maxWidth: 200),
-                                          child: Card(
-                                            child: ListTile(
-                                              dense: true,
-                                              title: Text(transcript['audioRef']
-                                                  .split('/')[1]),
-                                              subtitle: Text(transcript
-                                                  .reference.parent.parent!.id),
-                                            ),
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, routes.transcriptPage,
+                                          arguments: {
+                                            'transcript': transcript,
+                                            'course_id': transcript
+                                                .reference.parent.parent!.id
+                                          });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 5, bottom: 15),
+                                      margin: const EdgeInsets.only(
+                                          left: 5, right: 5),
+                                      child: Material(
+                                        color: MediaQuery.of(context)
+                                                    .platformBrightness ==
+                                                Brightness.light
+                                            ? null
+                                            : const Color(0xFF424242),
+                                        elevation: 6,
+                                        child: SizedBox(
+                                          height: 150,
+                                          width: 150,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(
+                                                      height: 70,
+                                                      child: Center(
+                                                        child: Icon(
+                                                            Icons
+                                                                .featured_play_list_outlined,
+                                                            size: 60),
+                                                      )),
+                                                  const Divider(height: 7),
+                                                  Text(
+                                                    transcript['audioRef']
+                                                        .split('/')[1]
+                                                        .split('.')
+                                                        .first,
+                                                    style: GoogleFonts.nunito(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  Text(
+                                                    "Created: ${DateFormat.yMMMMEEEEd().format(transcript['created'].toDate())}",
+                                                    style: GoogleFonts.nunito(
+                                                        fontSize: 12),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                  ),
+                                                ]),
                                           ),
                                         ),
-                                      );
-                                    }).toList(),
+                                      ),
+                                    ),
                                   );
-                                }),
-                          ),
-                        ]),
+                                }).toList(),
+                              );
+                            }),
                       );
                     } else {
                       return const SizedBox(
-                          height: 200,
+                          height: 170,
                           child: Center(child: CircularProgressIndicator()));
                     }
                   }),
@@ -331,7 +405,7 @@ class _HomePageState extends State<HomePage>
                         }
                         if (snapshot.data!.size == 0) {
                           return Column(children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 35),
                             Container(
                               padding: const EdgeInsets.only(
                                 top: 15,
@@ -353,7 +427,8 @@ class _HomePageState extends State<HomePage>
                                 width: 200,
                                 child: Text(
                                   "You are not a part of any course yet. Click the + button on the bottom right to begin!",
-                                  style: GoogleFonts.nunito(),
+                                  style: GoogleFonts.nunito(
+                                      fontStyle: FontStyle.italic),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -361,7 +436,7 @@ class _HomePageState extends State<HomePage>
                           ]);
                         }
                         return SizedBox(
-                          height: 300,
+                          height: 325,
                           child: GridView.count(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,

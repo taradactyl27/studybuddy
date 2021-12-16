@@ -75,37 +75,41 @@ class _FlashcardPageState extends State<FlashcardPage> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          _controller = TextEditingController(text: snapshot.data!.get('name'));
-          List<Widget> cards = List<dynamic>.from(snapshot.data!.get('cards'))
-              .mapIndexed<Widget>((index, card) {
-            return FlashCard(
-                key: Key(index.toString()),
-                width: 300,
-                height: 300,
-                frontWidget: Center(child: Text(card["answer"] ?? 'empty')),
-                backWidget: Stack(
-                  children: [
-                    Positioned(
-                        top: 0,
-                        right: 0,
-                        child: InkWell(
-                            onTap: () async {
-                              int oldIndex = index;
-                              resetIndex();
-                              await database.deleteFlashcard(
-                                  Provider.of<CourseState>(context,
-                                          listen: false)
-                                      .currentCourseId,
-                                  widget.cardsetId,
-                                  snapshot.data!.get("cards")[oldIndex]);
-                              print(index);
-                            },
-                            child: const Icon(Icons.delete_outline,
-                                color: kDangerColor))),
-                    Center(child: Text(card["question"] ?? 'empty')),
-                  ],
-                ));
-          }).toList();
+          _controller = TextEditingController(
+              text: snapshot.data!.exists ? snapshot.data!.get('name') : "");
+          List<Widget> cards = snapshot.data!.exists
+              ? List<dynamic>.from(snapshot.data!.get('cards'))
+                  .mapIndexed<Widget>((index, card) {
+                  return FlashCard(
+                      key: Key(index.toString()),
+                      width: 300,
+                      height: 300,
+                      frontWidget:
+                          Center(child: Text(card["answer"] ?? 'empty')),
+                      backWidget: Stack(
+                        children: [
+                          Positioned(
+                              top: 0,
+                              right: 0,
+                              child: InkWell(
+                                  onTap: () async {
+                                    int oldIndex = index;
+                                    resetIndex();
+                                    await database.deleteFlashcard(
+                                        Provider.of<CourseState>(context,
+                                                listen: false)
+                                            .currentCourseId,
+                                        widget.cardsetId,
+                                        snapshot.data!.get("cards")[oldIndex]);
+                                    print(index);
+                                  },
+                                  child: const Icon(Icons.delete_outline,
+                                      color: kDangerColor))),
+                          Center(child: Text(card["question"] ?? 'empty')),
+                        ],
+                      ));
+                }).toList()
+              : [];
           return Scaffold(
             key: _scaffoldKey,
             drawer: ConstrainedBox(
@@ -264,7 +268,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                     width: 200,
                                     child: Text(
                                       "You haven't created any cards yet. Click the + button on the bottom right to begin!",
-                                      style: GoogleFonts.nunito(),
+                                      style: GoogleFonts.nunito(
+                                          fontStyle: FontStyle.italic),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),

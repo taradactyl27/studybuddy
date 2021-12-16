@@ -35,7 +35,7 @@ class SideMenu extends StatelessWidget {
                 ),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(top: kIsWeb ? 25.0 : 10.0),
               child: Divider(
                 height: 20,
@@ -45,8 +45,7 @@ class SideMenu extends StatelessWidget {
               type: MaterialType.transparency,
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      routes.homePage, (route) => false);
+                  Navigator.of(context).pushNamed(routes.homePage);
                 },
                 child: ListTile(
                     hoverColor: const Color(0xFF424242),
@@ -64,7 +63,9 @@ class SideMenu extends StatelessWidget {
             Material(
               type: MaterialType.transparency,
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushNamed(routes.favoritesPage);
+                },
                 child: ListTile(
                     hoverColor: const Color(0xFF424242),
                     leading: const Icon(Icons.star),
@@ -80,8 +81,7 @@ class SideMenu extends StatelessWidget {
               type: MaterialType.transparency,
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      routes.settingsPage, (route) => false);
+                  Navigator.of(context).pushNamed(routes.settingsPage);
                 },
                 child: ListTile(
                     leading: const Icon(Icons.settings),

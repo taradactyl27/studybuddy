@@ -89,6 +89,7 @@ flutter:
     - theme/courses_empty.png
     - theme/questions_empty.png
     - theme/lectures_empty.png
+    - theme/viewed_empty.png
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:
