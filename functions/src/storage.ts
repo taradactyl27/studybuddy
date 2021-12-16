@@ -50,22 +50,36 @@ export const onObjectUploaded = functions
     }
 
     const metadata = object.metadata;
-    const { courseID, audioID, uid } = metadata;
+    const { courseID, audioID, uid, mocker, mockTemplate } = metadata;
 
-    const audioDoc = admin
+    let audioDoc = admin
       .firestore()
       .collection("courses")
       .doc(courseID)
       .collection("audios")
       .doc(audioID);
 
+    if (mocker.includes("data")) {
+     audioDoc = admin
+      .firestore()
+      .collection("lectures")
+      .doc(audioID);
+    }
+
     await audioDoc.set(
       {
-        owner: uid,
+        courseID,
+        roles: {
+          [uid]: {
+            email: mocker,
+            role: "owner"
+          }
+        },
         created: admin.firestore.Timestamp.now(),
+        status: "in the clouds",
+        owner: uid,
         audioRef: filePath,
         notesGenerated: false,
-        status: "in the clouds",
       },
       { merge: true }
     );
@@ -92,7 +106,6 @@ export const onObjectUploaded = functions
     functions.logger.log("TRANSCRIBE STAGE");
 
     try {
-      const { mocker, mockTemplate } = metadata;
 
       const transcriptPath = `${courseID}/${audioID}/${
         mocker.includes("admin") ? "admin/" : ""
