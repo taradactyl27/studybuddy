@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/color_constants.dart';
+
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' show User, signOut;
 import 'package:studybuddy/widgets/side_menu.dart';

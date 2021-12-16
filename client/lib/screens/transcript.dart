@@ -53,7 +53,7 @@ class _TranscriptPageState extends State<TranscriptPage> {
     if (data.containsKey('noteDeltas')) {
       initNotesData = jsonDecode(data['noteDeltas']);
     } else {
-      if (data != null && transcriptMut['notesGenerated']) {
+      if (transcriptMut['notesGenerated']) {
         initNotesData = [
           {
             'insert': data['isTranscribing']
