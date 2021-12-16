@@ -23,6 +23,7 @@ import 'package:studybuddy/widgets/course_tile.dart';
 import 'package:studybuddy/widgets/search_result.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 
+import "../route_observer.dart";
 import '../responsive.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,7 +34,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with RouteAware, SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
   int currentIndex = 0;
@@ -42,6 +43,7 @@ class _HomePageState extends State<HomePage>
   bool toggle = false;
   Map searchResults = {};
   late String uid;
+  late Future<List<dynamic>> _recentlyViewed;
   late Future<String> _searchApiKey;
 
   setBottomBarIndex(index) {
@@ -55,11 +57,40 @@ class _HomePageState extends State<HomePage>
     super.initState();
     uid = context.read<User>().uid;
     _searchApiKey = getSearchKey(true);
+    _recentlyViewed = database.getRecentActivity(uid);
   }
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void didPush() {
+    setState(() {
+      _recentlyViewed = database.getRecentActivity(uid);
+    });
+  }
+
+  @override
+  void didPopNext() {
+    setState(() {
+      _recentlyViewed = database.getRecentActivity(uid);
+    });
+  }
+
+  List<dynamic> orderRecents(
+      List<QueryDocumentSnapshot<Object?>> docs, List<dynamic> ids) {
+    return ids
+        .map((id) => docs.firstWhere((doc) => doc.id == id.split("/").last))
+        .toList();
   }
 
   void _retryKey() {
@@ -203,16 +234,82 @@ class _HomePageState extends State<HomePage>
               const SizedBox(height: 20),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              if (isSearching) const SizedBox(height: 20),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("Recently Edited",
-                    style: GoogleFonts.nunito(
-                        textStyle: const TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w400,
-                    ))),
-                const SizedBox(height: 200)
-              ]),
+              const SizedBox(height: 20),
+              FutureBuilder<List<dynamic>>(
+                  future: _recentlyViewed,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return const SizedBox(width: 0.0, height: 0.0);
+                      }
+                      final recentIDs = snapshot.data!;
+                      print("LIST");
+                      print(recentIDs);
+                      return SizedBox(
+                        height: 120,
+                        child: Column(children: [
+                          Text("Recently Viewed",
+                              style: GoogleFonts.nunito(
+                                  textStyle: const TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.w400,
+                              ))),
+                          Expanded(
+                            child: StreamBuilder(
+                                stream:
+                                    database.getRecentTranscripts(recentIDs),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const SizedBox(
+                                        height: 200,
+                                        child: Center(
+                                            child:
+                                                CircularProgressIndicator()));
+                                  }
+                                  return ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    children: orderRecents(
+                                            snapshot.data!.docs, recentIDs)
+                                        .map((transcript) {
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, routes.transcriptPage,
+                                              arguments: {
+                                                'transcript': transcript,
+                                                'course_id': transcript
+                                                    .reference.parent.parent!.id
+                                              });
+                                        },
+                                        child: ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                              maxWidth: 200),
+                                          child: Card(
+                                            child: ListTile(
+                                              dense: true,
+                                              title: Text(transcript['audioRef']
+                                                  .split('/')[1]),
+                                              subtitle: Text(transcript
+                                                  .reference.parent.parent!.id),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  );
+                                }),
+                          ),
+                        ]),
+                      );
+                    } else {
+                      return const SizedBox(
+                          height: 200,
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                  }),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
