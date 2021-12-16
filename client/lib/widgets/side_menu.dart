@@ -64,23 +64,6 @@ class SideMenu extends StatelessWidget {
               type: MaterialType.transparency,
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(routes.favoritesPage);
-                },
-                child: ListTile(
-                    hoverColor: const Color(0xFF424242),
-                    leading: const Icon(Icons.star),
-                    title: Text("Favorites",
-                        style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        )))),
-              ),
-            ),
-            Material(
-              type: MaterialType.transparency,
-              child: InkWell(
-                onTap: () {
                   Navigator.of(context).pushNamed(routes.settingsPage);
                 },
                 child: ListTile(

@@ -244,7 +244,7 @@ class _HomePageState extends State<HomePage>
               const SizedBox(height: 20),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              const SizedBox(height: 20),
+              if (isSearching) const SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -437,7 +437,7 @@ class _HomePageState extends State<HomePage>
                           (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return const SizedBox(
-                              height: 300,
+                              height: 375,
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
@@ -485,7 +485,7 @@ class _HomePageState extends State<HomePage>
                           });
                         }
                         return SizedBox(
-                          height: 325,
+                          height: 375,
                           child: GridView.count(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
