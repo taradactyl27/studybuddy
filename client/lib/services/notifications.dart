@@ -19,9 +19,9 @@ const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
 const IOSInitializationSettings initializationSettingsIOS =
-    const IOSInitializationSettings();
+    IOSInitializationSettings();
 
-final InitializationSettings initializationSettings = InitializationSettings(
+final InitializationSettings initializationSettings = const InitializationSettings(
     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
