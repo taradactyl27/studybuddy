@@ -17,7 +17,7 @@ class _FlashCardCreationFormState extends State<FlashCardCreationForm> {
 
   String? get _errorText {
     final text = _questioncontroller.value.text;
-    if (text.length > 20) {
+    if (text.length > 100) {
       return 'Too long';
     }
     return null;
