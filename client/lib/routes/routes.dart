@@ -5,6 +5,7 @@ import 'package:studybuddy/screens/favorites.dart';
 import 'package:studybuddy/screens/flashcards.dart';
 import 'package:studybuddy/screens/login.dart';
 import 'package:studybuddy/screens/register.dart';
+import 'package:studybuddy/screens/recording.dart';
 import 'package:studybuddy/screens/settings.dart';
 import 'package:studybuddy/screens/transcript.dart';
 import 'package:studybuddy/screens/layout.dart';
@@ -19,6 +20,7 @@ const String coursePage = '/courses';
 const String settingsPage = '/settings';
 const String transcriptPage = '/transcript';
 const String favoritesPage = '/favorites';
+const String recordingPage = '/recording';
 const String flashcardPage = '/flashcard';
 
 Route<dynamic> controller(RouteSettings settings) {
@@ -49,6 +51,8 @@ Route<dynamic> controller(RouteSettings settings) {
             transcript: arguments["transcript"],
             courseId: arguments["course_id"],
           );
+        case recordingPage:
+          return const RecordingPage();
         default:
           return const Scaffold(
             body: Center(
