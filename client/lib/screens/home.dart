@@ -13,6 +13,7 @@ import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/course_state.dart';
+import 'package:studybuddy/services/recents_state.dart';
 import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/widgets/class_creation_card.dart';
 import 'package:studybuddy/services/database.dart' as database;
@@ -131,6 +132,9 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    if (ModalRoute.of(context)!.isCurrent) {
+      print("CURRENT YUH YUH");
+    }
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);

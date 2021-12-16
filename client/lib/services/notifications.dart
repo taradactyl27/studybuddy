@@ -21,7 +21,7 @@ const AndroidInitializationSettings initializationSettingsAndroid =
 const IOSInitializationSettings initializationSettingsIOS =
     IOSInitializationSettings();
 
-const InitializationSettings initializationSettings = const InitializationSettings(
+const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
 const AndroidNotificationDetails androidPlatformChannelSpecifics =

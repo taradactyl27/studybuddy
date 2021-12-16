@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'package:studybuddy/services/course_state.dart';
 
 import '../services/course_state.dart';
 import '../services/notifications.dart';
-import 'routes/routes.dart';
 import "route_observer.dart";
+import 'routes/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

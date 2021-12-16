@@ -6,7 +6,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-
 import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/routes/hero_route.dart';
@@ -18,7 +17,6 @@ import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 import "../services/notifications.dart";
 
@@ -164,15 +162,13 @@ class _CoursePageState extends State<CoursePage> {
                                 courseName);
                           });
                         },
-                        icon: enabled
-                            ? const Icon(
-                                Icons.notifications_none_outlined,
-                                size: 24.0,
-                              )
-                            : const Icon(
-                                Icons.notifications_off_outlined,
-                                size: 24.0,
-                              ),
+                        icon: Icon(
+                          enabled
+                              ? Icons.notifications_on
+                              : Icons.notifications_off_outlined,
+                          size: 24.0,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.all(10),

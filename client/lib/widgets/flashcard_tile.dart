@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:studybuddy/color_constants.dart';
 
 class FlashCardTile extends StatelessWidget {
   const FlashCardTile({Key? key, required this.name}) : super(key: key);
