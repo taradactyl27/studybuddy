@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:studybuddy/color_constants.dart';
 
 class TranscriptTile extends StatefulWidget {
   const TranscriptTile(
@@ -27,15 +28,20 @@ class _TranscriptTileState extends State<TranscriptTile> {
     bool hasText = widget.transcript.data().containsKey('text');
     DateTime date = widget.transcript['created'].toDate();
     return Card(
+      elevation: 5,
       child: ListTile(
-        tileColor: hasText ? Colors.white : Colors.black12,
+        tileColor: hasText ? null : kInactiveTileColor,
         leading: const Icon(
           Icons.insert_drive_file_outlined,
           size: 35,
-          color: Colors.lightBlueAccent,
+          color: kPrimaryColor,
         ),
-        title: Text(widget.transcript['audioRef'].split('/')[1].split('.')[0]),
+        title: Text(
+          widget.transcript['audioRef'].split('/')[1].split('.')[0],
+          overflow: TextOverflow.ellipsis,
+        ),
         subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Wrap(
               //mainAxisAlignment: MainAxisAlignment.spaceEvenly,

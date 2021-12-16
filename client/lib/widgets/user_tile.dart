@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class UserTile extends StatefulWidget {
@@ -32,12 +33,12 @@ class _UserTileState extends State<UserTile> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 2,
       child: ListTile(
-        tileColor: Colors.white,
         leading: const Icon(
           Icons.account_box,
           size: 35,
-          color: Colors.lightBlueAccent,
+          color: kPrimaryColor,
         ),
         title: Text(widget.email.length > 22
             ? widget.email.substring(0, 22) + "..."
@@ -51,7 +52,7 @@ class _UserTileState extends State<UserTile> {
                       widget.courseId, widget.uid);
                 },
                 child: const Icon(Icons.cancel_rounded,
-                    size: 20, color: Colors.red))
+                    size: 20, color: kDangerColor))
             : null,
         dense: true,
       ),

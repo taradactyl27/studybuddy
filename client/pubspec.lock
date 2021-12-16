@@ -267,6 +267,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.4"
+  flash_card:
+    dependency: "direct main"
+    description:
+      name: flash_card
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.7"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -374,7 +381,7 @@ packages:
       name: flutter_quill
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.3.0"
   flutter_signin_button:
     dependency: "direct main"
     description:
@@ -525,6 +532,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
+  lint:
+    dependency: transitive
+    description:
+      name: lint
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.7.2"
   lints:
     dependency: transitive
     description:
@@ -952,4 +966,4 @@ packages:
     version: "8.0.0"
 sdks:
   dart: ">=2.14.0 <3.0.0"
-  flutter: ">=2.5.0"
+  flutter: ">=2.5.3"

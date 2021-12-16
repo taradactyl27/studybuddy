@@ -20,7 +20,10 @@ class CourseTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 5, right: 5),
       child: Material(
-        elevation: 5,
+        color: MediaQuery.of(context).platformBrightness == Brightness.light
+            ? null
+            : const Color(0xFF424242),
+        elevation: 6,
         child: SizedBox(
           height: 200,
           width: 200,
@@ -41,8 +44,7 @@ class CourseTile extends StatelessWidget {
                       child: Text(course['name'],
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                                color: Colors.black, fontSize: 16),
+                            textStyle: const TextStyle(fontSize: 16),
                           )),
                     ),
                   ),
@@ -76,8 +78,7 @@ class CourseTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 4,
                       style: GoogleFonts.nunito(
-                        textStyle: const TextStyle(
-                            color: Colors.black54, fontSize: 12),
+                        textStyle: const TextStyle(fontSize: 12),
                       )),
                 ),
               )
