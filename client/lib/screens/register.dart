@@ -42,27 +42,33 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
             ),
-            Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _usercontroller,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                )),
-            Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _passwordcontroller,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                )),
+            Center(
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: _usercontroller,
+                    decoration: const InputDecoration(labelText: 'Email'),
+                  )),
+            ),
+            Center(
+              child: Container(
+                  constraints: const BoxConstraints(maxWidth: 350),
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    controller: _passwordcontroller,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  )),
+            ),
             Container(
                 padding: const EdgeInsets.all(5.0),
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor, minimumSize: const Size(220, 36)),
+                      minimumSize: const Size(220, 36)),
                   child: Text(
                     'Sign up',
                     style: GoogleFonts.nunito(

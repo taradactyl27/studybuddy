@@ -10,17 +10,13 @@ import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/services/database.dart' as database;
-import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:studybuddy/widgets/flashcard_tile.dart';
 import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
-import 'package:timezone/timezone.dart' as tz;
 
 import "../services/notifications.dart";
 
@@ -54,8 +50,9 @@ class _CoursePageState extends State<CoursePage> {
             builder: (context,
                 AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                     snapshot) {
-              if (!snapshot.hasData)
-                return Center(child: CircularProgressIndicator());
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
               return Scaffold(
                   key: _scaffoldKey,
                   drawer: ConstrainedBox(
@@ -133,44 +130,44 @@ class _CoursePageState extends State<CoursePage> {
                             Navigator.of(context).pop();
                           }
                         },
-                        icon: const Icon(Icons.arrow_back_ios_new_sharp)),
+                        icon: Icon(Icons.arrow_back_ios_new_sharp,
+                            color: MediaQuery.of(context).platformBrightness ==
+                                    Brightness.light
+                                ? Colors.black
+                                : Colors.white)),
                     title: snapshot.data!.exists
                         ? Stack(
                             children: [
-                              Text(snapshot.data!.get("name") ?? "error",
+                              Text(snapshot.data!.get("name") ?? "",
                                   style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontSize: 32,
+                                      textStyle: TextStyle(
+                                          color: MediaQuery.of(context)
+                                                      .platformBrightness ==
+                                                  Brightness.light
+                                              ? Colors.black
+                                              : Colors.white,
+                                          fontSize: 28,
                                           fontWeight: FontWeight.w600)))
                             ],
                           )
                         : null,
                     actions: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: ElevatedButton.icon(
-                          onPressed: () async {
-                            setState(() {
-                              enabled = !enabled;
-                              enableNotification(
-                                  enabled,
-                                  context.read<CourseState>().currentCourseId,
-                                  courseName);
-                            });
-                          },
-                          icon: enabled
-                              ? const Icon(
-                                  Icons.notifications_none_outlined,
-                                  color: Colors.white,
-                                  size: 24.0,
-                                )
-                              : const Icon(
-                                  Icons.notifications_off_outlined,
-                                  color: Colors.white,
-                                  size: 24.0,
-                                ),
-                          label: const Text("Reminders",
-                              style: TextStyle(color: Colors.white)),
+                      IconButton(
+                        onPressed: () async {
+                          setState(() {
+                            enabled = !enabled;
+                            enableNotification(
+                                enabled,
+                                context.read<CourseState>().currentCourseId,
+                                courseName);
+                          });
+                        },
+                        icon: Icon(
+                          enabled
+                              ? Icons.notifications_on
+                              : Icons.notifications_off_outlined,
+                          size: 24.0,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       Container(
@@ -260,7 +257,9 @@ class _CoursePageState extends State<CoursePage> {
                                                   width: 200,
                                                   child: Text(
                                                     "You don't have any uploaded card sets yet. Click the + button on the bottom right to begin!",
-                                                    style: GoogleFonts.nunito(),
+                                                    style: GoogleFonts.nunito(
+                                                        fontStyle:
+                                                            FontStyle.italic),
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
@@ -323,7 +322,7 @@ class _CoursePageState extends State<CoursePage> {
                                   }
                                   if (snapshot.data!.size == 0) {
                                     return Column(children: [
-                                      const SizedBox(height: 20),
+                                      const SizedBox(height: 35),
                                       Container(
                                         padding: const EdgeInsets.only(
                                           top: 15,
@@ -345,7 +344,8 @@ class _CoursePageState extends State<CoursePage> {
                                           width: 200,
                                           child: Text(
                                             "You don't have any uploaded lectures yet. Click the + button on the bottom right to begin!",
-                                            style: GoogleFonts.nunito(),
+                                            style: GoogleFonts.nunito(
+                                                fontStyle: FontStyle.italic),
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
@@ -368,12 +368,7 @@ class _CoursePageState extends State<CoursePage> {
 
                                           if (data.containsKey('text')) {
                                             return InkWell(
-                                              onTap: () async {
-                                                await database
-                                                    .updateTranscriptActivity(
-                                                        uid,
-                                                        courseID,
-                                                        transcript.id);
+                                              onTap: () {
                                                 Navigator.pushNamed(context,
                                                     routes.transcriptPage,
                                                     arguments: {

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import "services/recents_state.dart";
-
-import 'package:flutter/material.dart';
 
 class AppRouteObserver extends RouteObserver<PageRoute<dynamic>> {
   void _sendScreenView(PageRoute<dynamic> route) {

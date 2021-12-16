@@ -2,8 +2,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:studybuddy/color_constants.dart';
-
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/auth.dart' show User, signOut;
 import 'package:studybuddy/widgets/side_menu.dart';
@@ -88,8 +86,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           fontSize: 24, fontWeight: FontWeight.w400))),
               const SizedBox(height: 100),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: kPrimaryColor, minimumSize: const Size(230, 44)),
+                style:
+                    ElevatedButton.styleFrom(minimumSize: const Size(230, 44)),
                 onPressed: () async {
                   await signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(

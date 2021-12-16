@@ -6,6 +6,7 @@ import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
 import 'package:studybuddy/services/api.dart' as api;
 import 'package:studybuddy/services/database.dart' as database;
+import "../route_observer.dart";
 
 class TranscriptPage extends StatefulWidget {
   const TranscriptPage(
@@ -22,7 +23,7 @@ class TranscriptPage extends StatefulWidget {
   _TranscriptPageState createState() => _TranscriptPageState();
 }
 
-class _TranscriptPageState extends State<TranscriptPage> {
+class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
   late QuillController _textController;
   late QuillController _notesController;
   late List<QuillController> _controllers;
@@ -79,9 +80,30 @@ class _TranscriptPageState extends State<TranscriptPage> {
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _textController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void didPush() {
+    final transcript = widget.transcript.data()!;
+    database.updateTranscriptActivity(
+        transcript['owner'], widget.courseId, widget.transcript.id);
+  }
+
+  @override
+  void didPopNext() {
+    final transcript = widget.transcript.data()!;
+    database.updateTranscriptActivity(
+        transcript['owner'], widget.courseId, widget.transcript.id);
   }
 
   @override
@@ -99,7 +121,8 @@ class _TranscriptPageState extends State<TranscriptPage> {
               ? null
               : <Widget>[
                   TextButton(
-                    style: TextButton.styleFrom(primary: Colors.deepOrange),
+                    style: TextButton.styleFrom(
+                        primary: Theme.of(context).colorScheme.primary),
                     onPressed: () {
                       setState(() {
                         tabID = 0;
@@ -109,8 +132,8 @@ class _TranscriptPageState extends State<TranscriptPage> {
                   ),
                   transcriptMut['notesGenerated']
                       ? TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Colors.deepPurple),
+                          style: TextButton.styleFrom(
+                              primary: Theme.of(context).colorScheme.secondary),
                           onPressed: () {
                             setState(() {
                               tabID = 1;

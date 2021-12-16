@@ -3,12 +3,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:studybuddy/services/database.dart' as database;
 import 'package:flutter/material.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 
-final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 List<int> intervals = [5, 10, 60, 300, 600, 1800];
 int index = 0;
@@ -19,10 +18,10 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
-final IOSInitializationSettings initializationSettingsIOS =
-    const IOSInitializationSettings();
+const IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings();
 
-final InitializationSettings initializationSettings = InitializationSettings(
+const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
 const AndroidNotificationDetails androidPlatformChannelSpecifics =

@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                     child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      primary: kPrimaryColor, minimumSize: const Size(220, 38)),
+                      minimumSize: const Size(220, 38)),
                   child: Text('Sign in',
                       style: GoogleFonts.nunito(
                         textStyle: const TextStyle(
@@ -120,7 +120,8 @@ class _LoginPageState extends State<LoginPage> {
                     TextSpan(
                         text: 'Sign Up!',
                         style: GoogleFonts.nunito(
-                          textStyle: const TextStyle(color: kPrimaryColor),
+                          textStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {

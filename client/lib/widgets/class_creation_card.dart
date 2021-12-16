@@ -85,9 +85,6 @@ class _ClassCreationCardState extends State<ClassCreationCard> {
                                     }
                                   }
                                 : null,
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.blue,
-                            ),
                             child: const Text('Add',
                                 style: TextStyle(
                                   color: Colors.white,

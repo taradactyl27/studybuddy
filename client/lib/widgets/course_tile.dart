@@ -30,10 +30,12 @@ class CourseTile extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                height: 50,
-                decoration: const BoxDecoration(
-                    gradient:
-                        LinearGradient(colors: [Colors.blue, Colors.blueGrey])),
+                height: 45,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary
+                ])),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

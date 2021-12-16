@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/color_constants.dart';
 
@@ -38,7 +39,9 @@ class _HomePageState extends State<HomePage>
     with RouteAware, SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
+  late AnimationController _controller;
   int currentIndex = 0;
+  bool filterFavorites = false;
   bool isSearching = false;
   bool isLoading = true;
   bool toggle = false;
@@ -56,6 +59,11 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+      upperBound: 0.5,
+    );
     uid = context.read<User>().uid;
     _searchApiKey = getSearchKey(true);
     _recentlyViewed = database.getRecentActivity(uid);
@@ -64,6 +72,8 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    _controller.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -156,8 +166,8 @@ class _HomePageState extends State<HomePage>
           icon: Icons.add,
           activeIcon: Icons.close,
           spacing: 10,
-          overlayColor: kOverlayColor,
-          overlayOpacity: 0.6,
+          overlayColor: Theme.of(context).colorScheme.secondary,
+          overlayOpacity: 0.1,
           children: [
             SpeedDialChild(
                 child: const Icon(Icons.my_library_add_rounded),
@@ -238,105 +248,206 @@ class _HomePageState extends State<HomePage>
               const SizedBox(height: 20),
               if (isSearching)
                 SearchResultBox(isLoading: isLoading, results: searchResults),
-              const SizedBox(height: 20),
+              if (isSearching) const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Recently Viewed",
+                      style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w400,
+                      ))),
+                ],
+              ),
               FutureBuilder<List<dynamic>>(
                   future: _recentlyViewed,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {
                       if (snapshot.data!.isEmpty) {
-                        return const SizedBox(width: 0.0, height: 0.0);
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(
+                                    top: 15,
+                                    right: 15,
+                                    left: 15,
+                                    bottom: 15,
+                                  ),
+                                  height: 100,
+                                  width: 150,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitHeight,
+                                        image: AssetImage(
+                                            "theme/viewed_empty.png")),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Center(
+                                  child: SizedBox(
+                                    width: 175,
+                                    child: Text(
+                                      "Your recently viewed transcripts will automatically pop up here!",
+                                      style: GoogleFonts.nunito(
+                                          fontStyle: FontStyle.italic),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              ]),
+                        );
                       }
                       final recentIDs = snapshot.data!;
-                      print("RECENTVIEW CONTEXT");
-                      print(context.read<RecentsState>().recentlyViewed);
-                      print(_recentlyViewed);
                       return SizedBox(
-                        height: 120,
-                        child: Column(children: [
-                          Text("Recently Viewed",
-                              style: GoogleFonts.nunito(
-                                  textStyle: const TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.w400,
-                              ))),
-                          Expanded(
-                            child: StreamBuilder(
-                                stream:
-                                    database.getRecentTranscripts(recentIDs),
-                                builder: (context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return const SizedBox(
-                                        height: 200,
-                                        child: Center(
-                                            child:
-                                                CircularProgressIndicator()));
-                                  }
-                                  return ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    shrinkWrap: true,
-                                    children: orderRecents(
-                                            snapshot.data!.docs, recentIDs)
+                        height: 170,
+                        child: StreamBuilder(
+                            stream: database.getRecentTranscripts(recentIDs),
+                            builder: (context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (!snapshot.hasData) {
+                                return const SizedBox(
+                                    height: 170,
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+                              }
+                              return ListView(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                children:
+                                    orderRecents(snapshot.data!.docs, recentIDs)
                                         .map((transcript) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                              context, routes.transcriptPage,
-                                              arguments: {
-                                                'transcript': transcript,
-                                                'course_id': transcript
-                                                    .reference.parent.parent!.id
-                                              });
-                                        },
-                                        child: ConstrainedBox(
-                                          constraints: const BoxConstraints(
-                                              maxWidth: 200),
-                                          child: Card(
-                                            child: ListTile(
-                                              dense: true,
-                                              title: Text(transcript['audioRef']
-                                                  .split('/')[1]),
-                                              subtitle: Text(transcript
-                                                  .reference.parent.parent!.id),
-                                            ),
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, routes.transcriptPage,
+                                          arguments: {
+                                            'transcript': transcript,
+                                            'course_id': transcript
+                                                .reference.parent.parent!.id
+                                          });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 15),
+                                      margin: const EdgeInsets.only(
+                                          left: 5, right: 5),
+                                      child: Material(
+                                        color: MediaQuery.of(context)
+                                                    .platformBrightness ==
+                                                Brightness.light
+                                            ? null
+                                            : const Color(0xFF424242),
+                                        elevation: 6,
+                                        child: SizedBox(
+                                          height: 150,
+                                          width: 140,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                      height: 60,
+                                                      child: Center(
+                                                        child: Icon(
+                                                            Icons
+                                                                .chrome_reader_mode_outlined,
+                                                            size: 60,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .secondary
+                                                                .withOpacity(
+                                                                    0.7)),
+                                                      )),
+                                                  const Divider(
+                                                    height: 10,
+                                                    thickness: 1,
+                                                  ),
+                                                  Text(
+                                                    transcript['audioRef']
+                                                        .split('/')[1]
+                                                        .split('.')
+                                                        .first,
+                                                    style: GoogleFonts.nunito(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  Text(
+                                                    "Created: ${DateFormat.yMMMMEEEEd().format(transcript['created'].toDate())}",
+                                                    style: GoogleFonts.nunito(
+                                                        fontSize: 12),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                  ),
+                                                ]),
                                           ),
                                         ),
-                                      );
-                                    }).toList(),
+                                      ),
+                                    ),
                                   );
-                                }),
-                          ),
-                        ]),
+                                }).toList(),
+                              );
+                            }),
                       );
                     } else {
                       return const SizedBox(
-                          height: 200,
+                          height: 170,
                           child: Center(child: CircularProgressIndicator()));
                     }
                   }),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Your Courses",
-                      style: GoogleFonts.nunito(
-                          textStyle: const TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w400,
-                      ))),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Your Courses",
+                          style: GoogleFonts.nunito(
+                              textStyle: const TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w400,
+                          ))),
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (filterFavorites) {
+                                _controller.reverse(from: 0.5);
+                              } else {
+                                _controller.forward(from: 0.0);
+                              }
+                              filterFavorites = !filterFavorites;
+                            });
+                          },
+                          child: RotationTransition(
+                              turns: Tween(begin: 0.0, end: 1.0)
+                                  .animate(_controller),
+                              child: const Icon(Icons.filter_list, size: 24)))
+                    ],
+                  ),
                   StreamBuilder(
                       stream: database.getUserCourseStream(uid),
                       builder:
                           (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return const SizedBox(
-                              height: 300,
+                              height: 375,
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
                         if (snapshot.data!.size == 0) {
                           return Column(children: [
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 35),
                             Container(
                               padding: const EdgeInsets.only(
                                 top: 15,
@@ -358,15 +469,27 @@ class _HomePageState extends State<HomePage>
                                 width: 200,
                                 child: Text(
                                   "You are not a part of any course yet. Click the + button on the bottom right to begin!",
-                                  style: GoogleFonts.nunito(),
+                                  style: GoogleFonts.nunito(
+                                      fontStyle: FontStyle.italic),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                             )
                           ]);
                         }
+                        List<QueryDocumentSnapshot<Object?>> list =
+                            snapshot.data!.docs;
+                        if (filterFavorites) {
+                          list.sort((a, b) {
+                            if (b['roles'][uid]['favorite']) {
+                              return 1;
+                            } else {
+                              return -1;
+                            }
+                          });
+                        }
                         return SizedBox(
-                          height: 300,
+                          height: 375,
                           child: GridView.count(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
@@ -378,8 +501,8 @@ class _HomePageState extends State<HomePage>
                                     ? 1
                                     : 2,
                             padding:
-                                const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                            children: snapshot.data!.docs.map((course) {
+                                const EdgeInsets.only(top: 10.0, bottom: 15.0),
+                            children: list.map((course) {
                               return InkWell(
                                 onTap: () {
                                   Provider.of<CourseState>(context,

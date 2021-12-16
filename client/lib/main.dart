@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 
 import '../services/course_state.dart';
 import '../services/notifications.dart';
-import '../services/recents_state.dart';
 import "route_observer.dart";
 import 'routes/routes.dart';
 
@@ -47,10 +46,6 @@ class MyApp extends StatelessWidget {
           },
         ),
         ChangeNotifierProvider(create: (_) => CourseState()),
-        ChangeNotifierProxyProvider<User, RecentsState>(
-          create: (_) => RecentsState(),
-          update: (_, user, recentsState) => recentsState!..update(user.uid),
-        )
       ],
       child: MaterialApp(
         title: 'Study Buddy',
@@ -62,7 +57,8 @@ class MyApp extends StatelessWidget {
                   statusBarColor: Colors.transparent,
                   statusBarIconBrightness: Brightness.dark)),
           brightness: Brightness.light,
-          primarySwatch: Colors.cyan,
+          colorScheme: const ColorScheme.light(),
+          primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         darkTheme: ThemeData(
@@ -72,10 +68,11 @@ class MyApp extends StatelessWidget {
                   statusBarIconBrightness: Brightness.light)),
           brightness: Brightness.dark,
           colorScheme: const ColorScheme.dark(),
-          primarySwatch: Colors.cyan,
+          primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           applyElevationOverlayColor: true,
         ),
+        themeMode: ThemeMode.system,
         navigatorKey: navigatorKey,
         onGenerateRoute: controller,
         initialRoute: rootUrl,

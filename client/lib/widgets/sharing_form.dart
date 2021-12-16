@@ -92,7 +92,7 @@ class _SharingFormState extends State<SharingForm> {
                                               .currentCourseId,
                                     );
                                   }).toList())),
-                          Divider(),
+                          const Divider(),
                           if (roleList[uid]['role'] == 'owner')
                             Padding(
                               padding: const EdgeInsets.only(

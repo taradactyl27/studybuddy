@@ -45,8 +45,7 @@ class SideMenu extends StatelessWidget {
               type: MaterialType.transparency,
               child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      routes.homePage, (route) => false);
+                  Navigator.of(context).pushNamed(routes.homePage);
                 },
                 child: ListTile(
                     hoverColor: const Color(0xFF424242),
@@ -64,24 +63,8 @@ class SideMenu extends StatelessWidget {
             Material(
               type: MaterialType.transparency,
               child: InkWell(
-                onTap: () {},
-                child: ListTile(
-                    hoverColor: const Color(0xFF424242),
-                    leading: const Icon(Icons.star),
-                    title: Text("Favorites",
-                        style: GoogleFonts.nunito(
-                            textStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        )))),
-              ),
-            ),
-            Material(
-              type: MaterialType.transparency,
-              child: InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      routes.settingsPage, (route) => false);
+                  Navigator.of(context).pushNamed(routes.settingsPage);
                 },
                 child: ListTile(
                     leading: const Icon(Icons.settings),

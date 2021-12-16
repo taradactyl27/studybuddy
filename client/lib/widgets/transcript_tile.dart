@@ -31,10 +31,10 @@ class _TranscriptTileState extends State<TranscriptTile> {
       elevation: 5,
       child: ListTile(
         tileColor: hasText ? null : kInactiveTileColor,
-        leading: const Icon(
+        leading: Icon(
           Icons.insert_drive_file_outlined,
           size: 35,
-          color: kPrimaryColor,
+          color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(
           widget.transcript['audioRef'].split('/')[1].split('.')[0],
