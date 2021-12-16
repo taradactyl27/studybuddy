@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:studybuddy/color_constants.dart';
 
 import 'package:studybuddy/services/storage.dart' as storage;
 import 'package:studybuddy/services/database.dart' as database
@@ -32,14 +34,10 @@ class _AudioFormState extends State<AudioForm> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
-        child: Hero(
-          tag: 'addaudio',
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 450),
           child: Material(
-            color: Colors.white,
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 3, color: Colors.black45),
-                borderRadius: BorderRadius.circular(32)),
+            elevation: 20,
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -70,11 +68,13 @@ class _AudioFormState extends State<AudioForm> {
                                     labelText: 'Course',
                                   ),
                                   allowClear: true,
-                                  hint: const Text('Select Course'),
+                                  hint: Text('Select Course',
+                                      style: GoogleFonts.nunito()),
                                   items: snapshot.data!.docs
                                       .map((course) => DropdownMenuItem(
                                             value: course.id,
-                                            child: Text(course.get('name')),
+                                            child: Text(course.get('name'),
+                                                style: GoogleFonts.nunito()),
                                           ))
                                       .toList(),
                                 );
@@ -124,15 +124,16 @@ class _AudioFormState extends State<AudioForm> {
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: uploading ? 0 : 2,
-                        primary: uploading ? Colors.white : Colors.blue,
+                        primary: uploading ? Colors.transparent : kPrimaryColor,
                       ),
                       child: uploading
                           ? LinearProgressIndicator(
                               value: progress,
                             )
-                          : const Text('Choose File',
-                              style: TextStyle(
-                                color: Colors.white,
+                          : Text('Choose File',
+                              style: GoogleFonts.nunito(
+                                textStyle:
+                                    const TextStyle(color: kLightTextColor),
                               )),
                     ),
                   ],
