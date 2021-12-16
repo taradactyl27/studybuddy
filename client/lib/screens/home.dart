@@ -321,7 +321,7 @@ class _HomePageState extends State<HomePage>
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.only(
-                                          top: 5, bottom: 15),
+                                          top: 10, bottom: 15),
                                       margin: const EdgeInsets.only(
                                           left: 5, right: 5),
                                       child: Material(
@@ -341,14 +341,17 @@ class _HomePageState extends State<HomePage>
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   const SizedBox(
-                                                      height: 70,
+                                                      height: 60,
                                                       child: Center(
                                                         child: Icon(
                                                             Icons
                                                                 .featured_play_list_outlined,
                                                             size: 60),
                                                       )),
-                                                  const Divider(height: 7),
+                                                  const Divider(
+                                                    height: 10,
+                                                    thickness: 1,
+                                                  ),
                                                   Text(
                                                     transcript['audioRef']
                                                         .split('/')[1]
@@ -448,7 +451,7 @@ class _HomePageState extends State<HomePage>
                                     ? 1
                                     : 2,
                             padding:
-                                const EdgeInsets.only(top: 15.0, bottom: 15.0),
+                                const EdgeInsets.only(top: 10.0, bottom: 15.0),
                             children: snapshot.data!.docs.map((course) {
                               return InkWell(
                                 onTap: () {
