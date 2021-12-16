@@ -35,7 +35,7 @@ class SideMenu extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: kIsWeb ? 25.0 : 10.0),
               child: Divider(
                 height: 20,

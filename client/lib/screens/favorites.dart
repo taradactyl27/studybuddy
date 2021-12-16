@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/database.dart' as database;
-import 'package:studybuddy/services/auth.dart' show User, signOut;
+import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/widgets/course_tile.dart';
 import 'package:studybuddy/widgets/side_menu.dart';

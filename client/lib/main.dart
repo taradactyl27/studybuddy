@@ -5,12 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/services/course_state.dart';
-import '../services/auth.dart';
 
 import '../services/course_state.dart';
+import '../services/notifications.dart';
 import 'routes/routes.dart';
 import "route_observer.dart";
 
@@ -18,6 +17,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await dotenv.load();
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: selectNotification);
+  await configureLocalTimeZone();
 
   if (dotenv.get('EMULATE_FUNCTIONS', fallback: '') == 'y') {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
@@ -71,6 +73,7 @@ class MyApp extends StatelessWidget {
           applyElevationOverlayColor: true,
         ),
         themeMode: ThemeMode.system,
+        navigatorKey: navigatorKey,
         onGenerateRoute: controller,
         initialRoute: rootUrl,
       ),

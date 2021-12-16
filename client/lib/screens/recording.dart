@@ -1,13 +1,7 @@
-import 'dart:async';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:studybuddy/routes/hero_route.dart';
-import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/services/sound_player.dart';
 import 'package:studybuddy/services/sound_recorder.dart';
 import 'package:studybuddy/widgets/audio_form.dart';
@@ -93,7 +87,7 @@ class _RecordingPageState extends State<RecordingPage> {
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(175, 50),
+                    minimumSize: const Size(175, 50),
                     primary: primary1,
                     onPrimary: onPrimary1,
                   ),
@@ -116,7 +110,7 @@ class _RecordingPageState extends State<RecordingPage> {
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(175, 50),
+                    minimumSize: const Size(175, 50),
                     primary: primary2,
                     onPrimary: onPrimary2,
                   ),
@@ -143,7 +137,7 @@ class _RecordingPageState extends State<RecordingPage> {
                 ),
                 ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size(175, 50),
+                      minimumSize: const Size(175, 50),
                       onPrimary: Colors.white,
                     ),
                     onPressed: () async {
@@ -152,7 +146,7 @@ class _RecordingPageState extends State<RecordingPage> {
                         return const AudioForm();
                       }));
                     },
-                    icon: Icon(Icons.check),
+                    icon: const Icon(Icons.check),
                     label: Text('Finished',
                         style:
                             GoogleFonts.nunito(fontWeight: FontWeight.w600))),

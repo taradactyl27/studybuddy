@@ -1,21 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 import 'package:studybuddy/color_constants.dart';
 import 'package:studybuddy/services/auth.dart' show User;
 import 'package:studybuddy/routes/hero_route.dart';
-import 'package:studybuddy/services/course_state.dart';
-import 'package:studybuddy/widgets/audio_form.dart';
-import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/routes/routes.dart' as routes;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:studybuddy/services/course_state.dart';
+import 'package:studybuddy/services/database.dart' as database;
 import 'package:studybuddy/widgets/flashcard_tile.dart';
+import 'package:studybuddy/widgets/audio_form.dart';
 import 'package:studybuddy/widgets/sharing_form.dart';
 import 'package:studybuddy/widgets/side_menu.dart';
 import 'package:studybuddy/widgets/transcript_tile.dart';
+import 'package:timezone/timezone.dart' as tz;
+
+import "../services/notifications.dart";
 
 class CoursePage extends StatefulWidget {
   const CoursePage({
@@ -27,6 +32,8 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   int currentIndex = 0;
+  bool enabled = false;
+  String courseName = '';
   setBottomBarIndex(index) {
     setState(() {
       currentIndex = index;
@@ -45,8 +52,9 @@ class _CoursePageState extends State<CoursePage> {
             builder: (context,
                 AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
                     snapshot) {
-              if (!snapshot.hasData)
-                return Center(child: CircularProgressIndicator());
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
               return Scaffold(
                   key: _scaffoldKey,
                   drawer: ConstrainedBox(
@@ -137,6 +145,33 @@ class _CoursePageState extends State<CoursePage> {
                           )
                         : null,
                     actions: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            setState(() {
+                              enabled = !enabled;
+                              enableNotification(
+                                  enabled,
+                                  context.read<CourseState>().currentCourseId,
+                                  courseName);
+                            });
+                          },
+                          icon: enabled
+                              ? const Icon(
+                                  Icons.notifications_none_outlined,
+                                  color: Colors.white,
+                                  size: 24.0,
+                                )
+                              : const Icon(
+                                  Icons.notifications_off_outlined,
+                                  color: Colors.white,
+                                  size: 24.0,
+                                ),
+                          label: const Text("Reminders",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
                       Container(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton.icon(

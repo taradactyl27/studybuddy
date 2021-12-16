@@ -14,7 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class FlashcardPage extends StatefulWidget {
-  FlashcardPage({Key? key, required this.cardsetId}) : super(key: key);
+  const FlashcardPage({Key? key, required this.cardsetId}) : super(key: key);
   final String cardsetId;
 
   @override
