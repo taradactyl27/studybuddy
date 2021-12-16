@@ -11,13 +11,9 @@ import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
-
-
-
 class FlashcardPage extends StatefulWidget {
   FlashcardPage({Key? key, required this.cardsetId}) : super(key: key);
   final String cardsetId;
-  
 
   @override
   _FlashcardPageState createState() => _FlashcardPageState();
@@ -49,44 +45,48 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     child: const Icon(Icons.mic_rounded, color: kLightModeIcon),
                     label: 'Add a Card',
                     onTap: () {
-                        Navigator.of(context)
-                      .push(HeroDialogRoute(builder: (context) {
-                    return FlashCardCreationForm(cardsetId: widget.cardsetId,);
-                  }));}),
+                      Navigator.of(context)
+                          .push(HeroDialogRoute(builder: (context) {
+                        return FlashCardCreationForm(
+                          cardsetId: widget.cardsetId,
+                        );
+                      }));
+                    }),
                 SpeedDialChild(
                     backgroundColor: kDangerColor,
                     labelBackgroundColor: kDangerColor,
                     child: const Icon(Icons.delete, color: kLightModeIcon),
                     label: 'Delete Card Set',
-                    onTap: () async {await database.deleteFlashcardset(
-                                        Provider.of<CourseState>(context, listen: false)
-                                    .currentCourseId, widget.cardsetId);
-                                        
-                                    Navigator.pop(context);})
+                    onTap: () async {
+                      await database.deleteFlashcardset(
+                          Provider.of<CourseState>(context, listen: false)
+                              .currentCourseId,
+                          widget.cardsetId);
+
+                      Navigator.pop(context);
+                    })
               ],
             ),
-            body: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: ListView(
-                padding: const EdgeInsets.only(top: 0, left: 15, right: 15),
-                children: [
-                  const SizedBox(height: 15),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Flashcards",
-                            style: GoogleFonts.nunito(
-                                textStyle: const TextStyle(
-                              fontSize: 21,
-                              fontWeight: FontWeight.w400,
-                            ))),
-                        const SizedBox(
-                          height: 200,
-                        )
-                      ]),
-                ],
-              ),
-            ),
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: ListView(
+          padding: const EdgeInsets.only(top: 0, left: 15, right: 15),
+          children: [
+            const SizedBox(height: 15),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("Flashcards",
+                  style: GoogleFonts.nunito(
+                      textStyle: const TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w400,
+                  ))),
+              const SizedBox(
+                height: 200,
+              )
+            ]),
+          ],
+        ),
+      ),
       bottomNavigationBar: !kIsWeb
           ? BottomAppBar(
               shape: const CircularNotchedRectangle(),

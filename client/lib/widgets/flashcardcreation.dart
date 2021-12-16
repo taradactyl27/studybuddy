@@ -5,7 +5,8 @@ import 'package:studybuddy/services/course_state.dart';
 import 'package:studybuddy/services/database.dart' as database;
 
 class FlashCardCreationForm extends StatefulWidget {
-  const FlashCardCreationForm({Key? key, required this.cardsetId}) : super(key: key);
+  const FlashCardCreationForm({Key? key, required this.cardsetId})
+      : super(key: key);
   final String cardsetId;
   @override
   State<FlashCardCreationForm> createState() => _FlashCardCreationFormState();
@@ -32,8 +33,8 @@ class _FlashCardCreationFormState extends State<FlashCardCreationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final courseId = Provider.of<CourseState>(context).currentCourseId; 
-    
+    final courseId = Provider.of<CourseState>(context).currentCourseId;
+
     return ValueListenableBuilder(
         valueListenable: _questioncontroller,
         builder: (context, TextEditingValue value, __) {

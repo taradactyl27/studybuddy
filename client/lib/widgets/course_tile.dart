@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
+import 'package:studybuddy/services/auth.dart' show User;
+import 'package:studybuddy/services/database.dart';
 
 class CourseTile extends StatelessWidget {
   const CourseTile({
@@ -12,6 +16,7 @@ class CourseTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uid = context.read<User>().uid;
     return Container(
       margin: const EdgeInsets.only(left: 5, right: 5),
       child: Material(
@@ -43,9 +48,26 @@ class CourseTile extends StatelessWidget {
                           )),
                     ),
                   ),
-                  Container(
-                      margin: const EdgeInsets.only(top: 7, right: 6),
-                      child: const Icon(Icons.star_border, size: 20)),
+                  InkWell(
+                    onTap: () async {
+                      if (course['roles'][uid]['favorite'] == null) {
+                        await addCourseToFavorite(course.id, uid);
+                      } else {
+                        if (course['roles'][uid]['favorite']) {
+                          await removeCourseFromFavorite(course.id, uid);
+                        } else {
+                          await addCourseToFavorite(course.id, uid);
+                        }
+                      }
+                    },
+                    child: Container(
+                        margin: const EdgeInsets.only(top: 7, right: 6),
+                        child: course['roles'][uid]['favorite'] == null ||
+                                !course['roles'][uid]['favorite']
+                            ? const Icon(Icons.star_border, size: 20)
+                            : const Icon(Icons.star,
+                                color: Colors.amber, size: 20)),
+                  ),
                 ],
               ),
               Flexible(

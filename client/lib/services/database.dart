@@ -22,6 +22,10 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getUserCourseStream(String uid) {
   return courses.where('roles.$uid.email', isGreaterThan: "").snapshots();
 }
 
+Stream<QuerySnapshot<Map<String, dynamic>>> getUserFavoritesStream(String uid) {
+  return courses.where('roles.$uid.favorite', isEqualTo: true).snapshots();
+}
+
 Stream<DocumentSnapshot<Map<String, dynamic>>> getCourseStream(
     String courseId) {
   return courses.doc(courseId).snapshots();
@@ -36,13 +40,23 @@ Future<dynamic> getCoursePermList(String courseId) async {
   }
 }
 
+Future<void> addCourseToFavorite(String courseId, String uid) async {
+  String favoritesField = "roles.$uid.favorite";
+  await courses.doc(courseId).update({favoritesField: true});
+}
+
+Future<void> removeCourseFromFavorite(String courseId, String uid) async {
+  String favoritesField = "roles.$uid.favorite";
+  await courses.doc(courseId).update({favoritesField: false});
+}
+
 Future<void> createCourse(
     String uid, String email, String name, String description) async {
   DocumentReference<Object?> value = await courses.add({
     "name": name,
     "description": description,
     "roles": {
-      uid: {"email": email, "role": "owner"}
+      uid: {"email": email, "role": "owner", "favorite": false}
     }
   });
   courses.doc(value.id).update({"course_id": value.id});
@@ -53,7 +67,7 @@ Future<String> createFlashcardSet(String courseId) async {
       .doc(courseId)
       .collection("flashcards")
       .add({"name": "Untitled", "cards": []});
-    return value.id;
+  return value.id;
 }
 
 Future<void> addUserToCourse(String courseId, String email) async {
@@ -69,7 +83,10 @@ Future<void> addUserToCourse(String courseId, String email) async {
     }
     String roleField = "roles.${userdoc.docs[0].id}.role";
     String emailField = "roles.${userdoc.docs[0].id}.email";
-    await courses.doc(courseId).update({roleField: "user", emailField: email});
+    String favoritesField = "roles.${userdoc.docs[0].id}.favorite";
+    await courses
+        .doc(courseId)
+        .update({roleField: "user", emailField: email, favoritesField: false});
   }
 }
 
@@ -135,10 +152,11 @@ Future<void> deleteFlashcardset(String courseId, String cardsetId) async {
   await courses.doc(courseId).collection('flashcards').doc(cardsetId).delete();
 }
 
-Future<void> createFlashcard(String courseId, String cardsetId, String question, String answer) async {
-  await courses
-      .doc(courseId)
-      .collection("flashcards")
-      .doc(cardsetId)
-      .update({"card": FieldValue.arrayUnion([{"question": question, "answer": answer}])});
+Future<void> createFlashcard(
+    String courseId, String cardsetId, String question, String answer) async {
+  await courses.doc(courseId).collection("flashcards").doc(cardsetId).update({
+    "card": FieldValue.arrayUnion([
+      {"question": question, "answer": answer}
+    ])
+  });
 }
