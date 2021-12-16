@@ -5,11 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:studybuddy/services/course_state.dart';
-import '../services/auth.dart';
+
+import '../services/course_state.dart';
 import '../services/notifications.dart';
+import '../services/recents_state.dart';
+import "route_observer.dart";
 import 'routes/routes.dart';
 
 void main() async {
@@ -45,11 +46,16 @@ class MyApp extends StatelessWidget {
             return oldUser != newUser;
           },
         ),
-        ChangeNotifierProvider(create: (_) => CourseState())
+        ChangeNotifierProvider(create: (_) => CourseState()),
+        ChangeNotifierProxyProvider<User, RecentsState>(
+          create: (_) => RecentsState(),
+          update: (_, user, recentsState) => recentsState!..update(user.uid),
+        )
       ],
       child: MaterialApp(
         title: 'Study Buddy',
         debugShowCheckedModeBanner: false,
+        navigatorObservers: [routeObserver],
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
