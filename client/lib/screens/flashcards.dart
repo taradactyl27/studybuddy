@@ -127,8 +127,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     icon: Icons.menu_open,
                     activeIcon: Icons.close,
                     spacing: 10,
-                    overlayColor: kOverlayColor,
-                    overlayOpacity: 0.6,
+                    overlayColor: Colors.black,
+                    overlayOpacity: 0.25,
                     children: [
                       SpeedDialChild(
                           child: const Icon(Icons.mic_rounded),

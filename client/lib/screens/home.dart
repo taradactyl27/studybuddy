@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:studybuddy/color_constants.dart';
-
 import 'package:studybuddy/routes/hero_route.dart';
 import 'package:studybuddy/routes/routes.dart' as routes;
 import 'package:studybuddy/services/course_state.dart';
@@ -38,7 +37,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with RouteAware, SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final TextEditingController _searchController = TextEditingController();
+  late TextEditingController _searchController;
   late AnimationController _controller;
   int currentIndex = 0;
   bool filterFavorites = false;
@@ -59,13 +58,14 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
       upperBound: 0.5,
     );
     uid = context.read<User>().uid;
-    _searchApiKey = getSearchKey(true);
+    _searchApiKey = getSearchKey();
     _recentlyViewed = database.getRecentActivity(uid);
   }
 
@@ -132,9 +132,9 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    if (ModalRoute.of(context)!.isCurrent) {
-      print("CURRENT YUH YUH");
-    }
+    // if (ModalRoute.of(context)!.isCurrent) {
+    //   print("CURRENT YUH YUH");
+    // }
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -153,6 +153,7 @@ class _HomePageState extends State<HomePage>
         ),
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          toolbarHeight: 0,
           elevation: 0,
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
@@ -166,8 +167,8 @@ class _HomePageState extends State<HomePage>
           icon: Icons.add,
           activeIcon: Icons.close,
           spacing: 10,
-          overlayColor: Theme.of(context).colorScheme.secondary,
-          overlayOpacity: 0.1,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.25,
           children: [
             SpeedDialChild(
                 child: const Icon(Icons.my_library_add_rounded),
@@ -198,8 +199,9 @@ class _HomePageState extends State<HomePage>
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: ListView(
-            padding: const EdgeInsets.only(top: 65, left: 15, right: 15),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             children: [
+              const SizedBox(height: 65),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -215,31 +217,33 @@ class _HomePageState extends State<HomePage>
                   FutureBuilder<String>(
                       future: _searchApiKey,
                       builder: (context, snapshot) {
-                        return Expanded(
-                          child: SizedBox(
-                            height: 40,
-                            child: TextField(
-                              selectionHeightStyle: BoxHeightStyle.tight,
-                              onSubmitted: (value) async {
-                                submitSearch(snapshot);
-                              },
-                              decoration: InputDecoration(
-                                labelText: "Search...",
-                                labelStyle: GoogleFonts.nunito(),
-                                fillColor: kBgLightColor,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  borderSide: const BorderSide(),
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () async {
-                                    submitSearch(snapshot);
-                                  },
-                                  icon: const Icon(Icons.search),
-                                ),
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width - 30,
+                          height: 40,
+                          child: TextField(
+                            onTap: () {
+                              print("clicking works");
+                            },
+                            selectionHeightStyle: BoxHeightStyle.tight,
+                            onSubmitted: (value) async {
+                              submitSearch(snapshot);
+                            },
+                            decoration: InputDecoration(
+                              labelText: "Search...",
+                              labelStyle: GoogleFonts.nunito(),
+                              fillColor: kBgLightColor,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                borderSide: const BorderSide(),
                               ),
-                              controller: _searchController,
+                              suffixIcon: IconButton(
+                                onPressed: () async {
+                                  submitSearch(snapshot);
+                                },
+                                icon: const Icon(Icons.search),
+                              ),
                             ),
+                            controller: _searchController,
                           ),
                         );
                       }),

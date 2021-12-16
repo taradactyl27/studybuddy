@@ -18,7 +18,7 @@ class SearchResultBox extends StatelessWidget {
     return Material(
       elevation: 15,
       child: Container(
-        margin: const EdgeInsets.all(15),
+        margin: const EdgeInsets.all(10),
         height: 300,
         child: isLoading
             ? const Center(
@@ -26,7 +26,7 @@ class SearchResultBox extends StatelessWidget {
               )
             : ListView(
                 padding:
-                    const EdgeInsets.only(bottom: 0, left: 0, right: 0, top: 5),
+                    const EdgeInsets.only(bottom: 0, left: 0, right: 0, top: 0),
                 shrinkWrap: true,
                 children: results['hits'].map<Widget>((hit) {
                   return InkWell(
@@ -56,10 +56,10 @@ class SearchResult extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: const Icon(
+        leading: Icon(
           Icons.insert_drive_file_outlined,
-          size: 35,
-          color: kPrimaryColor,
+          size: 32,
+          color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(
           hit['audioRef'].split('/')[1].split('.')[0],
