@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage>
       upperBound: 0.5,
     );
     uid = context.read<User>().uid;
-    _searchApiKey = getSearchKey(false);
+    _searchApiKey = getSearchKey();
     _recentlyViewed = database.getRecentActivity(uid);
   }
 
