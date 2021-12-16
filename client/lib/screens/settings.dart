@@ -87,8 +87,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           fontSize: 24, fontWeight: FontWeight.w400))),
               const SizedBox(height: 100),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    primary: kPrimaryColor, minimumSize: const Size(230, 44)),
+                style:
+                    ElevatedButton.styleFrom(minimumSize: const Size(230, 44)),
                 onPressed: () async {
                   await signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(

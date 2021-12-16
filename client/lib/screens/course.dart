@@ -132,13 +132,22 @@ class _CoursePageState extends State<CoursePage> {
                             Navigator.of(context).pop();
                           }
                         },
-                        icon: const Icon(Icons.arrow_back_ios_new_sharp)),
+                        icon: Icon(Icons.arrow_back_ios_new_sharp,
+                            color: MediaQuery.of(context).platformBrightness ==
+                                    Brightness.light
+                                ? Colors.black
+                                : Colors.white)),
                     title: snapshot.data!.exists
                         ? Stack(
                             children: [
                               Text(snapshot.data!.get("name") ?? "",
                                   style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
+                                      textStyle: TextStyle(
+                                          color: MediaQuery.of(context)
+                                                      .platformBrightness ==
+                                                  Brightness.light
+                                              ? Colors.black
+                                              : Colors.white,
                                           fontSize: 28,
                                           fontWeight: FontWeight.w600)))
                             ],

@@ -58,7 +58,8 @@ class MyApp extends StatelessWidget {
                   statusBarColor: Colors.transparent,
                   statusBarIconBrightness: Brightness.dark)),
           brightness: Brightness.light,
-          primarySwatch: Colors.cyan,
+          colorScheme: const ColorScheme.light(),
+          primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         darkTheme: ThemeData(
@@ -68,7 +69,7 @@ class MyApp extends StatelessWidget {
                   statusBarIconBrightness: Brightness.light)),
           brightness: Brightness.dark,
           colorScheme: const ColorScheme.dark(),
-          primarySwatch: Colors.cyan,
+          primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           applyElevationOverlayColor: true,
         ),

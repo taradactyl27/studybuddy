@@ -38,7 +38,9 @@ class _HomePageState extends State<HomePage>
     with RouteAware, SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
+  late AnimationController _controller;
   int currentIndex = 0;
+  bool filterFavorites = false;
   bool isSearching = false;
   bool isLoading = true;
   bool toggle = false;
@@ -56,6 +58,11 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+      upperBound: 0.5,
+    );
     uid = context.read<User>().uid;
     _searchApiKey = getSearchKey(true);
     _recentlyViewed = database.getRecentActivity(uid);
@@ -64,6 +71,8 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    _controller.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -153,8 +162,8 @@ class _HomePageState extends State<HomePage>
           icon: Icons.add,
           activeIcon: Icons.close,
           spacing: 10,
-          overlayColor: kOverlayColor,
-          overlayOpacity: 0.6,
+          overlayColor: Theme.of(context).colorScheme.secondary,
+          overlayOpacity: 0.1,
           children: [
             SpeedDialChild(
                 child: const Icon(Icons.my_library_add_rounded),
@@ -333,20 +342,26 @@ class _HomePageState extends State<HomePage>
                                         elevation: 6,
                                         child: SizedBox(
                                           height: 150,
-                                          width: 150,
+                                          width: 140,
                                           child: Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  const SizedBox(
+                                                  SizedBox(
                                                       height: 60,
                                                       child: Center(
                                                         child: Icon(
                                                             Icons
-                                                                .featured_play_list_outlined,
-                                                            size: 60),
+                                                                .chrome_reader_mode_outlined,
+                                                            size: 60,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .colorScheme
+                                                                .secondary
+                                                                .withOpacity(
+                                                                    0.7)),
                                                       )),
                                                   const Divider(
                                                     height: 10,
@@ -390,12 +405,32 @@ class _HomePageState extends State<HomePage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Your Courses",
-                      style: GoogleFonts.nunito(
-                          textStyle: const TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w400,
-                      ))),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Your Courses",
+                          style: GoogleFonts.nunito(
+                              textStyle: const TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w400,
+                          ))),
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (filterFavorites) {
+                                _controller.reverse(from: 0.5);
+                              } else {
+                                _controller.forward(from: 0.0);
+                              }
+                              filterFavorites = !filterFavorites;
+                            });
+                          },
+                          child: RotationTransition(
+                              turns: Tween(begin: 0.0, end: 1.0)
+                                  .animate(_controller),
+                              child: const Icon(Icons.filter_list, size: 24)))
+                    ],
+                  ),
                   StreamBuilder(
                       stream: database.getUserCourseStream(uid),
                       builder:
@@ -438,6 +473,17 @@ class _HomePageState extends State<HomePage>
                             )
                           ]);
                         }
+                        List<QueryDocumentSnapshot<Object?>> list =
+                            snapshot.data!.docs;
+                        if (filterFavorites) {
+                          list.sort((a, b) {
+                            if (b['roles'][uid]['favorite']) {
+                              return 1;
+                            } else {
+                              return -1;
+                            }
+                          });
+                        }
                         return SizedBox(
                           height: 325,
                           child: GridView.count(
@@ -452,7 +498,7 @@ class _HomePageState extends State<HomePage>
                                     : 2,
                             padding:
                                 const EdgeInsets.only(top: 10.0, bottom: 15.0),
-                            children: snapshot.data!.docs.map((course) {
+                            children: list.map((course) {
                               return InkWell(
                                 onTap: () {
                                   Provider.of<CourseState>(context,

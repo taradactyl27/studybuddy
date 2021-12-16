@@ -35,10 +35,10 @@ class _UserTileState extends State<UserTile> {
     return Card(
       elevation: 2,
       child: ListTile(
-        leading: const Icon(
+        leading: Icon(
           Icons.account_box,
           size: 35,
-          color: kPrimaryColor,
+          color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(widget.email.length > 22
             ? widget.email.substring(0, 22) + "..."

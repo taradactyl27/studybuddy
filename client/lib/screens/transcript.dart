@@ -121,7 +121,8 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
               ? null
               : <Widget>[
                   TextButton(
-                    style: TextButton.styleFrom(primary: Colors.deepOrange),
+                    style: TextButton.styleFrom(
+                        primary: Theme.of(context).colorScheme.primary),
                     onPressed: () {
                       setState(() {
                         tabID = 0;
@@ -131,8 +132,8 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
                   ),
                   transcriptMut['notesGenerated']
                       ? TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Colors.deepPurple),
+                          style: TextButton.styleFrom(
+                              primary: Theme.of(context).colorScheme.secondary),
                           onPressed: () {
                             setState(() {
                               tabID = 1;

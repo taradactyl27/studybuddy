@@ -129,8 +129,15 @@ class _AudioFormState extends State<AudioForm> {
                                         right: 10.0, left: 10.0, bottom: 10.0),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.library_music,
-                                            size: 30),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 15.0),
+                                          child: Icon(Icons.library_music,
+                                              size: 30,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                        ),
                                         const SizedBox(width: 10),
                                         Column(
                                           crossAxisAlignment:
@@ -165,7 +172,7 @@ class _AudioFormState extends State<AudioForm> {
                                                     fontSize: 12))
                                           ],
                                         ),
-                                        const SizedBox(width: 10),
+                                        const SizedBox(width: 5),
                                         _editing
                                             ? InkWell(
                                                 onTap: () {
@@ -186,6 +193,7 @@ class _AudioFormState extends State<AudioForm> {
                                                 },
                                                 child: const Icon(Icons.edit,
                                                     size: 18)),
+                                        const SizedBox(width: 5),
                                         InkWell(
                                             onTap: () {
                                               setState(() {
@@ -231,9 +239,8 @@ class _AudioFormState extends State<AudioForm> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     elevation: uploading ? 0 : 2,
-                                    primary: uploading
-                                        ? Colors.transparent
-                                        : Colors.blue,
+                                    primary:
+                                        uploading ? Colors.transparent : null,
                                   ),
                                   child: uploading
                                       ? LinearProgressIndicator(
@@ -320,65 +327,6 @@ class _AudioFormState extends State<AudioForm> {
                                       ),
                                     )),
                           ),
-                    // ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       elevation: 2,
-                    //       primary: Colors.blue,
-                    //     ),
-                    //     onPressed: () async {
-                    //       await Navigator.pushNamed(
-                    //           context, routes.recordingPage);
-                    //     },
-                    //     child: const Text('Record',
-                    //         style: TextStyle(
-                    //           color: Colors.white,
-                    //         ))),
-                    // ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       elevation: 2,
-                    //       primary: Colors.blue,
-                    //     ),
-                    //     onPressed: () async {
-                    //       _formKey.currentState!.save();
-                    //       String courseID =
-                    //           _formKey.currentState!.value['courseID'];
-
-                    //       String temp = recentFilePath;
-                    //       //String tempFileName = "test File 1";
-                    //       //String tempFileName = tempfilename;
-                    //       print("recording file and name updated");
-
-                    //       setState(() {
-                    //         uploading = true;
-                    //       });
-                    //       print("started uploading");
-
-                    //       String audioID = database.newLectureRef(courseID).id;
-                    //       File file = File(temp);
-                    //       String name = tempfilename;
-
-                    //       UploadTask upload = storage.createUpload(
-                    //           user, courseID, audioID, file, name);
-
-                    //       upload.snapshotEvents.listen((event) {
-                    //         setState(() {
-                    //           progress =
-                    //               (event.bytesTransferred / event.totalBytes);
-                    //         });
-                    //       });
-
-                    //       await upload;
-                    //       print('audio UPLOAD done!!!');
-
-                    //       setState(() {
-                    //         uploading = false;
-                    //         progress = 0;
-                    //       });
-                    //     },
-                    //     child: const Text('Upload Recording',
-                    //         style: TextStyle(
-                    //           color: Colors.white,
-                    //         )))
                   ],
                 ),
               ),
