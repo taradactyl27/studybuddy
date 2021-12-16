@@ -141,7 +141,13 @@ class _HomePageState extends State<HomePage>
                       .push(HeroDialogRoute(builder: (context) {
                     return const AudioForm();
                   }));
-                })
+                }),
+            SpeedDialChild(
+                child: const Icon(Icons.mode_standby),
+                label: "Record Lecture",
+                onTap: () {
+                  Navigator.of(context).pushNamed(routes.recordingPage);
+                }),
           ],
         ),
         body: SizedBox(

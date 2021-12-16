@@ -92,15 +92,19 @@ class _SharingFormState extends State<SharingForm> {
                                               .currentCourseId,
                                     );
                                   }).toList())),
+                          Divider(),
                           if (roleList[uid]['role'] == 'owner')
-                            TextFormField(
-                              controller: _namecontroller,
-                              decoration: InputDecoration(
-                                hintStyle: GoogleFonts.nunito(),
-                                hintText: 'New User Email',
-                                border: InputBorder.none,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, bottom: 8),
+                              child: TextFormField(
+                                controller: _namecontroller,
+                                decoration: InputDecoration(
+                                  hintStyle: GoogleFonts.nunito(),
+                                  hintText: 'Type New User Email Here',
+                                ),
+                                cursorColor: kBgLightColor,
                               ),
-                              cursorColor: kBgLightColor,
                             ),
                           roleList[uid]['role'] == 'owner'
                               ? SizedBox(
@@ -137,6 +141,7 @@ class _SharingFormState extends State<SharingForm> {
                                         : Text("Add a User",
                                             style: GoogleFonts.nunito(
                                               textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
                                                   color: kLightTextColor),
                                             )),
                                   ),
