@@ -122,7 +122,9 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
               : <Widget>[
                   TextButton(
                     style: TextButton.styleFrom(
-                        primary: Theme.of(context).colorScheme.primary),
+                        primary: tabID == 0
+                            ? Theme.of(context).colorScheme.secondary
+                            : Theme.of(context).colorScheme.primaryVariant),
                     onPressed: () {
                       setState(() {
                         tabID = 0;
@@ -133,7 +135,11 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
                   transcriptMut['notesGenerated']
                       ? TextButton(
                           style: TextButton.styleFrom(
-                              primary: Theme.of(context).colorScheme.secondary),
+                              primary: tabID == 1
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primaryVariant),
                           onPressed: () {
                             setState(() {
                               tabID = 1;
@@ -142,8 +148,10 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
                           child: const Text("Our Notes"),
                         )
                       : TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Colors.deepPurple),
+                          style: TextButton.styleFrom(
+                              primary: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant),
                           onPressed: () async {
                             setState(() {
                               isLoading = true;
@@ -170,13 +178,15 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
                           },
                           child: !isLoading
                               ? const Text("Create Notes")
-                              : const Center(
+                              : Center(
                                   child: SizedBox(
                                     height: 15,
                                     width: 15,
                                     child: CircularProgressIndicator(
                                         strokeWidth: 2.0,
-                                        color: Colors.deepPurple),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryVariant),
                                   ),
                                 ),
                         ),
@@ -203,6 +213,8 @@ class _TranscriptPageState extends State<TranscriptPage> with RouteAware {
                       right: 15.0,
                     ),
                     child: QuillEditor.basic(
+                      keyboardAppearance:
+                          MediaQuery.of(context).platformBrightness,
                       controller: _controllers[tabID],
                       readOnly: false, // true for view only mode
                     ),
