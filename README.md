@@ -2,6 +2,32 @@
 
 Transcribe lectures, generate notes, and finally be able to search for exactly which class the professor mentioned that one thing...
 
+# Usage
+Login Page                            |  Dark Mode Login Page
+:------------------------------------:|:-------------------------:
+![Login Page](/screenshots/login.PNG) | ![Login Page Dark](/screenshots/login_dark.PNG)
+
+Home Page                             |  Dark Mode Home Page
+:------------------------------------:|:-------------------------:
+![Home Page](/screenshots/home_light.gif) | ![Home Page Dark](/screenshots/home_dark.gif)
+
+Selecting File                        |  Uploading File
+:------------------------------------:|:-------------------------:
+![File Selection](/screenshots/file_upload.png) | ![File Upload](/screenshots/selected_file.gif)
+
+Course Page                           |  Lecture Page
+:------------------------------------:|:-------------------------:
+![Course Page](/screenshots/course_page.png) | ![Lecture Page](/screenshots/lecture.gif)
+
+Flashcards                            | Recording Page  
+:------------------------------------:|:-------------------------:
+![Flashcards](/screenshots/flashcards.gif) | ![Recording Page](/screenshots/recording.png)
+
+Web Screenshot |
+:--------------:|
+![Web Page](/screenshots/web.png)|
+
+
 
 ## Requirements
 
