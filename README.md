@@ -13,7 +13,7 @@ Home Page                             |  Dark Mode Home Page
 
 Selecting File                        |  Uploading File
 :------------------------------------:|:-------------------------:
-![File Selection](/screenshots/file_upload.ONG) | ![File Upload](/screenshots/selected_file.gif)
+![File Selection](/screenshots/file_upload.PNG) | ![File Upload](/screenshots/selected_file.gif)
 
 Course Page                           |  Lecture Page
 :------------------------------------:|:-------------------------:
