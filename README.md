@@ -13,19 +13,19 @@ Home Page                             |  Dark Mode Home Page
 
 Selecting File                        |  Uploading File
 :------------------------------------:|:-------------------------:
-![File Selection](/screenshots/file_upload.png) | ![File Upload](/screenshots/selected_file.gif)
+![File Selection](/screenshots/file_upload.ONG) | ![File Upload](/screenshots/selected_file.gif)
 
 Course Page                           |  Lecture Page
 :------------------------------------:|:-------------------------:
-![Course Page](/screenshots/course_page.png) | ![Lecture Page](/screenshots/lecture.gif)
+![Course Page](/screenshots/course_page.PNG) | ![Lecture Page](/screenshots/lecture.gif)
 
 Flashcards                            | Recording Page  
 :------------------------------------:|:-------------------------:
-![Flashcards](/screenshots/flashcards.gif) | ![Recording Page](/screenshots/recording.png)
+![Flashcards](/screenshots/flashcards.gif) | ![Recording Page](/screenshots/recording.PNG)
 
 Web Screenshot |
 :--------------:|
-![Web Page](/screenshots/web.png)|
+![Web Page](/screenshots/web.PNG)|
 
 
 
