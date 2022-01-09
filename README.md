@@ -2,7 +2,7 @@
 
 Transcribe lectures, generate notes, and finally be able to search for exactly which class the professor mentioned that one thing...
 
-# Usage
+# Demo
 Login Page                            |  Dark Mode Login Page
 :------------------------------------:|:-------------------------:
 ![Login Page](/screenshots/login.PNG) | ![Login Page Dark](/screenshots/login_dark.PNG)
@@ -23,7 +23,7 @@ Flashcards                            | Recording Page
 :------------------------------------:|:-------------------------:
 ![Flashcards](/screenshots/flashcards.gif) | ![Recording Page](/screenshots/recording.PNG)
 
-Web Screenshot |
+Web View |
 :--------------:|
 ![Web Page](/screenshots/web.PNG)|
 
